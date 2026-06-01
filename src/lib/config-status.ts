@@ -8,14 +8,18 @@ export interface ConfigStatus {
   docsLabel?: string;
 }
 
-export const configStatuses: ConfigStatus[] = [
-  {
-    name: "Supabase",
-    configured: Boolean(SUPABASE_URL && SUPABASE_KEY),
-    message: "Supabase nie jest skonfigurowany — funkcje uwierzytelniania są wyłączone.",
-    docsUrl: "https://github.com/przeprogramowani/10x-astro-starter#supabase-configuration",
-    docsLabel: "Zobacz instrukcję konfiguracji",
-  },
-];
+export function getConfigStatuses(): ConfigStatus[] {
+  return [
+    {
+      name: "Supabase",
+      configured: Boolean(SUPABASE_URL && SUPABASE_KEY),
+      message: "Supabase nie jest skonfigurowany — funkcje uwierzytelniania są wyłączone.",
+      docsUrl: "https://github.com/przeprogramowani/10x-astro-starter#supabase-configuration",
+      docsLabel: "Zobacz instrukcję konfiguracji",
+    },
+  ];
+}
 
-export const missingConfigs = configStatuses.filter((s) => !s.configured);
+export function getMissingConfigs(): ConfigStatus[] {
+  return getConfigStatuses().filter((s) => !s.configured);
+}

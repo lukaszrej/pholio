@@ -1,7 +1,8 @@
 ---
 import "../styles/global.css";
 import Banner from "@/components/Banner.astro";
-import { missingConfigs } from "@/lib/config-status";
+import { getMissingConfigs } from "@/lib/config-status";
+const missingConfigs = getMissingConfigs();
 
 interface Props {
   title?: string;
