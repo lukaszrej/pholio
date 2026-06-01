@@ -191,26 +191,23 @@ The build requires `SUPABASE_URL` and `SUPABASE_KEY` at compile time (Astro's `e
 
 ### 2.1 Cloudflare account + scoped API token
 
-- [ ] Log in at `dash.cloudflare.com`
-- [ ] Find your **Account ID**: Workers & Pages → Overview → right-hand sidebar
-- [ ] Create a **scoped API token**: Profile → API Tokens → Create Token → *Edit Cloudflare Workers* template
+- [x] Log in at `dash.cloudflare.com`
+- [x] Find your **Account ID**: Workers & Pages → Overview → right-hand sidebar
+- [x] Create a **scoped API token**: Profile → API Tokens → Create Token → *Edit Cloudflare Workers* template
   - Permissions: `Workers Scripts:Edit`, `Workers Routes:Edit` — **do not add DNS or billing scope**
   - Zone resources: leave as default (All zones) unless restricting by domain
-- [ ] Authenticate wrangler locally:
+- [x] Authenticate wrangler locally:
   ```
   ! wrangler login
   ```
 
-### 2.2 Inject production secrets into the Worker
+### 2.2 Inject production credentials into the Worker
 
-Run in your terminal (values from your Supabase project's API settings):
+> **Lesson learned:** `wrangler secret put` stores values as encrypted secrets accessible only via the Cloudflare `env` binding object. However, `astro:env/server` with `@astrojs/cloudflare` v13 reads via `process.env` by default, and the `setGetEnv(createGetEnv(env))` bridging mechanism does not reliably populate it at runtime. **Use Cloudflare text environment variables (not secrets) for `SUPABASE_URL` and `SUPABASE_KEY`** — with `nodejs_compat`, text vars are accessible via `process.env` which is what `astro:env` reads.
 
-```bash
-! wrangler secret put SUPABASE_URL
-! wrangler secret put SUPABASE_KEY
-```
-
-Secrets are encrypted at Cloudflare and never appear in `wrangler.jsonc` or `wrangler tail` output. Do **not** put them in `wrangler.jsonc` `[vars]`.
+- [x] Cloudflare dashboard → Workers & Pages → **pholio** → Settings → Variables and Secrets → add as **text environment variables** (not secrets):
+  - `SUPABASE_URL` = `https://<ref>.supabase.co`
+  - `SUPABASE_KEY` = `<anon key>`
 
 ### 2.3 Add GitHub repository secrets
 
@@ -222,6 +219,8 @@ Navigate to: GitHub repo → Settings → Secrets and variables → Actions → 
 | `CLOUDFLARE_ACCOUNT_ID` | Account ID from 2.1 |
 | `SUPABASE_URL` | Supabase project URL |
 | `SUPABASE_KEY` | Supabase anon key |
+
+- [x] All four secrets added ✅
 
 ---
 
@@ -240,7 +239,7 @@ Navigate to: GitHub repo → Settings → Secrets and variables → Actions → 
   wrangler deployments list
   ```
 
-- [ ] **3.4** Smoke-test the live URL:
+- [x] **3.4** Smoke-test the live URL:
   - `/` loads without error
   - `/auth/signin` form renders
   - Sign in with test credentials → redirects to `/dashboard`
@@ -252,10 +251,10 @@ Navigate to: GitHub repo → Settings → Secrets and variables → Actions → 
 
 > **Human gate. Requires the Workers URL from Phase 3.**
 
-- [ ] Supabase dashboard → Authentication → URL Configuration:
-  - **Site URL:** `https://pholio.<account>.workers.dev`
-  - **Redirect URLs:** add `https://pholio.<account>.workers.dev/**`
-- [ ] Re-test auth flow end-to-end on the production URL (signup → confirm email → login → logout)
+- [x] Supabase dashboard → Authentication → URL Configuration:
+  - **Site URL:** `https://pholio.rejlukasz.workers.dev`
+  - **Redirect URLs:** `https://pholio.rejlukasz.workers.dev/**`
+- [x] Re-test auth flow end-to-end on the production URL (signup → confirm email → login → logout)
 
 ---
 
@@ -263,9 +262,11 @@ Navigate to: GitHub repo → Settings → Secrets and variables → Actions → 
 
 > **Agent-owned commands.**
 
-- [ ] Push any commit to `main` and watch the Actions tab in GitHub
-- [ ] Confirm the `Deploy` workflow runs green
-- [ ] Confirm `wrangler deployments list` shows a new version matching the commit SHA
+- [x] Push any commit to `main` and watch the Actions tab in GitHub
+- [x] Confirm the `Deploy` workflow runs green
+- [x] Confirm `wrangler deployments list` shows a new version matching the commit SHA
+
+> **Additional fix applied:** Disabled the Cloudflare Workers GitHub integration (dashboard → Workers → pholio → Settings → Git Integration → Disconnect). Without this, Cloudflare auto-built on every push without Supabase env vars, overwriting the correct GitHub Actions deployment.
 
 ---
 
@@ -328,7 +329,7 @@ The production domain isn't whitelisted. Re-do Phase 4 with the correct Workers 
 
 ## Verification checklist (end state)
 
-- [ ] `wrangler deployments list` shows a live `pholio` worker version
-- [ ] `wrangler tail pholio --status error` shows no errors at idle
-- [ ] Full auth flow works on production Workers URL
-- [ ] GitHub Actions `Deploy` workflow is green on a push to `main`
+- [x] `wrangler deployments list` shows a live `pholio` worker version
+- [x] `wrangler tail pholio --status error` shows no errors at idle
+- [x] Full auth flow works on production Workers URL
+- [x] GitHub Actions `Deploy` workflow is green on a push to `main`
