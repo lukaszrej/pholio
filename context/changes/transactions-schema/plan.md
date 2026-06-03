@@ -27,7 +27,7 @@ After this plan is complete:
 
 - `supabase` CLI is already in `devDependencies` (`^2.102.0`) — use `npx supabase` without global install
 - `supabase/migrations/` directory is absent; `supabase migration new` creates it on first run
-- Per-request client in `src/lib/supabase.ts:13` (`createServerClient`) is correct for Cloudflare Workers — no change needed
+- Per-request client in `src/lib/supabase.ts:9` (`createServerClient`) is correct for Cloudflare Workers — no change needed
 - All auth routes use the same `createClient()` pattern; transactions queries will follow suit
 
 ## What We're NOT Doing
@@ -55,6 +55,12 @@ One Supabase CLI migration file handles the entire DB layer: table creation, CHE
 Create the `supabase/migrations/` directory via the Supabase CLI, write the migration SQL, and push it to the remote project. This is the only phase that touches the database.
 
 ### Changes Required:
+
+#### 0. Link project to remote Supabase
+
+**Command**: `npx supabase link --project-ref <ref>`
+
+**Intent**: Bind the local CLI to the remote Supabase project so `db push` knows where to send the migration. The `<ref>` is the alphanumeric string after `project/` in your Supabase Dashboard URL (e.g. `abcdefghijklmnop`). Skip this step if `.supabase/` already exists in the repo root.
 
 #### 1. Generate migration file
 
@@ -110,7 +116,7 @@ Create the `supabase/migrations/` directory via the Supabase CLI, write the migr
 
 **Command**: `npx supabase db push`
 
-**Intent**: Pushes the migration to the linked remote Supabase project. If the project is not yet linked, run `npx supabase link` first and provide the project reference ID from the Supabase Dashboard URL.
+**Intent**: Pushes the migration to the linked remote Supabase project (linked in step 0).
 
 ### Success Criteria:
 
@@ -124,7 +130,7 @@ Create the `supabase/migrations/` directory via the Supabase CLI, write the migr
 - Supabase Dashboard → Table Editor → `transactions` shows 9 columns with correct types
 - Dashboard → Authentication → Policies → `transactions` shows 4 policies with RLS enabled
 - Attempting to query the table as a logged-in user returns an empty array (not an error)
-- Attempting to query as an anonymous role is blocked by RLS
+- Unauthenticated query returns an empty array `[]` with HTTP 200 (not an error) — confirms RLS is filtering rows, not throwing
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase. Phase blocks use plain bullets — the corresponding `- [ ]` checkboxes for these items live in the `## Progress` section at the bottom of the plan.
 
@@ -154,7 +160,7 @@ Add a hand-written TypeScript file that exposes the transactions schema as typed
 
 #### Automated Verification:
 
-- `npm run typecheck` passes with zero errors
+- `npx astro check` passes with zero errors
 - `npm run build` succeeds (no import errors)
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding. Phase blocks use plain bullets — the corresponding `- [ ]` checkboxes for these items live in the `## Progress` section at the bottom of the plan.
@@ -193,10 +199,11 @@ Add a hand-written TypeScript file that exposes the transactions schema as typed
 - [ ] 1.3 Dashboard shows `transactions` table with 9 columns and correct types
 - [ ] 1.4 Dashboard shows 4 RLS policies with RLS enabled on the table
 - [ ] 1.5 Querying as logged-in user returns empty array (not error)
+- [ ] 1.6 Unauthenticated query returns empty array (not an error) — RLS filtering rows, not throwing
 
 ### Phase 2: TypeScript Types
 
 #### Automated
 
-- [ ] 2.1 `npm run typecheck` passes with zero errors
+- [ ] 2.1 `npx astro check` passes with zero errors
 - [ ] 2.2 `npm run build` succeeds
