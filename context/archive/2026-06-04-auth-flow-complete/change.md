@@ -1,10 +1,10 @@
 ---
 change_id: auth-flow-complete
 title: Complete auth flow — register, sign in, view dashboard, sign out
-status: planned
+status: archived
 created: 2026-06-04
 updated: 2026-06-04
-archived_at: null
+archived_at: 2026-06-04T20:44:59Z
 ---
 
 ## Notes

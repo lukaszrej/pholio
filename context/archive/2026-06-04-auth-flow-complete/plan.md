@@ -228,20 +228,20 @@ None — no schema changes, no data migration.
 
 #### Automated
 
-- [ ] 1.1 TypeScript check passes: `npx astro check`
-- [ ] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 TypeScript check passes: `npx astro check` — d595e6b
+- [x] 1.2 Linting passes: `npm run lint` — d595e6b
 
 #### Manual
 
-- [ ] 1.3 Signing in with valid credentials redirects to `/dashboard`, not `/`
-- [ ] 1.4 Visiting `/auth/signin` while authenticated redirects to `/dashboard`
-- [ ] 1.5 Visiting `/auth/signup` while authenticated redirects to `/dashboard`
+- [x] 1.3 Signing in with valid credentials redirects to `/dashboard`, not `/` — d595e6b
+- [x] 1.4 Visiting `/auth/signin` while authenticated redirects to `/dashboard` — d595e6b
+- [x] 1.5 Visiting `/auth/signup` while authenticated redirects to `/dashboard` — d595e6b
 
 ### Phase 2: Supabase configuration + end-to-end verification
 
 #### Manual
 
-- [ ] 2.1 Dev flow: register → `/auth/confirm-email` → sign in → `/dashboard` → sign out → `/`
-- [ ] 2.2 Production flow: register → email arrives → click link → `/dashboard` with active session
-- [ ] 2.3 Auth-page guard: authenticated user redirected away from `/auth/signin` and `/auth/signup`
-- [ ] 2.4 Signout: land on `/`, Topbar shows "Not signed in" with Sign in / Sign up links
+- [x] 2.1 Dev flow: register → `/auth/confirm-email` → sign in → `/dashboard` → sign out → `/` — 54a2c77
+- [x] 2.2 Production flow: register → email arrives → click link → `/dashboard` with active session — 54a2c77
+- [x] 2.3 Auth-page guard: authenticated user redirected away from `/auth/signin` and `/auth/signup` — 54a2c77
+- [x] 2.4 Signout: land on `/`, Topbar shows "Not signed in" with Sign in / Sign up links — 54a2c77
