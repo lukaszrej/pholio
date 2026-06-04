@@ -241,7 +241,7 @@ None — no schema changes, no data migration.
 
 #### Manual
 
-- [x] 2.1 Dev flow: register → `/auth/confirm-email` → sign in → `/dashboard` → sign out → `/`
-- [x] 2.2 Production flow: register → email arrives → click link → `/dashboard` with active session
-- [x] 2.3 Auth-page guard: authenticated user redirected away from `/auth/signin` and `/auth/signup`
-- [x] 2.4 Signout: land on `/`, Topbar shows "Not signed in" with Sign in / Sign up links
+- [x] 2.1 Dev flow: register → `/auth/confirm-email` → sign in → `/dashboard` → sign out → `/` — 54a2c77
+- [x] 2.2 Production flow: register → email arrives → click link → `/dashboard` with active session — 54a2c77
+- [x] 2.3 Auth-page guard: authenticated user redirected away from `/auth/signin` and `/auth/signup` — 54a2c77
+- [x] 2.4 Signout: land on `/`, Topbar shows "Not signed in" with Sign in / Sign up links — 54a2c77
