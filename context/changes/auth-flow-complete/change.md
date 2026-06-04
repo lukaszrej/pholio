@@ -1,7 +1,7 @@
 ---
 change_id: auth-flow-complete
 title: Complete auth flow — register, sign in, view dashboard, sign out
-status: implemented
+status: impl_reviewed
 created: 2026-06-04
 updated: 2026-06-04
 archived_at: null
