@@ -205,5 +205,5 @@ Add a hand-written TypeScript file that exposes the transactions schema as typed
 
 #### Automated
 
-- [x] 2.1 `npx astro check` passes with zero errors
-- [x] 2.2 `npm run build` succeeds
+- [x] 2.1 `npx astro check` passes with zero errors — 85d4b48
+- [x] 2.2 `npm run build` succeeds — 85d4b48

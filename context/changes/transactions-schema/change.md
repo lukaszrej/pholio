@@ -1,7 +1,7 @@
 ---
 change_id: transactions-schema
 title: Transactions table schema with RLS policies (F-01)
-status: implementing
+status: implemented
 created: 2026-06-03
 updated: 2026-06-04
 archived_at: null
