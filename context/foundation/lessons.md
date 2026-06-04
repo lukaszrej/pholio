@@ -17,3 +17,12 @@
 If you connect a Cloudflare Worker to a GitHub repo via the Cloudflare dashboard's Git Integration, Cloudflare triggers its own build-and-deploy on every push — independently of GitHub Actions. This build runs without your GitHub secrets (no `SUPABASE_URL`, etc.), produces a broken artifact, and deploys it AFTER GitHub Actions finishes, overwriting the correct build.
 
 **Rule:** When GitHub Actions owns the deploy pipeline (`cloudflare/wrangler-action`), disconnect the Cloudflare Git Integration: Workers → pholio → Settings → Git Integration → Disconnect. These two CD paths are mutually exclusive; running both causes the last one to win (usually Cloudflare's broken build).
+
+---
+
+## Always use double quotes in TypeScript files
+
+- **Context**: Any new TypeScript file in src/
+- **Problem**: CI lint fails — Prettier enforces double quotes; single quotes cause eslint/prettier errors that break the CI pipeline. Happened in src/types/transaction.ts (Currency union and Omit<> keys used single quotes, caught by CI run #8).
+- **Rule**: Always use double quotes in TypeScript files — single quotes fail the Prettier lint check.
+- **Applies to**: implement, impl-review
