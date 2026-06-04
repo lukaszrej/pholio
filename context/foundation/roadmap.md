@@ -30,7 +30,7 @@ Indywidualny inwestor długoterminowy nie ma jednego miejsca, gdzie może zobacz
 | ID   | Change ID               | Outcome (użytkownik może …)                                                   | Prerequisites | PRD refs                   | Status   |
 | ---- | ----------------------- | ----------------------------------------------------------------------------- | ------------- | -------------------------- | -------- |
 | F-01 | transactions-schema     | (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane  | —             | FR-004, FR-007, §AC        | done     |
-| S-01 | auth-flow-complete      | zarejestrować konto, zalogować się i wylogować; zobaczyć pusty dashboard      | —             | FR-001, FR-002, FR-003     | ready    |
+| S-01 | auth-flow-complete      | zarejestrować konto, zalogować się i wylogować; zobaczyć pusty dashboard      | —             | FR-001, FR-002, FR-003     | done     |
 | S-02 | add-transaction         | dodać transakcję (ticker, cena, data, waluta, liczba akcji)                   | S-01, F-01    | FR-004                     | proposed |
 | S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                      | S-02          | FR-007, US-01              | blocked  |
 | S-04 | transaction-crud        | edytować i trwale usunąć istniejącą transakcję                                | S-02          | FR-005, FR-006             | proposed |
@@ -84,7 +84,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Scaffold auth istnieje, ale kompletność flow rejestracji (strona signup, ewentualne potwierdzenie email) nie jest zweryfikowana; może wymagać uzupełnienia brakujących ekranów.
-- **Status:** ready
+- **Status:** done
 
 ### S-02: Dodawanie transakcji
 
@@ -167,3 +167,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 (Empty on first generation. `/10x-archive` appends an entry here — and flips that item's `Status` to `done` — when a change whose `Change ID` matches the item is archived.)
 
 - **F-01: (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane** — Archived 2026-06-04 → `context/archive/2026-06-03-transactions-schema/`. Lesson: —.
+- **S-01: Użytkownik może zarejestrować nowe konto email/hasło, zalogować się, zobaczyć pusty dashboard i wylogować się.** — Archived 2026-06-04 → `context/archive/2026-06-04-auth-flow-complete/`. Lesson: —.
