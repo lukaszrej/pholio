@@ -1,4 +1,4 @@
-export type Currency = 'PLN' | 'USD' | 'EUR' | 'GBP' | 'CHF' | 'CAD' | 'AUD' | 'JPY' | 'DKK' | 'NOK' | 'SEK';
+export type Currency = "PLN" | "USD" | "EUR" | "GBP" | "CHF" | "CAD" | "AUD" | "JPY" | "DKK" | "NOK" | "SEK";
 
 export interface Transaction {
   id: string;
@@ -12,6 +12,6 @@ export interface Transaction {
   updated_at: string;
 }
 
-export type NewTransaction = Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>;
+export type NewTransaction = Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">;
 
 export type UpdateTransaction = Partial<NewTransaction>;
