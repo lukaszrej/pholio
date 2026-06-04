@@ -3,7 +3,7 @@ project: "Pholio"
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-04
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -29,7 +29,7 @@ Indywidualny inwestor długoterminowy nie ma jednego miejsca, gdzie może zobacz
 
 | ID   | Change ID               | Outcome (użytkownik może …)                                                   | Prerequisites | PRD refs                   | Status   |
 | ---- | ----------------------- | ----------------------------------------------------------------------------- | ------------- | -------------------------- | -------- |
-| F-01 | transactions-schema     | (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane  | —             | FR-004, FR-007, §AC        | ready    |
+| F-01 | transactions-schema     | (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane  | —             | FR-004, FR-007, §AC        | done     |
 | S-01 | auth-flow-complete      | zarejestrować konto, zalogować się i wylogować; zobaczyć pusty dashboard      | —             | FR-001, FR-002, FR-003     | ready    |
 | S-02 | add-transaction         | dodać transakcję (ticker, cena, data, waluta, liczba akcji)                   | S-01, F-01    | FR-004                     | proposed |
 | S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                      | S-02          | FR-007, US-01              | blocked  |
@@ -70,7 +70,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Schemat zdefiniowany zbyt wąsko (np. bez obsługi wielowalutowości) może wymagać migracji zanim trafią pierwsze dane; warto uwzględnić walutę i datę zakupu od razu, bo późniejsza zmiana schematu z danymi produkcyjnymi jest kosztowna.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -165,3 +165,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 ## Done
 
 (Empty on first generation. `/10x-archive` appends an entry here — and flips that item's `Status` to `done` — when a change whose `Change ID` matches the item is archived.)
+
+- **F-01: (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane** — Archived 2026-06-04 → `context/archive/2026-06-03-transactions-schema/`. Lesson: —.
