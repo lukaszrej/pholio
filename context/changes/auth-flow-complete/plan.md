@@ -228,14 +228,14 @@ None — no schema changes, no data migration.
 
 #### Automated
 
-- [ ] 1.1 TypeScript check passes: `npx astro check`
-- [ ] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 TypeScript check passes: `npx astro check`
+- [x] 1.2 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 1.3 Signing in with valid credentials redirects to `/dashboard`, not `/`
-- [ ] 1.4 Visiting `/auth/signin` while authenticated redirects to `/dashboard`
-- [ ] 1.5 Visiting `/auth/signup` while authenticated redirects to `/dashboard`
+- [x] 1.3 Signing in with valid credentials redirects to `/dashboard`, not `/`
+- [x] 1.4 Visiting `/auth/signin` while authenticated redirects to `/dashboard`
+- [x] 1.5 Visiting `/auth/signup` while authenticated redirects to `/dashboard`
 
 ### Phase 2: Supabase configuration + end-to-end verification
 
