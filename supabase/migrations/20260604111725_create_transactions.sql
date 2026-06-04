@@ -32,7 +32,7 @@ CREATE POLICY "Users can delete own transactions"
   ON public.transactions FOR DELETE
   USING (auth.uid() = user_id);
 
--- updated_at trigger
+-- Shared trigger utility; do not redefine per table. Used by set_transactions_updated_at trigger.
 CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
