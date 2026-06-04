@@ -191,15 +191,15 @@ Add a hand-written TypeScript file that exposes the transactions schema as typed
 
 #### Automated
 
-- [ ] 1.1 `npx supabase db push` exits with code 0
-- [ ] 1.2 Migration file committed to git
+- [x] 1.1 `npx supabase db push` exits with code 0
+- [x] 1.2 Migration file committed to git
 
 #### Manual
 
-- [ ] 1.3 Dashboard shows `transactions` table with 9 columns and correct types
-- [ ] 1.4 Dashboard shows 4 RLS policies with RLS enabled on the table
-- [ ] 1.5 Querying as logged-in user returns empty array (not error)
-- [ ] 1.6 Unauthenticated query returns empty array (not an error) — RLS filtering rows, not throwing
+- [x] 1.3 Dashboard shows `transactions` table with 9 columns and correct types
+- [x] 1.4 Dashboard shows 4 RLS policies with RLS enabled on the table
+- [x] 1.5 Querying as logged-in user returns empty array (not error)
+- [x] 1.6 Unauthenticated query returns empty array (not an error) — RLS filtering rows, not throwing
 
 ### Phase 2: TypeScript Types
 
