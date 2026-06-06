@@ -32,9 +32,9 @@ Indywidualny inwestor długoterminowy nie ma jednego miejsca, gdzie może zobacz
 | F-01 | transactions-schema     | (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane  | —             | FR-004, FR-007, §AC        | done     |
 | S-01 | auth-flow-complete      | zarejestrować konto, zalogować się i wylogować; zobaczyć pusty dashboard      | —             | FR-001, FR-002, FR-003     | done     |
 | S-02 | add-transaction         | dodać transakcję (ticker, cena, data, waluta, liczba akcji)                   | S-01, F-01    | FR-004                     | proposed |
-| S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                      | S-02          | FR-007, US-01              | blocked  |
+| S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                      | S-02          | FR-007, US-01              | proposed |
 | S-04 | transaction-crud        | edytować i trwale usunąć istniejącą transakcję                                | S-02          | FR-005, FR-006             | proposed |
-| S-05 | sector-allocation-chart | zobaczyć wykres alokacji sektorowej portfela                                  | S-03          | FR-008                     | blocked  |
+| S-05 | sector-allocation-chart | zobaczyć wykres alokacji sektorowej portfela                                  | S-03          | FR-008                     | proposed |
 
 ## Streams
 
@@ -108,9 +108,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** S-04
 - **Blockers:** —
 - **Unknowns:**
-  - Który dostawca danych EOD zostanie wybrany (Yahoo Finance unofficial, Alpha Vantage, Polygon.io lub inny)? — Owner: developer. Block: yes.
+  - ~~Który dostawca danych EOD zostanie wybrany?~~ — **Resolved 2026-06-06: Finnhub.** Szczegóły w `context/foundation/eod-api-decision.md`.
 - **Risk:** Zewnętrzna zależność od API cenowego jest jedyną nierozwiązaną decyzją blokującą must-have; zły wybór dostawcy (limity API, koszty, niezawodność) może wymagać podmiany integracji przed launchem.
-- **Status:** blocked
+- **Status:** proposed
 
 ### S-04: Edycja i usuwanie transakcji
 
@@ -133,9 +133,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:**
-  - Czy wybrany dostawca EOD dostarcza dane o przynależności sektorowej dla wszystkich tickerów? — Owner: developer. Block: yes.
+  - ~~Czy wybrany dostawca EOD dostarcza dane o przynależności sektorowej?~~ — **Resolved 2026-06-06: Finnhub company profile endpoint zawiera sector/industry.** Szczegóły w `context/foundation/eod-api-decision.md`.
 - **Risk:** FR-008 to nice-to-have; jeśli dostawca nie dostarcza danych sektorowych lub koszty są za wysokie, feature wypada bez blokowania MVP.
-- **Status:** blocked
+- **Status:** proposed
 
 ## Backlog Handoff
 
@@ -150,7 +150,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Open Roadmap Questions
 
-1. **Który dostawca danych EOD (ceny akcji)?** — Owner: developer. Block: S-03, S-05. Decyzja odblokowuje gwiazdę przewodnią i powinna być podjęta jako pierwszy krok poza implementacją — przed uruchomieniem `/10x-plan portfolio-roi-view`.
+1. ~~**Który dostawca danych EOD (ceny akcji)?**~~ — **Resolved 2026-06-06: Finnhub.** Zobacz `context/foundation/eod-api-decision.md`.
 2. **Walidacja tickera przy ręcznym wpisaniu** — Czy MVP powinien walidować ticker natychmiast przez call do API? Owner: developer. Block: no (KISS wybrane w PRD §FR-004; jeśli zdecydujesz inaczej, S-02 wymaga aktualizacji zakresu).
 
 ## Parked
