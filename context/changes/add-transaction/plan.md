@@ -348,42 +348,42 @@ No schema changes. The `transactions` table was created in F-01. No data migrati
 
 #### Automated
 
-- [x] 2.1 `npx astro check` passes
-- [x] 2.2 `npm run lint` passes
+- [x] 2.1 `npx astro check` passes — 8b47c20
+- [x] 2.2 `npm run lint` passes — 8b47c20
 
 #### Manual
 
-- [x] 2.3 Authenticated POST with valid JSON body returns HTTP 201 with created transaction
-- [x] 2.4 Unauthenticated POST returns HTTP 401 `{ error: "Unauthorized" }`
-- [x] 2.5 POST with invalid body returns HTTP 400 with descriptive error message
-- [x] 2.6 New row visible in Supabase Dashboard → Table Editor → `transactions`
+- [x] 2.3 Authenticated POST with valid JSON body returns HTTP 201 with created transaction — 8b47c20
+- [x] 2.4 Unauthenticated POST returns HTTP 401 `{ error: "Unauthorized" }` — 8b47c20
+- [x] 2.5 POST with invalid body returns HTTP 400 with descriptive error message — 8b47c20
+- [x] 2.6 New row visible in Supabase Dashboard → Table Editor → `transactions` — 8b47c20
 
 ### Phase 3: AddTransactionForm React component
 
 #### Automated
 
-- [ ] 3.1 `npx astro check` passes
-- [ ] 3.2 `npm run lint` passes
+- [x] 3.1 `npx astro check` passes
+- [x] 3.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 3.3 Empty form submit shows field-level validation errors without a network request
-- [ ] 3.4 Valid submit triggers POST visible in DevTools Network tab
-- [ ] 3.5 Server error displays inside the form as an error message
-- [ ] 3.6 Form is disabled with spinner during submission
+- [x] 3.3 Empty form submit shows field-level validation errors without a network request
+- [x] 3.4 Valid submit triggers POST visible in DevTools Network tab
+- [x] 3.5 Server error displays inside the form as an error message
+- [x] 3.6 Form is disabled with spinner during submission
 
 ### Phase 4: Dashboard integration
 
 #### Automated
 
-- [ ] 4.1 `npx astro check` passes
-- [ ] 4.2 `npm run lint` passes
+- [x] 4.1 `npx astro check` passes
+- [x] 4.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 4.3 New user sees empty state with "Add transaction" CTA
-- [ ] 4.4 Modal opens on CTA click; closes after successful submit
-- [ ] 4.5 New transaction row appears immediately after submit (no reload)
-- [ ] 4.6 Page refresh shows the same persisted transaction
-- [ ] 4.7 Multiple transactions display newest first
-- [ ] 4.8 Sign-out works after dashboard update
+- [x] 4.3 New user sees empty state with "Add transaction" CTA
+- [x] 4.4 Modal opens on CTA click; closes after successful submit
+- [x] 4.5 New transaction row appears immediately after submit (no reload)
+- [x] 4.6 Page refresh shows the same persisted transaction
+- [x] 4.7 Multiple transactions display newest first
+- [x] 4.8 Sign-out works after dashboard update
