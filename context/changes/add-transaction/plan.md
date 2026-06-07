@@ -334,9 +334,9 @@ No schema changes. The `transactions` table was created in F-01. No data migrati
 
 #### Automated
 
-- [x] 1.1 `npx astro check` passes with zero errors
-- [x] 1.2 `npm run build` succeeds
-- [x] 1.3 `npm run lint` passes
+- [x] 1.1 `npx astro check` passes with zero errors — 7a05c9f
+- [x] 1.2 `npm run build` succeeds — 7a05c9f
+- [x] 1.3 `npm run lint` passes — 7a05c9f
 
 #### Manual
 
@@ -348,15 +348,15 @@ No schema changes. The `transactions` table was created in F-01. No data migrati
 
 #### Automated
 
-- [ ] 2.1 `npx astro check` passes
-- [ ] 2.2 `npm run lint` passes
+- [x] 2.1 `npx astro check` passes
+- [x] 2.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 2.3 Authenticated POST with valid JSON body returns HTTP 201 with created transaction
-- [ ] 2.4 Unauthenticated POST returns HTTP 401 `{ error: "Unauthorized" }`
-- [ ] 2.5 POST with invalid body returns HTTP 400 with descriptive error message
-- [ ] 2.6 New row visible in Supabase Dashboard → Table Editor → `transactions`
+- [x] 2.3 Authenticated POST with valid JSON body returns HTTP 201 with created transaction
+- [x] 2.4 Unauthenticated POST returns HTTP 401 `{ error: "Unauthorized" }`
+- [x] 2.5 POST with invalid body returns HTTP 400 with descriptive error message
+- [x] 2.6 New row visible in Supabase Dashboard → Table Editor → `transactions`
 
 ### Phase 3: AddTransactionForm React component
 
