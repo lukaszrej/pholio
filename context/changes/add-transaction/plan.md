@@ -362,15 +362,15 @@ No schema changes. The `transactions` table was created in F-01. No data migrati
 
 #### Automated
 
-- [x] 3.1 `npx astro check` passes
-- [x] 3.2 `npm run lint` passes
+- [x] 3.1 `npx astro check` passes — ee3928c
+- [x] 3.2 `npm run lint` passes — ee3928c
 
 #### Manual
 
-- [x] 3.3 Empty form submit shows field-level validation errors without a network request
-- [x] 3.4 Valid submit triggers POST visible in DevTools Network tab
-- [x] 3.5 Server error displays inside the form as an error message
-- [x] 3.6 Form is disabled with spinner during submission
+- [x] 3.3 Empty form submit shows field-level validation errors without a network request — ee3928c
+- [x] 3.4 Valid submit triggers POST visible in DevTools Network tab — ee3928c
+- [x] 3.5 Server error displays inside the form as an error message — ee3928c
+- [x] 3.6 Form is disabled with spinner during submission — ee3928c
 
 ### Phase 4: Dashboard integration
 
