@@ -32,11 +32,17 @@ export default function AddTransactionForm({ onSuccess, onCancel }: Props) {
   } = form;
 
   async function onSubmit(values: TransactionFormValues) {
-    const response = await fetch("/api/transactions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
+    let response: Response;
+    try {
+      response = await fetch("/api/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+    } catch {
+      setError("root", { message: "Network error. Please check your connection and try again." });
+      return;
+    }
 
     if (!response.ok) {
       const json = (await response.json().catch(() => ({ error: "Unexpected error" }))) as {

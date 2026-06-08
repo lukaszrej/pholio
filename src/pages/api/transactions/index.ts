@@ -43,11 +43,12 @@ export const POST: APIRoute = async (context) => {
     .from("transactions")
     .insert([{ user_id: context.locals.user.id, ...result.data }])
     .select()
-    .single()) as { data: Transaction | null; error: { message: string } | null };
+    .single()) as { data: Transaction | null; error: { message: string; code?: string } | null };
 
   if (dbError) {
+    const status = dbError.code?.startsWith("23") ? 400 : 500;
     return new Response(JSON.stringify({ error: dbError.message }), {
-      status: 400,
+      status,
       headers: JSON_HEADERS,
     });
   }

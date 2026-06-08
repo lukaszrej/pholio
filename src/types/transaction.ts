@@ -1,4 +1,6 @@
-export type Currency = "PLN" | "USD" | "EUR" | "GBP" | "CHF" | "CAD" | "AUD" | "JPY" | "DKK" | "NOK" | "SEK";
+import { CURRENCIES } from "@/lib/transaction-schema";
+
+export type Currency = (typeof CURRENCIES)[number];
 
 export interface Transaction {
   id: string;
