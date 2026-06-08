@@ -340,9 +340,9 @@ No schema changes. The `transactions` table was created in F-01. No data migrati
 
 #### Manual
 
-- [ ] 1.4 `src/components/ui/input.tsx`, `label.tsx`, `select.tsx`, `dialog.tsx` all exist
-- [ ] 1.5 `src/lib/transaction-schema.ts` exists and exports `transactionSchema` and `CURRENCIES`
-- [ ] 1.6 No visible console errors or broken styles on the dashboard page
+- [x] 1.4 `src/components/ui/input.tsx`, `label.tsx`, `select.tsx`, `dialog.tsx` all exist
+- [x] 1.5 `src/lib/transaction-schema.ts` exists and exports `transactionSchema` and `CURRENCIES`
+- [x] 1.6 No visible console errors or broken styles on the dashboard page
 
 ### Phase 2: POST /api/transactions route
 
