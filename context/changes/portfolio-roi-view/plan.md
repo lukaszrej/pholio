@@ -391,14 +391,14 @@ No changes to the existing `transactions` table. The new `prices` table is addit
 
 #### Automated
 
-- [ ] 2.1 `npx astro check` passes with zero errors
-- [ ] 2.2 `npm run lint` passes
-- [ ] 2.3 `npm run build` succeeds
+- [x] 2.1 `npx astro check` passes with zero errors
+- [x] 2.2 `npm run lint` passes
+- [x] 2.3 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 2.4 `src/lib/finnhub.ts` exists and exports `fetchQuote`
-- [ ] 2.5 `FINNHUB_API_KEY` set in `.env` (local) and as text env var in Cloudflare Workers
+- [x] 2.4 `src/lib/finnhub.ts` exists and exports `fetchQuote`
+- [x] 2.5 `FINNHUB_API_KEY` set in `.env` (local) and as text env var in Cloudflare Workers
 
 ### Phase 3: Portfolio types, `computePositions`, and dashboard price fetching
 
