@@ -378,14 +378,14 @@ No changes to the existing `transactions` table. The new `prices` table is addit
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly (`npx supabase db push` or SQL Editor)
-- [x] 1.2 `npx astro check` passes
-- [x] 1.3 `npm run lint` passes
+- [x] 1.1 Migration applies cleanly (`npx supabase db push` or SQL Editor) — 6c3e4df
+- [x] 1.2 `npx astro check` passes — 6c3e4df
+- [x] 1.3 `npm run lint` passes — 6c3e4df
 
 #### Manual
 
-- [x] 1.4 `prices` table visible in Supabase Dashboard with correct columns
-- [x] 1.5 RLS enabled on `prices` table
+- [x] 1.4 `prices` table visible in Supabase Dashboard with correct columns — 6c3e4df
+- [x] 1.5 RLS enabled on `prices` table — 6c3e4df
 
 ### Phase 2: Finnhub client + env key declaration
 
