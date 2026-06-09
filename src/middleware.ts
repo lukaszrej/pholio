@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase";
 
 const PROTECTED_ROUTES = ["/dashboard"];
 const PROTECTED_API_ROUTES = ["/api/"];
+const PUBLIC_API_ROUTES = ["/api/auth/"];
 const AUTH_PAGES = ["/auth/signin", "/auth/signup"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -21,7 +22,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     context.locals.user = null;
   }
 
-  if (PROTECTED_API_ROUTES.some((route) => context.url.pathname.startsWith(route))) {
+  const isPublicApi = PUBLIC_API_ROUTES.some((route) => context.url.pathname.startsWith(route));
+  if (!isPublicApi && PROTECTED_API_ROUTES.some((route) => context.url.pathname.startsWith(route))) {
     if (!context.locals.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,

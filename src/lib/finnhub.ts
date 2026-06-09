@@ -9,6 +9,7 @@ export async function fetchQuote(ticker: string): Promise<number | null> {
   }, 2500);
 
   try {
+    // token in query string — Finnhub requires this form; do not log this URL
     const response = await fetch(
       `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_API_KEY}`,
       { signal: controller.signal },
@@ -16,12 +17,14 @@ export async function fetchQuote(ticker: string): Promise<number | null> {
 
     if (!response.ok) return null;
 
-    const data = (await response.json()) as { c: number };
-
-    if (!data.c || data.c === 0) return null;
+    const json: unknown = await response.json();
+    if (typeof json !== "object" || json === null) return null;
+    const data = json as { c: number };
+    if (!data.c || data.c === 0) return null; // c === 0 means no market data for this symbol
 
     return data.c;
-  } catch {
+  } catch (e) {
+    console.error("[finnhub] fetchQuote failed", ticker, e);
     return null;
   } finally {
     clearTimeout(timeout);

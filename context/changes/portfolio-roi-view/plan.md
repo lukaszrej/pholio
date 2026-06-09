@@ -391,26 +391,26 @@ No changes to the existing `transactions` table. The new `prices` table is addit
 
 #### Automated
 
-- [x] 2.1 `npx astro check` passes with zero errors
-- [x] 2.2 `npm run lint` passes
-- [x] 2.3 `npm run build` succeeds
+- [x] 2.1 `npx astro check` passes with zero errors — dd60051
+- [x] 2.2 `npm run lint` passes — dd60051
+- [x] 2.3 `npm run build` succeeds — dd60051
 
 #### Manual
 
-- [x] 2.4 `src/lib/finnhub.ts` exists and exports `fetchQuote`
-- [x] 2.5 `FINNHUB_API_KEY` set in `.env` (local) and as text env var in Cloudflare Workers
+- [x] 2.4 `src/lib/finnhub.ts` exists and exports `fetchQuote` — dd60051
+- [x] 2.5 `FINNHUB_API_KEY` set in `.env` (local) and as text env var in Cloudflare Workers — dd60051
 
 ### Phase 3: Portfolio types, `computePositions`, and dashboard price fetching
 
 #### Automated
 
-- [ ] 3.1 `npx astro check` passes
-- [ ] 3.2 `npm run lint` passes
+- [x] 3.1 `npx astro check` passes
+- [x] 3.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 3.3 After page load, `prices` table contains rows for the user's tickers
-- [ ] 3.4 Second same-day page load does not update `fetched_at` (cache hit)
+- [x] 3.3 After page load, `prices` table contains rows for the user's tickers
+- [x] 3.4 Second same-day page load does not update `fetched_at` (cache hit)
 
 ### Phase 4: DashboardView — 7-column portfolio table UI
 
