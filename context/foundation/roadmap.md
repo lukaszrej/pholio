@@ -145,7 +145,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-01       | auth-flow-complete      | Dokończ i zweryfikuj flow rejestracji i logowania | yes                   | Run `/10x-plan auth-flow-complete`     |
 | S-02       | add-transaction         | Formularz dodawania transakcji zakupu             | no                    | Czeka na F-01 + S-01                   |
 | S-03       | portfolio-roi-view      | Tabela portfela z ceną EOD i ROI                  | no                    | Blocked: wybór dostawcy danych EOD     |
-| S-04       | transaction-crud        | Edycja i usuwanie transakcji                      | no                    | Czeka na S-02                          |
+| S-04       | transaction-crud        | Edycja i usuwanie transakcji                      | —                     | Archived 2026-06-10                    |
 | S-05       | sector-allocation-chart | Wykres alokacji sektorowej                        | no                    | Blocked: dane sektorowe od dostawcy EOD |
 
 ## Open Roadmap Questions
