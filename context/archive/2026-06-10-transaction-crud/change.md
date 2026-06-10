@@ -1,9 +1,10 @@
 ---
 change_id: transaction-crud
 title: "Edit and Delete Transactions"
-status: implemented
+status: archived
 created: 2026-06-10
 updated: 2026-06-10
+archived_at: 2026-06-10T20:07:34Z
 
 roadmap_id: S-04
 prd_refs:

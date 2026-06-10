@@ -33,7 +33,7 @@ Indywidualny inwestor długoterminowy nie ma jednego miejsca, gdzie może zobacz
 | S-01 | auth-flow-complete      | zarejestrować konto, zalogować się i wylogować; zobaczyć pusty dashboard      | —             | FR-001, FR-002, FR-003     | done     |
 | S-02 | add-transaction         | dodać transakcję (ticker, cena, data, waluta, liczba akcji)                   | S-01, F-01    | FR-004                     | done     |
 | S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                      | S-02          | FR-007, US-01              | done     |
-| S-04 | transaction-crud        | edytować i trwale usunąć istniejącą transakcję                                | S-02          | FR-005, FR-006             | proposed |
+| S-04 | transaction-crud        | edytować i trwale usunąć istniejącą transakcję                                | S-02          | FR-005, FR-006             | done     |
 | S-05 | sector-allocation-chart | zobaczyć wykres alokacji sektorowej portfela                                  | S-03          | FR-008                     | proposed |
 
 ## Streams
@@ -122,7 +122,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Twarde usunięcie bez możliwości odtworzenia zaakceptowane przez PRD; edycja in-place z potwierdzeniem — zakres prosty, ryzyko niskie.
-- **Status:** proposed
+- **Status:** done
 
 ### S-05: Wykres alokacji sektorowej
 
@@ -170,3 +170,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-01: Użytkownik może zarejestrować nowe konto email/hasło, zalogować się, zobaczyć pusty dashboard i wylogować się.** — Archived 2026-06-04 → `context/archive/2026-06-04-auth-flow-complete/`. Lesson: —.
 - **S-02: Użytkownik może dodać transakcję zakupu akcji podając ticker, cenę zakupu, datę zakupu, walutę i liczbę akcji; transakcja jest zapisana i pojawia się na liście.** — Archived 2026-06-08 → `context/archive/2026-06-06-add-transaction/`. Lesson: —.
 - **S-03: Użytkownik widzi tabelę portfela ze wszystkimi pozycjami, aktualną ceną EOD i wyliczonym ROI (% i wartość bezwzględna); przy niedostępności API wyświetla ostatnią zapisaną cenę lub czytelny komunikat "brak danych", bez crasha.** — Archived 2026-06-10 → `context/archive/2026-06-09-portfolio-roi-view/`. Lesson: —.
+- **S-04: Użytkownik może edytować dane istniejącej transakcji i trwale ją usunąć po potwierdzeniu.** — Archived 2026-06-10 → `context/archive/2026-06-10-transaction-crud/`. Lesson: —.
