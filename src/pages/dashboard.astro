@@ -36,7 +36,8 @@ if (supabase && uniqueTickers.length > 0) {
       const quote = await fetchQuote(ticker);
       if (quote !== null) {
         const fetched_at = new Date().toISOString();
-        await sb.from("prices").upsert({ ticker, price: quote, fetched_at });
+        const { error: upsertErr } = await sb.from("prices").upsert({ ticker, price: quote, fetched_at });
+        if (upsertErr) console.error("[prices] upsert failed", ticker, upsertErr.message);
         prices[ticker] = { price: quote, fetched_at, is_fresh: true };
       } else if (cached) {
         prices[ticker] = { price: cached.price, fetched_at: cached.fetched_at, is_fresh: false };

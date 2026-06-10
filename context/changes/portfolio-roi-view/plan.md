@@ -404,29 +404,29 @@ No changes to the existing `transactions` table. The new `prices` table is addit
 
 #### Automated
 
-- [x] 3.1 `npx astro check` passes
-- [x] 3.2 `npm run lint` passes
+- [x] 3.1 `npx astro check` passes — 6226c0c
+- [x] 3.2 `npm run lint` passes — 6226c0c
 
 #### Manual
 
-- [x] 3.3 After page load, `prices` table contains rows for the user's tickers
-- [x] 3.4 Second same-day page load does not update `fetched_at` (cache hit)
+- [x] 3.3 After page load, `prices` table contains rows for the user's tickers — 6226c0c
+- [x] 3.4 Second same-day page load does not update `fetched_at` (cache hit) — 6226c0c
 
 ### Phase 4: DashboardView — 7-column portfolio table UI
 
 #### Automated
 
-- [ ] 4.1 `npx astro check` passes with zero errors
-- [ ] 4.2 `npm run lint` passes
-- [ ] 4.3 `npm run build` succeeds
+- [x] 4.1 `npx astro check` passes with zero errors
+- [x] 4.2 `npm run lint` passes
+- [x] 4.3 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 4.4 Portfolio table shows 7 columns with aggregated per-ticker data
-- [ ] 4.5 Weighted average cost is correct for multi-transaction tickers
-- [ ] 4.6 ROI % and ROI abs. are mathematically correct
-- [ ] 4.7 Positive ROI is green; negative ROI is red
-- [ ] 4.8 Stale price shows ⚠ + date; unavailable price shows `—`
-- [ ] 4.9 Optimistic add updates existing ticker row without reload
-- [ ] 4.10 New ticker add creates new row with `—` for price
-- [ ] 4.11 Empty state unchanged
+- [x] 4.4 Portfolio table shows 7 columns with aggregated per-ticker data
+- [x] 4.5 Weighted average cost is correct for multi-transaction tickers
+- [x] 4.6 ROI % and ROI abs. are mathematically correct
+- [x] 4.7 Positive ROI is green; negative ROI is red
+- [x] 4.8 Stale price shows ⚠ + date; unavailable price shows `—`
+- [x] 4.9 Optimistic add updates existing ticker row without reload
+- [x] 4.10 New ticker add creates new row with `—` for price
+- [x] 4.11 Empty state unchanged
