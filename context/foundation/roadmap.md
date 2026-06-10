@@ -3,7 +3,7 @@ project: "Pholio"
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-08
+updated: 2026-06-10
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -32,7 +32,7 @@ Indywidualny inwestor długoterminowy nie ma jednego miejsca, gdzie może zobacz
 | F-01 | transactions-schema     | (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane  | —             | FR-004, FR-007, §AC        | done     |
 | S-01 | auth-flow-complete      | zarejestrować konto, zalogować się i wylogować; zobaczyć pusty dashboard      | —             | FR-001, FR-002, FR-003     | done     |
 | S-02 | add-transaction         | dodać transakcję (ticker, cena, data, waluta, liczba akcji)                   | S-01, F-01    | FR-004                     | done     |
-| S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                      | S-02          | FR-007, US-01              | proposed |
+| S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                      | S-02          | FR-007, US-01              | done     |
 | S-04 | transaction-crud        | edytować i trwale usunąć istniejącą transakcję                                | S-02          | FR-005, FR-006             | proposed |
 | S-05 | sector-allocation-chart | zobaczyć wykres alokacji sektorowej portfela                                  | S-03          | FR-008                     | proposed |
 
@@ -110,7 +110,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - ~~Który dostawca danych EOD zostanie wybrany?~~ — **Resolved 2026-06-06: Finnhub.** Szczegóły w `context/foundation/eod-api-decision.md`.
 - **Risk:** Zewnętrzna zależność od API cenowego jest jedyną nierozwiązaną decyzją blokującą must-have; zły wybór dostawcy (limity API, koszty, niezawodność) może wymagać podmiany integracji przed launchem.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Edycja i usuwanie transakcji
 
@@ -169,3 +169,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **F-01: (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane** — Archived 2026-06-04 → `context/archive/2026-06-03-transactions-schema/`. Lesson: —.
 - **S-01: Użytkownik może zarejestrować nowe konto email/hasło, zalogować się, zobaczyć pusty dashboard i wylogować się.** — Archived 2026-06-04 → `context/archive/2026-06-04-auth-flow-complete/`. Lesson: —.
 - **S-02: Użytkownik może dodać transakcję zakupu akcji podając ticker, cenę zakupu, datę zakupu, walutę i liczbę akcji; transakcja jest zapisana i pojawia się na liście.** — Archived 2026-06-08 → `context/archive/2026-06-06-add-transaction/`. Lesson: —.
+- **S-03: Użytkownik widzi tabelę portfela ze wszystkimi pozycjami, aktualną ceną EOD i wyliczonym ROI (% i wartość bezwzględna); przy niedostępności API wyświetla ostatnią zapisaną cenę lub czytelny komunikat "brak danych", bez crasha.** — Archived 2026-06-10 → `context/archive/2026-06-09-portfolio-roi-view/`. Lesson: —.

@@ -1,11 +1,11 @@
 ---
 change_id: portfolio-roi-view
 title: Portfolio ROI view
-status: impl_reviewed
+status: archived
 created: 2026-06-09
 updated: 2026-06-10
 impl_review: context/changes/portfolio-roi-view/reviews/impl-review.md
-archived_at: null
+archived_at: 2026-06-10T18:29:08Z
 ---
 
 ## Notes
