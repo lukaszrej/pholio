@@ -9,11 +9,10 @@ export async function fetchQuote(ticker: string): Promise<number | null> {
   }, 2500);
 
   try {
-    // token in query string — Finnhub requires this form; do not log this URL
-    const response = await fetch(
-      `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_API_KEY}`,
-      { signal: controller.signal },
-    );
+    const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}`, {
+      signal: controller.signal,
+      headers: { "X-Finnhub-Token": FINNHUB_API_KEY },
+    });
 
     if (!response.ok) return null;
 
@@ -24,6 +23,7 @@ export async function fetchQuote(ticker: string): Promise<number | null> {
 
     return data.c;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error("[finnhub] fetchQuote failed", ticker, e);
     return null;
   } finally {

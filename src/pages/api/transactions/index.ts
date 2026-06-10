@@ -46,8 +46,13 @@ export const POST: APIRoute = async (context) => {
     .single()) as { data: Transaction | null; error: { message: string; code?: string } | null };
 
   if (dbError) {
-    const status = dbError.code?.startsWith("23") ? 400 : 500;
-    return new Response(JSON.stringify({ error: dbError.message }), {
+    const isConstraintViolation = dbError.code?.startsWith("23");
+    const status = isConstraintViolation ? 400 : 500;
+    if (!isConstraintViolation) {
+      // eslint-disable-next-line no-console
+      console.error("[api/transactions] DB error", dbError.message);
+    }
+    return new Response(JSON.stringify({ error: isConstraintViolation ? dbError.message : "Internal server error" }), {
       status,
       headers: JSON_HEADERS,
     });

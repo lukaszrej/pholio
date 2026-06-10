@@ -35,7 +35,8 @@ export function computePositions(transactions: Transaction[], prices: Record<str
 
   return [...groups.entries()].map(([ticker, txns]) => {
     const totalShares = txns.reduce((sum, t) => sum + t.shares, 0);
-    const avgCost = txns.reduce((sum, t) => sum + t.shares * t.purchase_price, 0) / totalShares;
+    const weightedSum = txns.reduce((sum, t) => sum + t.shares * t.purchase_price, 0);
+    const avgCost = totalShares > 0 ? weightedSum / totalShares : 0;
     const hasMultipleCurrencies = new Set(txns.map((t) => t.currency)).size > 1;
     const currency = hasMultipleCurrencies ? "MULTI" : txns[0].currency;
 

@@ -5,12 +5,17 @@ import { createClient } from "@/lib/supabase";
 import { fetchQuote } from "@/lib/finnhub";
 import type { PriceData } from "@/lib/portfolio";
 import type { Transaction } from "@/types/transaction";
+import pLimit from "p-limit";
 
 const { user } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 const result = supabase
-  ? await supabase.from("transactions").select("*").order("purchase_date", { ascending: false })
+  ? await supabase.from("transactions").select("*").order("purchase_date", { ascending: false }).limit(500)
   : null;
+if (result?.error) {
+  // eslint-disable-next-line no-console
+  console.error("[dashboard] failed to load transactions", result.error.message);
+}
 const transactions = (result?.data ?? []) as Transaction[];
 
 const today = new Date().toISOString().split("T")[0];
@@ -25,24 +30,28 @@ if (supabase && uniqueTickers.length > 0) {
     cacheMap.set(row.ticker, { price: row.price, fetched_at: row.fetched_at });
   }
 
+  const limit = pLimit(10);
   await Promise.allSettled(
-    uniqueTickers.map(async (ticker) => {
-      const cached = cacheMap.get(ticker);
-      if (cached?.fetched_at.split("T")[0] === today) {
-        prices[ticker] = { price: cached.price, fetched_at: cached.fetched_at, is_fresh: true };
-        return;
-      }
+    uniqueTickers.map((ticker) =>
+      limit(async () => {
+        const cached = cacheMap.get(ticker);
+        if (cached?.fetched_at.split("T")[0] === today) {
+          prices[ticker] = { price: cached.price, fetched_at: cached.fetched_at, is_fresh: true };
+          return;
+        }
 
-      const quote = await fetchQuote(ticker);
-      if (quote !== null) {
-        const fetched_at = new Date().toISOString();
-        const { error: upsertErr } = await sb.from("prices").upsert({ ticker, price: quote, fetched_at });
-        if (upsertErr) console.error("[prices] upsert failed", ticker, upsertErr.message);
-        prices[ticker] = { price: quote, fetched_at, is_fresh: true };
-      } else if (cached) {
-        prices[ticker] = { price: cached.price, fetched_at: cached.fetched_at, is_fresh: false };
-      }
-    }),
+        const quote = await fetchQuote(ticker);
+        if (quote !== null) {
+          const fetched_at = new Date().toISOString();
+          const { error: upsertErr } = await sb.from("prices").upsert({ ticker, price: quote, fetched_at });
+          // eslint-disable-next-line no-console
+          if (upsertErr) console.error("[prices] upsert failed", ticker, upsertErr.message);
+          prices[ticker] = { price: quote, fetched_at, is_fresh: true };
+        } else if (cached) {
+          prices[ticker] = { price: cached.price, fetched_at: cached.fetched_at, is_fresh: false };
+        }
+      }),
+    ),
   );
 }
 ---

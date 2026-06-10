@@ -37,7 +37,7 @@ function formatSigned(value: number | null, decimals = 2): string {
 
 export default function DashboardView({ initialTransactions, initialPrices, userEmail }: Props) {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
-  const [prices] = useState(initialPrices);
+  const [prices] = useState(initialPrices); // prices are server-fetched once; new tickers show — until next page load
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const positions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);

@@ -52,7 +52,11 @@ export default function AddTransactionForm({ onSuccess, onCancel }: Props) {
       return;
     }
 
-    const json = (await response.json()) as { data: Transaction };
+    const json = (await response.json()) as { data: Transaction | null };
+    if (!json.data) {
+      setError("root", { message: "Unexpected server error" });
+      return;
+    }
     onSuccess(json.data);
   }
 
