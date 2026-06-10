@@ -417,17 +417,17 @@ No schema changes. The `transactions` table schema (from F-01) supports all requ
 
 #### Automated
 
-- [x] 4.1 `npx astro check` passes with zero type errors
-- [x] 4.2 `npm run lint` passes
+- [x] 4.1 `npx astro check` passes with zero type errors — 30b120b
+- [x] 4.2 `npm run lint` passes — 30b120b
 
 #### Manual
 
-- [x] 4.3 Clicking a position row expands/collapses it
-- [x] 4.4 Expanded section shows individual transactions with correct data
-- [x] 4.5 Edit dialog opens pre-filled; ticker is disabled
-- [x] 4.6 Saving edit updates the row without page reload
-- [x] 4.7 Delete AlertDialog shows correct ticker and date
-- [x] 4.8 Confirming delete removes the transaction; position updates
-- [x] 4.9 Deleting last transaction for a ticker removes the position row
-- [x] 4.10 Add transaction still works
-- [x] 4.11 Sign out still works
+- [x] 4.3 Clicking a position row expands/collapses it — 30b120b
+- [x] 4.4 Expanded section shows individual transactions with correct data — 30b120b
+- [x] 4.5 Edit dialog opens pre-filled; ticker is disabled — 30b120b
+- [x] 4.6 Saving edit updates the row without page reload — 30b120b
+- [x] 4.7 Delete AlertDialog shows correct ticker and date — 30b120b
+- [x] 4.8 Confirming delete removes the transaction; position updates — 30b120b
+- [x] 4.9 Deleting last transaction for a ticker removes the position row — 30b120b
+- [x] 4.10 Add transaction still works — 30b120b
+- [x] 4.11 Sign out still works — 30b120b
