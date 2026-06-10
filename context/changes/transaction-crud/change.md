@@ -4,6 +4,7 @@ title: "Edit and Delete Transactions"
 status: implementing
 created: 2026-06-10
 updated: 2026-06-10
+
 roadmap_id: S-04
 prd_refs:
   - FR-005
