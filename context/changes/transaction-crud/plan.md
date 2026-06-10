@@ -403,15 +403,15 @@ No schema changes. The `transactions` table schema (from F-01) supports all requ
 
 #### Automated
 
-- [x] 3.1 `npx astro check` passes
-- [x] 3.2 `npm run lint` passes
+- [x] 3.1 `npx astro check` passes — 18f3bff
+- [x] 3.2 `npm run lint` passes — 18f3bff
 
 #### Manual
 
-- [x] 3.3 Edit mode shows all fields pre-filled
-- [x] 3.4 Ticker field is visually disabled and cannot be typed into
-- [x] 3.5 Edit form submits PUT (visible in DevTools Network tab)
-- [x] 3.6 Add mode still works as before (POST, all fields editable)
+- [x] 3.3 Edit mode shows all fields pre-filled — 18f3bff
+- [x] 3.4 Ticker field is visually disabled and cannot be typed into — 18f3bff
+- [x] 3.5 Edit form submits PUT (visible in DevTools Network tab) — 18f3bff
+- [x] 3.6 Add mode still works as before (POST, all fields editable) — 18f3bff
 
 ### Phase 4: DashboardView — expandable rows + edit/delete UX
 
