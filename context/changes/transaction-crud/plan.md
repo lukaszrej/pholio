@@ -22,6 +22,7 @@ Add edit and delete capabilities for individual stock purchase transactions. The
 - Delete: opens an AlertDialog with a brief description; confirming calls `DELETE /api/transactions/{id}` and removes the transaction from local state on success. If deleting the last transaction for a ticker, the position row disappears automatically.
 
 ### Verify:
+
 1. `npx astro check` passes with zero type errors
 2. `npm run lint` passes
 3. Clicking a position row expands it to show individual transactions
@@ -104,13 +105,14 @@ Create the API route that handles editing and deleting a single transaction by I
 
 #### 1. Create dynamic transaction API route
 
-**File**: `src/pages/api/transactions/[id].ts` *(new file)*
+**File**: `src/pages/api/transactions/[id].ts` _(new file)_
 
 **Intent**: Handle PUT (edit) and DELETE (delete) for a single transaction. Both methods guard against unauthenticated requests, validate input (PUT only), perform the database operation, and return an appropriate response.
 
 **Contract**:
 
 `PUT` handler — steps in order:
+
 1. Check `context.locals.user` — if null, return 401 `{ error: "Unauthorized" }`.
 2. Extract `id` from `context.params.id`.
 3. Parse body: `await context.request.json()` — if throws, return 400 `{ error: "Invalid JSON body" }`.
@@ -122,6 +124,7 @@ Create the API route that handles editing and deleting a single transaction by I
 9. Return 200 `{ data: updatedRow }`.
 
 `DELETE` handler — steps in order:
+
 1. Check `context.locals.user` — if null, return 401 `{ error: "Unauthorized" }`.
 2. Extract `id` from `context.params.id`.
 3. Create Supabase client; if null, return 500 `{ error: "Service unavailable" }`.
@@ -161,13 +164,14 @@ Extend the existing `AddTransactionForm` to support edit mode: pre-fill all fiel
 
 #### 1. Extend AddTransactionForm component
 
-**File**: `src/components/transactions/AddTransactionForm.tsx` *(modify existing)*
+**File**: `src/components/transactions/AddTransactionForm.tsx` _(modify existing)_
 
 **Intent**: Add an optional `transaction` prop. When present, the form operates in edit mode — `defaultValues` are populated from the transaction, the ticker input is disabled, and the submit handler calls PUT to `/api/transactions/{transaction.id}` instead of POST to `/api/transactions`. The `onSuccess` callback receives the updated (or newly created) `Transaction` in both modes.
 
 **Contract**:
 
 Props interface change:
+
 ```ts
 interface Props {
   onSuccess: (transaction: Transaction) => void;
@@ -213,13 +217,14 @@ Add expandable position rows to the portfolio table. Clicking a position row tog
 
 #### 1. Update DashboardView component
 
-**File**: `src/components/transactions/DashboardView.tsx` *(modify existing)*
+**File**: `src/components/transactions/DashboardView.tsx` _(modify existing)_
 
 **Intent**: Add interactive row expansion, edit dialog, and delete confirmation to the dashboard. All transaction mutations (add, edit, delete) update the same `transactions` state; `positions` is derived automatically.
 
 **Contract**:
 
 New state variables:
+
 - `expandedTickers: Set<string>` — which position rows are expanded; use `useState<Set<string>>(new Set())`
 - `editingTransaction: Transaction | null` — non-null means the edit dialog is open for this transaction
 - `deletingTransaction: Transaction | null` — non-null means the AlertDialog is open for this transaction
@@ -228,6 +233,7 @@ New state variables:
 New imports: `AlertDialog`, `AlertDialogAction`, `AlertDialogCancel`, `AlertDialogContent`, `AlertDialogDescription`, `AlertDialogFooter`, `AlertDialogHeader`, `AlertDialogTitle` from `@/components/ui/alert-dialog`; `ChevronDown`, `ChevronRight` from `lucide-react`.
 
 **Portfolio table changes** — add an 8th column:
+
 - `<thead>` gains a new `<th>` (empty or with an expand icon, narrow, e.g. `w-8`) as the last column.
 - Each `<tr>` for a position gains `onClick={() => toggleExpanded(pos.ticker)}` and `className="... cursor-pointer"`.
 - Last `<td>` in each position row: `<ChevronDown>` if expanded, `<ChevronRight>` if collapsed (both `size-4 text-blue-100/40`).
@@ -264,9 +270,10 @@ New imports: `AlertDialog`, `AlertDialogAction`, `AlertDialogCancel`, `AlertDial
   ```
 
 **`toggleExpanded` function**:
+
 ```ts
 function toggleExpanded(ticker: string) {
-  setExpandedTickers(prev => {
+  setExpandedTickers((prev) => {
     const next = new Set(prev);
     next.has(ticker) ? next.delete(ticker) : next.add(ticker);
     return next;
@@ -275,24 +282,28 @@ function toggleExpanded(ticker: string) {
 ```
 
 **Edit dialog**: Add a second `<Dialog>` (separate from the add dialog) controlled by `editingTransaction !== null`:
+
 - `open={editingTransaction !== null}` `onOpenChange={(open) => { if (!open) setEditingTransaction(null); }}`
 - `DialogTitle`: "Edit transaction"
 - Content: `<AddTransactionForm transaction={editingTransaction ?? undefined} onSuccess={handleEditSuccess} onCancel={() => setEditingTransaction(null)} />`
 
 **`handleEditSuccess` function**:
+
 ```ts
 function handleEditSuccess(updated: Transaction) {
-  setTransactions(prev => prev.map(t => t.id === updated.id ? updated : t));
+  setTransactions((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
   setEditingTransaction(null);
 }
 ```
 
 **Delete AlertDialog**: Render `<AlertDialog open={deletingTransaction !== null} onOpenChange={(open) => { if (!open && !isDeleteLoading) setDeletingTransaction(null); }}>`:
+
 - Description: "This will permanently delete the {deletingTransaction?.ticker} transaction from {deletingTransaction?.purchase_date}. This action cannot be undone."
 - Cancel button closes dialog (disabled when `isDeleteLoading`)
 - Confirm button: calls `handleDeleteConfirm()`, shows loading state
 
 **`handleDeleteConfirm` async function**:
+
 1. Set `isDeleteLoading(true)`
 2. Call `DELETE /api/transactions/${deletingTransaction!.id}`
 3. On success: `setTransactions(prev => prev.filter(t => t.id !== deletingTransaction!.id))`, `setDeletingTransaction(null)`
@@ -365,28 +376,28 @@ No schema changes. The `transactions` table schema (from F-01) supports all requ
 
 #### Automated
 
-- [x] 1.1 `npx astro check` passes with zero errors
-- [x] 1.2 `npm run build` succeeds
-- [x] 1.3 `npm run lint` passes
+- [x] 1.1 `npx astro check` passes with zero errors — bec9f0c
+- [x] 1.2 `npm run build` succeeds — bec9f0c
+- [x] 1.3 `npm run lint` passes — bec9f0c
 
 #### Manual
 
-- [x] 1.4 `src/components/ui/alert-dialog.tsx` exists
+- [x] 1.4 `src/components/ui/alert-dialog.tsx` exists — bec9f0c
 
 ### Phase 2: PUT + DELETE `/api/transactions/[id].ts`
 
 #### Automated
 
-- [ ] 2.1 `npx astro check` passes
-- [ ] 2.2 `npm run lint` passes
+- [x] 2.1 `npx astro check` passes
+- [x] 2.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 2.3 Authenticated PUT with valid body on own transaction returns 200 with updated row
-- [ ] 2.4 Authenticated DELETE on own transaction returns 200 `{ success: true }`
-- [ ] 2.5 Unauthenticated PUT/DELETE returns 401
-- [ ] 2.6 PUT with invalid body returns 400 with descriptive message
-- [ ] 2.7 DELETE on non-existent or other user's transaction returns 404
+- [x] 2.3 Authenticated PUT with valid body on own transaction returns 200 with updated row
+- [x] 2.4 Authenticated DELETE on own transaction returns 200 `{ success: true }`
+- [x] 2.5 Unauthenticated PUT/DELETE returns 401
+- [x] 2.6 PUT with invalid body returns 400 with descriptive message
+- [x] 2.7 DELETE on non-existent or other user's transaction returns 404
 
 ### Phase 3: AddTransactionForm edit mode
 
