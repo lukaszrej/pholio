@@ -11,16 +11,25 @@ import { Button } from "@/components/ui/button";
 interface Props {
   onSuccess: (transaction: Transaction) => void;
   onCancel: () => void;
+  transaction?: Transaction;
 }
 
-export default function AddTransactionForm({ onSuccess, onCancel }: Props) {
+export default function AddTransactionForm({ onSuccess, onCancel, transaction }: Props) {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionSchema) as Resolver<TransactionFormValues>,
-    defaultValues: {
-      ticker: "",
-      purchase_date: "",
-      currency: "USD",
-    },
+    defaultValues: transaction
+      ? {
+          ticker: transaction.ticker,
+          purchase_date: transaction.purchase_date,
+          purchase_price: transaction.purchase_price,
+          currency: transaction.currency,
+          shares: transaction.shares,
+        }
+      : {
+          ticker: "",
+          purchase_date: "",
+          currency: "USD",
+        },
   });
 
   const {
@@ -32,10 +41,12 @@ export default function AddTransactionForm({ onSuccess, onCancel }: Props) {
   } = form;
 
   async function onSubmit(values: TransactionFormValues) {
+    const url = transaction ? `/api/transactions/${transaction.id}` : "/api/transactions";
+    const method = transaction ? "PUT" : "POST";
     let response: Response;
     try {
-      response = await fetch("/api/transactions", {
-        method: "POST",
+      response = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
@@ -65,7 +76,14 @@ export default function AddTransactionForm({ onSuccess, onCancel }: Props) {
       {/* Ticker */}
       <div className="space-y-1">
         <Label htmlFor="ticker">Ticker</Label>
-        <Input id="ticker" type="text" placeholder="AAPL" {...register("ticker")} aria-invalid={!!errors.ticker} />
+        <Input
+          id="ticker"
+          type="text"
+          placeholder="AAPL"
+          {...register("ticker")}
+          aria-invalid={!!errors.ticker}
+          disabled={!!transaction}
+        />
         {errors.ticker && (
           <p className="flex items-center gap-1 text-xs text-red-400">
             <CircleAlert className="size-3" />
@@ -169,7 +187,7 @@ export default function AddTransactionForm({ onSuccess, onCancel }: Props) {
         </Button>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 size-4 animate-spin" />}
-          {isSubmitting ? "Adding..." : "Add transaction"}
+          {isSubmitting ? (transaction ? "Saving..." : "Adding...") : transaction ? "Save changes" : "Add transaction"}
         </Button>
       </div>
     </form>

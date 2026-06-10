@@ -4,6 +4,7 @@ import { transactionSchema } from "@/lib/transaction-schema";
 import type { Transaction } from "@/types/transaction";
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const PUT: APIRoute = async (context) => {
   if (!context.locals.user) {
@@ -14,6 +15,12 @@ export const PUT: APIRoute = async (context) => {
   }
 
   const id = context.params.id;
+  if (!id || !UUID_RE.test(id)) {
+    return new Response(JSON.stringify({ error: "Invalid transaction ID" }), {
+      status: 400,
+      headers: JSON_HEADERS,
+    });
+  }
 
   let body: unknown;
   try {
@@ -41,6 +48,7 @@ export const PUT: APIRoute = async (context) => {
     });
   }
 
+  // RLS (auth.uid() = user_id) scopes this update to the authenticated user's rows.
   const { data: updatedRow, error: dbError } = (await supabase
     .from("transactions")
     .update(result.data)
@@ -50,6 +58,7 @@ export const PUT: APIRoute = async (context) => {
 
   if (dbError) {
     if (dbError.code === "PGRST116") {
+      // .single() raises PGRST116 (not null) when no row matches — this is the not-found path
       return new Response(JSON.stringify({ error: "Transaction not found" }), {
         status: 404,
         headers: JSON_HEADERS,
@@ -59,13 +68,6 @@ export const PUT: APIRoute = async (context) => {
     console.error("[api/transactions/[id]] PUT DB error", dbError.message);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: JSON_HEADERS,
-    });
-  }
-
-  if (updatedRow === null) {
-    return new Response(JSON.stringify({ error: "Transaction not found" }), {
-      status: 404,
       headers: JSON_HEADERS,
     });
   }
@@ -85,6 +87,12 @@ export const DELETE: APIRoute = async (context) => {
   }
 
   const id = context.params.id;
+  if (!id || !UUID_RE.test(id)) {
+    return new Response(JSON.stringify({ error: "Invalid transaction ID" }), {
+      status: 400,
+      headers: JSON_HEADERS,
+    });
+  }
 
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
@@ -94,15 +102,15 @@ export const DELETE: APIRoute = async (context) => {
     });
   }
 
-  const { data, error: dbError } = (await supabase
-    .from("transactions")
-    .delete()
-    .eq("id", id)
-    .select("id")
-    .single()) as { data: { id: string } | null; error: { message: string; code?: string } | null };
+  // RLS (auth.uid() = user_id) scopes this delete to the authenticated user's rows.
+  const { error: dbError } = (await supabase.from("transactions").delete().eq("id", id).select("id").single()) as {
+    data: { id: string } | null;
+    error: { message: string; code?: string } | null;
+  };
 
   if (dbError) {
     if (dbError.code === "PGRST116") {
+      // .single() raises PGRST116 (not null) when no row matches — this is the not-found path
       return new Response(JSON.stringify({ error: "Transaction not found" }), {
         status: 404,
         headers: JSON_HEADERS,
@@ -112,13 +120,6 @@ export const DELETE: APIRoute = async (context) => {
     console.error("[api/transactions/[id]] DELETE DB error", dbError.message);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: JSON_HEADERS,
-    });
-  }
-
-  if (data === null) {
-    return new Response(JSON.stringify({ error: "Transaction not found" }), {
-      status: 404,
       headers: JSON_HEADERS,
     });
   }

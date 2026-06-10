@@ -388,46 +388,46 @@ No schema changes. The `transactions` table schema (from F-01) supports all requ
 
 #### Automated
 
-- [x] 2.1 `npx astro check` passes
-- [x] 2.2 `npm run lint` passes
+- [x] 2.1 `npx astro check` passes — 248bef4
+- [x] 2.2 `npm run lint` passes — 248bef4
 
 #### Manual
 
-- [x] 2.3 Authenticated PUT with valid body on own transaction returns 200 with updated row
-- [x] 2.4 Authenticated DELETE on own transaction returns 200 `{ success: true }`
-- [x] 2.5 Unauthenticated PUT/DELETE returns 401
-- [x] 2.6 PUT with invalid body returns 400 with descriptive message
-- [x] 2.7 DELETE on non-existent or other user's transaction returns 404
+- [x] 2.3 Authenticated PUT with valid body on own transaction returns 200 with updated row — 248bef4
+- [x] 2.4 Authenticated DELETE on own transaction returns 200 `{ success: true }` — 248bef4
+- [x] 2.5 Unauthenticated PUT/DELETE returns 401 — 248bef4
+- [x] 2.6 PUT with invalid body returns 400 with descriptive message — 248bef4
+- [x] 2.7 DELETE on non-existent or other user's transaction returns 404 — 248bef4
 
 ### Phase 3: AddTransactionForm edit mode
 
 #### Automated
 
-- [ ] 3.1 `npx astro check` passes
-- [ ] 3.2 `npm run lint` passes
+- [x] 3.1 `npx astro check` passes
+- [x] 3.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 3.3 Edit mode shows all fields pre-filled
-- [ ] 3.4 Ticker field is visually disabled and cannot be typed into
-- [ ] 3.5 Edit form submits PUT (visible in DevTools Network tab)
-- [ ] 3.6 Add mode still works as before (POST, all fields editable)
+- [x] 3.3 Edit mode shows all fields pre-filled
+- [x] 3.4 Ticker field is visually disabled and cannot be typed into
+- [x] 3.5 Edit form submits PUT (visible in DevTools Network tab)
+- [x] 3.6 Add mode still works as before (POST, all fields editable)
 
 ### Phase 4: DashboardView — expandable rows + edit/delete UX
 
 #### Automated
 
-- [ ] 4.1 `npx astro check` passes with zero type errors
-- [ ] 4.2 `npm run lint` passes
+- [x] 4.1 `npx astro check` passes with zero type errors
+- [x] 4.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 4.3 Clicking a position row expands/collapses it
-- [ ] 4.4 Expanded section shows individual transactions with correct data
-- [ ] 4.5 Edit dialog opens pre-filled; ticker is disabled
-- [ ] 4.6 Saving edit updates the row without page reload
-- [ ] 4.7 Delete AlertDialog shows correct ticker and date
-- [ ] 4.8 Confirming delete removes the transaction; position updates
-- [ ] 4.9 Deleting last transaction for a ticker removes the position row
-- [ ] 4.10 Add transaction still works
-- [ ] 4.11 Sign out still works
+- [x] 4.3 Clicking a position row expands/collapses it
+- [x] 4.4 Expanded section shows individual transactions with correct data
+- [x] 4.5 Edit dialog opens pre-filled; ticker is disabled
+- [x] 4.6 Saving edit updates the row without page reload
+- [x] 4.7 Delete AlertDialog shows correct ticker and date
+- [x] 4.8 Confirming delete removes the transaction; position updates
+- [x] 4.9 Deleting last transaction for a ticker removes the position row
+- [x] 4.10 Add transaction still works
+- [x] 4.11 Sign out still works
