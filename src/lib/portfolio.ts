@@ -1,5 +1,25 @@
 import type { Transaction } from "@/types/transaction";
 
+export interface PriceData {
+  price: number;
+  fetched_at: string;
+  is_fresh: boolean;
+}
+
+export interface PortfolioPosition {
+  ticker: string;
+  totalShares: number;
+  avgCost: number;
+  currency: string;
+  hasMultipleCurrencies: boolean;
+  currentPrice: number | null;
+  isFresh: boolean;
+  priceDate: string | null;
+  positionValue: number | null;
+  roiPct: number | null;
+  roiAbs: number | null;
+}
+
 export interface SectorSlice {
   sector: string;
   value: number;
@@ -36,26 +56,6 @@ export function computeSectorAllocation(
   }
 
   return slices;
-}
-
-export interface PriceData {
-  price: number;
-  fetched_at: string;
-  is_fresh: boolean;
-}
-
-export interface PortfolioPosition {
-  ticker: string;
-  totalShares: number;
-  avgCost: number;
-  currency: string;
-  hasMultipleCurrencies: boolean;
-  currentPrice: number | null;
-  isFresh: boolean;
-  priceDate: string | null;
-  positionValue: number | null;
-  roiPct: number | null;
-  roiAbs: number | null;
 }
 
 export function computePositions(transactions: Transaction[], prices: Record<string, PriceData>): PortfolioPosition[] {

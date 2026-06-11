@@ -83,6 +83,8 @@ if (supabase && uniqueTickers.length > 0) {
           // eslint-disable-next-line no-console
           if (upsertErr) console.error("[sectors] upsert failed", ticker, upsertErr.message);
           sectors[ticker] = sector;
+        } else if (cached) {
+          sectors[ticker] = cached.sector;
         }
       }),
     ),

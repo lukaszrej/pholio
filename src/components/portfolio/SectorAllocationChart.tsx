@@ -63,7 +63,7 @@ export default function SectorAllocationChart({ slices }: Props) {
           label: (ctx: { label?: string; dataIndex: number }) => {
             const slice = slices[ctx.dataIndex] as SectorSlice | undefined;
             if (!slice) return "";
-            return ` ${slice.sector}: ${slice.percentage.toFixed(1)}%  (${slice.value.toFixed(2)})`;
+            return ` ${slice.sector}: ${slice.percentage.toFixed(1)}% (${slice.value.toFixed(2)})`; // value is unitless — mixed-currency portfolios sum across currencies by design
           },
         },
       },
