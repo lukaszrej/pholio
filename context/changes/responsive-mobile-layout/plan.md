@@ -259,12 +259,12 @@ function useIsSmall() {
 
 #### Automated
 
-- [x] 2.1 Type check passes (`npm run typecheck`)
-- [x] 2.2 Lint passes (`npm run lint`)
+- [x] 2.1 Type check passes (`npm run typecheck`) — 0982fd7
+- [x] 2.2 Lint passes (`npm run lint`) — 0982fd7
 
 #### Manual
 
-- [ ] 2.3 Legend appears below doughnut on viewport < 768px
-- [ ] 2.4 Legend appears to the right of doughnut on viewport ≥ 768px
-- [ ] 2.5 Legend labels fully visible and unclipped on mobile
-- [ ] 2.6 Legend position switches live on browser resize
+- [x] 2.3 Legend appears below doughnut on viewport < 768px — 0982fd7
+- [x] 2.4 Legend appears to the right of doughnut on viewport ≥ 768px — 0982fd7
+- [x] 2.5 Legend labels fully visible and unclipped on mobile — 0982fd7
+- [x] 2.6 Legend position switches live on browser resize — 0982fd7
