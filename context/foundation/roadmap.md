@@ -3,7 +3,7 @@ project: "Pholio"
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-10
+updated: 2026-06-11
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -34,7 +34,7 @@ Indywidualny inwestor długoterminowy nie ma jednego miejsca, gdzie może zobacz
 | S-02 | add-transaction         | dodać transakcję (ticker, cena, data, waluta, liczba akcji)                   | S-01, F-01    | FR-004                     | done     |
 | S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                      | S-02          | FR-007, US-01              | done     |
 | S-04 | transaction-crud        | edytować i trwale usunąć istniejącą transakcję                                | S-02          | FR-005, FR-006             | done     |
-| S-05 | sector-allocation-chart | zobaczyć wykres alokacji sektorowej portfela                                  | S-03          | FR-008                     | proposed |
+| S-05 | sector-allocation-chart | zobaczyć wykres alokacji sektorowej portfela                                  | S-03          | FR-008                     | done     |
 
 ## Streams
 
@@ -135,7 +135,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - ~~Czy wybrany dostawca EOD dostarcza dane o przynależności sektorowej?~~ — **Resolved 2026-06-06: Finnhub company profile endpoint zawiera sector/industry.** Szczegóły w `context/foundation/eod-api-decision.md`.
 - **Risk:** FR-008 to nice-to-have; jeśli dostawca nie dostarcza danych sektorowych lub koszty są za wysokie, feature wypada bez blokowania MVP.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -171,3 +171,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-02: Użytkownik może dodać transakcję zakupu akcji podając ticker, cenę zakupu, datę zakupu, walutę i liczbę akcji; transakcja jest zapisana i pojawia się na liście.** — Archived 2026-06-08 → `context/archive/2026-06-06-add-transaction/`. Lesson: —.
 - **S-03: Użytkownik widzi tabelę portfela ze wszystkimi pozycjami, aktualną ceną EOD i wyliczonym ROI (% i wartość bezwzględna); przy niedostępności API wyświetla ostatnią zapisaną cenę lub czytelny komunikat "brak danych", bez crasha.** — Archived 2026-06-10 → `context/archive/2026-06-09-portfolio-roi-view/`. Lesson: —.
 - **S-04: Użytkownik może edytować dane istniejącej transakcji i trwale ją usunąć po potwierdzeniu.** — Archived 2026-06-10 → `context/archive/2026-06-10-transaction-crud/`. Lesson: —.
+- **S-05: Użytkownik widzi wykres pokazujący procentowy udział każdego sektora w portfelu.** — Archived 2026-06-11 → `context/archive/2026-06-10-sector-allocation-chart/`. Lesson: —.
