@@ -25,8 +25,8 @@ interface Props {
 export default function SectorAllocationChart({ slices }: Props) {
   if (slices.length === 0) {
     return (
-      <div className="flex items-center justify-center rounded-2xl border border-white/10 py-16 text-center">
-        <p className="text-blue-100/60">No positions to display</p>
+      <div className="flex items-center justify-center rounded-2xl border border-gray-200 py-16 text-center">
+        <p className="text-gray-500">No positions to display</p>
       </div>
     );
   }
@@ -53,7 +53,7 @@ export default function SectorAllocationChart({ slices }: Props) {
       legend: {
         position: "right" as const,
         labels: {
-          color: "rgba(219, 234, 254, 0.8)",
+          color: "rgb(55, 65, 81)",
           padding: 12,
           font: { size: 12 },
         },

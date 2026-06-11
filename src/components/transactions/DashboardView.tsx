@@ -37,8 +37,8 @@ function formatCurrentPrice(pos: PortfolioPosition): string {
 }
 
 function roiClass(value: number | null): string {
-  if (value === null) return "text-blue-100/40";
-  return value >= 0 ? "text-emerald-400" : "text-red-400";
+  if (value === null) return "text-gray-400";
+  return value >= 0 ? "text-emerald-600" : "text-red-600";
 }
 
 function formatSigned(value: number | null, decimals = 2): string {
@@ -108,18 +108,18 @@ export default function DashboardView({ initialTransactions, initialPrices, init
   }
 
   return (
-    <div className="bg-cosmic min-h-screen p-6 text-white">
+    <div className="bg-cosmic min-h-screen p-6 text-gray-900">
       {/* Toolbar */}
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+        <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
           Portfolio
         </h1>
         <div className="flex items-center gap-3">
-          {userEmail && <span className="text-sm text-blue-100/60">{userEmail}</span>}
+          {userEmail && <span className="text-sm text-gray-500">{userEmail}</span>}
           <form method="POST" action="/api/auth/signout">
             <button
               type="submit"
-              className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white transition-colors hover:bg-white/20"
+              className="rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-200"
             >
               Sign out
             </button>
@@ -129,14 +129,14 @@ export default function DashboardView({ initialTransactions, initialPrices, init
 
       {/* Portfolio table or empty state */}
       {transactions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 py-20 text-center backdrop-blur-xl">
-          <p className="text-blue-100/60">No transactions yet</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-20 text-center">
+          <p className="text-gray-500">No transactions yet</p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+        <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-left text-blue-100/60">
+              <tr className="border-b border-gray-200 text-left text-gray-500">
                 <th className="px-4 py-3 font-medium">Ticker</th>
                 <th className="px-4 py-3 font-medium">Shares</th>
                 <th className="px-4 py-3 font-medium">Avg. Cost</th>
@@ -151,7 +151,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
               {positions.map((pos) => (
                 <Fragment key={pos.ticker}>
                   <tr
-                    className="cursor-pointer border-b border-white/5 transition-colors hover:bg-white/5"
+                    className="cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
                     onClick={() => {
                       toggleExpanded(pos.ticker);
                     }}
@@ -160,7 +160,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                     <td className="px-4 py-3">{pos.totalShares.toFixed(4)}</td>
                     <td className="px-4 py-3">
                       {pos.avgCost.toFixed(2)}
-                      {!pos.hasMultipleCurrencies && <span className="ml-1 text-blue-100/50">{pos.currency}</span>}
+                      {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
                     </td>
                     <td className="px-4 py-3">{formatCurrentPrice(pos)}</td>
                     <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
@@ -171,7 +171,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                     <td className={`px-4 py-3 ${roiClass(pos.roiAbs)}`}>
                       {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
                     </td>
-                    <td className="px-2 py-3 text-blue-100/40">
+                    <td className="px-2 py-3 text-gray-400">
                       {expandedTickers.has(pos.ticker) ? (
                         <ChevronDown className="size-4" />
                       ) : (
@@ -181,10 +181,10 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                   </tr>
                   {expandedTickers.has(pos.ticker) && (
                     <tr key={`${pos.ticker}-txns`}>
-                      <td colSpan={8} className="bg-white/[0.03] px-6 pt-1 pb-3">
+                      <td colSpan={8} className="bg-gray-50 px-6 pt-1 pb-3">
                         <table className="w-full text-xs">
                           <thead>
-                            <tr className="text-blue-100/40">
+                            <tr className="text-gray-400">
                               <th className="py-1 text-left font-normal">Date</th>
                               <th className="py-1 text-left font-normal">Shares</th>
                               <th className="py-1 text-left font-normal">Price</th>
@@ -198,7 +198,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                               .filter((t) => t.ticker.toUpperCase() === pos.ticker)
                               .sort((a, b) => a.purchase_date.localeCompare(b.purchase_date))
                               .map((t) => (
-                                <tr key={t.id} className="border-t border-white/5">
+                                <tr key={t.id} className="border-t border-gray-100">
                                   <td className="py-1.5">{t.purchase_date}</td>
                                   <td className="py-1.5">{t.shares.toFixed(4)}</td>
                                   <td className="py-1.5">{t.purchase_price.toFixed(2)}</td>
@@ -218,7 +218,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="text-red-400 hover:text-red-400"
+                                      className="text-red-600 hover:text-red-600"
                                       onClick={() => {
                                         setDeleteError(null);
                                         setDeletingTransaction(t);
@@ -254,8 +254,8 @@ export default function DashboardView({ initialTransactions, initialPrices, init
       </div>
 
       {/* Sector Allocation Chart */}
-      <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-        <h2 className="mb-4 text-lg font-semibold text-blue-100/80">Sector Allocation</h2>
+      <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-gray-700">Sector Allocation</h2>
         <SectorAllocationChart slices={sectorSlices} />
       </div>
 
@@ -311,7 +311,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
             </AlertDialogDescription>
           </AlertDialogHeader>
           {deleteError && (
-            <p className="flex items-center gap-1 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+            <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
               {deleteError}
             </p>
           )}

@@ -280,29 +280,29 @@ Replace dark utility classes in the five React/TSX components: `FormField.tsx`, 
 
 #### Automated
 
-- [x] 1.1 `npx astro check` passes with zero errors
-- [x] 1.2 `npm run lint` passes
+- [x] 1.1 `npx astro check` passes with zero errors — 9116731
+- [x] 1.2 `npm run lint` passes — 9116731
 
 #### Manual
 
-- [x] 1.3 Welcome page renders with light background, no orbs or star field
-- [x] 1.4 Heading gradient visible (dark blue-to-pink on light bg)
-- [x] 1.5 Auth pages show white card on light background
-- [x] 1.6 Topbar appears as white nav bar with dark text and purple links
+- [x] 1.3 Welcome page renders with light background, no orbs or star field — 9116731
+- [x] 1.4 Heading gradient visible (dark blue-to-pink on light bg) — 9116731
+- [x] 1.5 Auth pages show white card on light background — 9116731
+- [x] 1.6 Topbar appears as white nav bar with dark text and purple links — 9116731
 
 ### Phase 2: React/TSX component sweep
 
 #### Automated
 
-- [ ] 2.1 `npx astro check` passes with zero errors
-- [ ] 2.2 `npm run lint` passes
-- [ ] 2.3 `npm run build` succeeds
+- [x] 2.1 `npx astro check` passes with zero errors
+- [x] 2.2 `npm run lint` passes
+- [x] 2.3 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 2.4 Dashboard table renders with white bg, gray borders, dark text
-- [ ] 2.5 ROI colors visible with adequate contrast (`text-emerald-600` / `text-red-600`)
-- [ ] 2.6 Auth form fields show dark text on white input bg
-- [ ] 2.7 Form validation errors and server error banners render in light-mode red
-- [ ] 2.8 Sector chart legend text is dark and readable
-- [ ] 2.9 No dark artifacts visible in dialogs or on hover
+- [x] 2.4 Dashboard table renders with white bg, gray borders, dark text
+- [x] 2.5 ROI colors visible with adequate contrast (`text-emerald-600` / `text-red-600`)
+- [x] 2.6 Auth form fields show dark text on white input bg
+- [x] 2.7 Form validation errors and server error banners render in light-mode red
+- [x] 2.8 Sector chart legend text is dark and readable
+- [x] 2.9 No dark artifacts visible in dialogs or on hover
