@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import type { SectorSlice } from "@/lib/portfolio";
@@ -22,7 +23,25 @@ interface Props {
   slices: SectorSlice[];
 }
 
+function useIsSmall() {
+  const [isSmall, setIsSmall] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => {
+      setIsSmall(mq.matches);
+    };
+    update();
+    mq.addEventListener("change", update);
+    return () => {
+      mq.removeEventListener("change", update);
+    };
+  }, []);
+  return isSmall;
+}
+
 export default function SectorAllocationChart({ slices }: Props) {
+  const isSmall = useIsSmall();
+
   if (slices.length === 0) {
     return (
       <div className="flex items-center justify-center rounded-2xl border border-gray-200 py-16 text-center">
@@ -46,12 +65,14 @@ export default function SectorAllocationChart({ slices }: Props) {
     ],
   };
 
+  const legendPosition: "bottom" | "right" = isSmall ? "bottom" : "right";
+
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "right" as const,
+        position: legendPosition,
         labels: {
           color: "rgb(55, 65, 81)",
           padding: 12,
@@ -71,7 +92,7 @@ export default function SectorAllocationChart({ slices }: Props) {
   };
 
   return (
-    <div className="relative h-[300px]">
+    <div className="relative h-[380px] md:h-[300px]">
       <Doughnut data={data} options={options} />
     </div>
   );

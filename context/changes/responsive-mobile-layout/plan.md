@@ -245,22 +245,22 @@ function useIsSmall() {
 
 #### Automated
 
-- [x] 1.1 Type check passes (`npm run typecheck`)
-- [x] 1.2 Lint passes (`npm run lint`)
+- [x] 1.1 Type check passes (`npm run typecheck`) — ed81fe2
+- [x] 1.2 Lint passes (`npm run lint`) — ed81fe2
 
 #### Manual
 
-- [x] 1.3 Ticker column is sticky on narrow viewport (< 768px)
-- [x] 1.4 Full-row hover highlight covers the sticky Ticker cell (group-hover)
-- [x] 1.5 Expanded sub-rows scroll horizontally on mobile
-- [x] 1.6 No visual bleed-through behind the sticky Ticker column
+- [x] 1.3 Ticker column is sticky on narrow viewport (< 768px) — ed81fe2
+- [x] 1.4 Full-row hover highlight covers the sticky Ticker cell (group-hover) — ed81fe2
+- [x] 1.5 Expanded sub-rows scroll horizontally on mobile — ed81fe2
+- [x] 1.6 No visual bleed-through behind the sticky Ticker column — ed81fe2
 
 ### Phase 2: Responsive Chart Legend
 
 #### Automated
 
-- [ ] 2.1 Type check passes (`npm run typecheck`)
-- [ ] 2.2 Lint passes (`npm run lint`)
+- [x] 2.1 Type check passes (`npm run typecheck`)
+- [x] 2.2 Lint passes (`npm run lint`)
 
 #### Manual
 
