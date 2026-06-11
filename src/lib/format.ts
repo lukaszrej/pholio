@@ -6,5 +6,5 @@ export function pnlClass(value: number | null): string {
 export function formatSigned(value: number | null, decimals = 2): string {
   if (value === null) return "—";
   const sign = value >= 0 ? "+" : "";
-  return `${sign}${value.toFixed(decimals)}`;
+  return `${sign}${value.toFixed(Math.max(0, Math.min(100, decimals)))}`;
 }
