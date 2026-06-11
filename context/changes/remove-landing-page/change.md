@@ -1,7 +1,7 @@
 ---
 change_id: remove-landing-page
 title: Remove landing page and redirect root to sign-in or dashboard
-status: implemented
+status: impl_reviewed
 created: 2026-06-11
 updated: 2026-06-11
 archived_at: null
