@@ -76,13 +76,13 @@ if (supabase && uniqueTickers.length > 0) {
           return;
         }
 
-        const result = await fetchSector(ticker);
-        if (result !== null) {
+        const sector = await fetchSector(ticker);
+        if (sector !== null) {
           const fetched_at = new Date().toISOString();
-          const { error: upsertErr } = await sb.from("sectors").upsert({ ticker, sector: result, fetched_at });
+          const { error: upsertErr } = await sb.from("sectors").upsert({ ticker, sector, fetched_at });
           // eslint-disable-next-line no-console
           if (upsertErr) console.error("[sectors] upsert failed", ticker, upsertErr.message);
-          sectors[ticker] = result;
+          sectors[ticker] = sector;
         }
       }),
     ),

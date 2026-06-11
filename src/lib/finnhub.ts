@@ -9,10 +9,10 @@ export async function fetchSector(ticker: string): Promise<string | null> {
   }, 2500);
 
   try {
-    const response = await fetch(
-      `https://finnhub.io/api/v1/stock/profile2?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_API_KEY}`,
-      { signal: controller.signal },
-    );
+    const response = await fetch(`https://finnhub.io/api/v1/stock/profile2?symbol=${encodeURIComponent(ticker)}`, {
+      signal: controller.signal,
+      headers: { "X-Finnhub-Token": FINNHUB_API_KEY },
+    });
 
     if (!response.ok) return null;
 

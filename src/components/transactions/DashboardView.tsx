@@ -18,6 +18,7 @@ import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 interface Props {
   initialTransactions: Transaction[];
   initialPrices: Record<string, PriceData>;
+  initialSectors?: Record<string, string>;
   userEmail?: string;
 }
 

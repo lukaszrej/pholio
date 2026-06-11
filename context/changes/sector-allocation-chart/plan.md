@@ -299,8 +299,8 @@ No changes to the `transactions` or `prices` tables. The new `sectors` table is 
 
 #### Automated
 
-- [x] 2.1 `npx astro check` passes
-- [x] 2.2 `npm run lint` passes
+- [x] 2.1 `npx astro check` passes — 69ff014
+- [x] 2.2 `npm run lint` passes — 69ff014
 
 #### Manual
 
