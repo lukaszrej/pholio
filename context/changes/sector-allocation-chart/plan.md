@@ -312,15 +312,15 @@ No changes to the `transactions` or `prices` tables. The new `sectors` table is 
 
 #### Automated
 
-- [x] 3.1 `npx astro check` passes with zero errors
-- [x] 3.2 `npm run lint` passes
-- [x] 3.3 `npm run build` succeeds
+- [x] 3.1 `npx astro check` passes with zero errors — 4d3066a
+- [x] 3.2 `npm run lint` passes — 4d3066a
+- [x] 3.3 `npm run build` succeeds — 4d3066a
 
 #### Manual
 
-- [x] 3.4 Donut chart renders above portfolio table with "Sector Allocation" heading
-- [x] 3.5 Slice percentages match expected allocation by position value
-- [x] 3.6 Tooltip shows sector name, percentage, and value
-- [x] 3.7 "Other" slice is gray when present
-- [x] 3.8 Adding a transaction updates the chart without page reload
-- [x] 3.9 Empty portfolio shows empty-state card in chart area
+- [x] 3.4 Donut chart renders above portfolio table with "Sector Allocation" heading — 4d3066a
+- [x] 3.5 Slice percentages match expected allocation by position value — 4d3066a
+- [x] 3.6 Tooltip shows sector name, percentage, and value — 4d3066a
+- [x] 3.7 "Other" slice is gray when present — 4d3066a
+- [x] 3.8 Adding a transaction updates the chart without page reload — 4d3066a
+- [x] 3.9 Empty portfolio shows empty-state card in chart area — 4d3066a
