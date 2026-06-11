@@ -18,6 +18,7 @@ Implement S-05: a donut chart showing each sector's percentage of the user's por
 Logged-in user with at least one priced position opens the dashboard and sees a donut chart above the portfolio table. Each colored slice represents a sector (e.g., "Technology", "Healthcare"); hovering shows the sector name, percentage, and total market value. Tickers with no Finnhub sector data are grouped into a gray "Other" slice. If the portfolio has no positions (or all positions have null prices), the chart area shows an empty-state card matching the table's existing empty state.
 
 ### Verify:
+
 1. `npx astro check` passes with zero errors
 2. `npm run lint` passes
 3. `npm run build` succeeds
@@ -48,6 +49,7 @@ Logged-in user with at least one priced position opens the dashboard and sees a 
 Three sequential phases. Phase 1 is the DB migration (prerequisite for caching). Phase 2 wires the Finnhub company profile endpoint and passes sector data to the frontend without changing the UI. Phase 3 delivers the allocation logic and chart. Each phase is independently verifiable before the next begins.
 
 Data flow after this change:
+
 ```
 dashboard.astro (server):
   1. fetch transactions (existing)
@@ -80,11 +82,12 @@ Create the `sectors` Supabase table that caches ticker-to-sector mappings. Like 
 
 #### 1. Create sectors migration
 
-**File**: `supabase/migrations/20260610000000_create_sectors.sql` *(new file)*
+**File**: `supabase/migrations/20260610000000_create_sectors.sql` _(new file)_
 
 **Intent**: Define the `sectors` table and its RLS policies, mirroring the structure of the `prices` migration.
 
 **Contract**: The migration must:
+
 - Create `public.sectors` with columns: `ticker TEXT PRIMARY KEY`, `sector TEXT NOT NULL`, `fetched_at TIMESTAMPTZ NOT NULL DEFAULT now()`
 - `ALTER TABLE public.sectors ENABLE ROW LEVEL SECURITY`
 - Add three policies: SELECT, INSERT, UPDATE — each using `auth.role() = 'authenticated'`; follow the exact same policy structure as `20260609000000_create_prices.sql`
@@ -121,6 +124,7 @@ Add `fetchSector(ticker)` to the existing Finnhub client and update `dashboard.a
 **Intent**: Expose a `fetchSector(ticker)` function that calls the Finnhub company profile endpoint and returns the sector string. Follows the identical failure-safe pattern as `fetchQuote`: missing key, timeout, non-200, or empty `finnhubIndustry` all return null — callers treat null as "unknown" and the chart buckets it into "Other".
 
 **Contract**: Export `fetchSector(ticker: string): Promise<string | null>`:
+
 - Same `FINNHUB_API_KEY` guard and 2.5s AbortController timeout as `fetchQuote`
 - Endpoint: `https://finnhub.io/api/v1/stock/profile2?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_API_KEY}`
 - If `!response.ok` → return `null`
@@ -134,6 +138,7 @@ Add `fetchSector(ticker)` to the existing Finnhub client and update `dashboard.a
 **Intent**: After the existing price-fetch block, fetch and cache sector data for all unique tickers. Uses a 7-day TTL. Assembles `sectors: Record<string, string>` and passes it to `DashboardView`.
 
 **Contract**: New frontmatter block after the prices block:
+
 1. If `supabase && uniqueTickers.length > 0`: query `supabase.from("sectors").select("*").in("ticker", uniqueTickers)` — build a `Map<string, { sector, fetched_at }>` from result
 2. Initialise `sectors: Record<string, string> = {}`
 3. 7-day staleness constant: `7 * 24 * 60 * 60 * 1000` ms
@@ -178,6 +183,7 @@ Add `SectorSlice` and `computeSectorAllocation` to `portfolio.ts`. Install chart
 **Contract**:
 
 Export `SectorSlice`:
+
 ```typescript
 export interface SectorSlice {
   sector: string;
@@ -187,6 +193,7 @@ export interface SectorSlice {
 ```
 
 Export `computeSectorAllocation(positions: PortfolioPosition[], sectors: Record<string, string>): SectorSlice[]`:
+
 - Filter positions where `positionValue !== null`
 - For each: `const sector = sectors[position.ticker] ?? "Other"`
 - Group by sector, summing `positionValue`
@@ -200,11 +207,12 @@ No file changes — run `npm install chart.js react-chartjs-2` before implementi
 
 #### 3. Create `SectorAllocationChart` component
 
-**File**: `src/components/portfolio/SectorAllocationChart.tsx` *(new file)*
+**File**: `src/components/portfolio/SectorAllocationChart.tsx` _(new file)_
 
 **Intent**: A self-contained React component rendering a Chart.js Doughnut chart from `SectorSlice[]`. Handles the empty state. Assigns colors from a fixed palette; "Other" is always gray.
 
 **Contract**:
+
 - At module scope (before the component): `Chart.register(ArcElement, Tooltip, Legend)`
 - Props: `{ slices: SectorSlice[] }`
 - Color palette: define a constant array of ≥10 distinct hex colors (suggested: use a set of distinct, saturated colors — one per recognizable sector; "Other" is always `"#6B7280"` regardless of palette position)
@@ -220,6 +228,7 @@ No file changes — run `npm install chart.js react-chartjs-2` before implementi
 **Intent**: Accept `initialSectors`, compute sector allocation in a `useMemo` alongside the existing `computePositions` call, and render `SectorAllocationChart` above the portfolio table in a full-width card section.
 
 **Contract**:
+
 - Add `initialSectors: Record<string, string>` to the Props interface
 - `const [sectors] = useState(initialSectors)` — static after mount (same pattern as `prices`)
 - `const sectorSlices = useMemo(() => computeSectorAllocation(positions, sectors), [positions, sectors])` — import `computeSectorAllocation` and `SectorSlice` from `@/lib/portfolio`
