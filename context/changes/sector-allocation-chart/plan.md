@@ -287,8 +287,8 @@ No changes to the `transactions` or `prices` tables. The new `sectors` table is 
 #### Automated
 
 - [x] 1.1 Migration applies cleanly (`npx supabase db push` or SQL Editor) — 617812b
-- [x] 1.2 `npx astro check` passes — 617812b
-- [x] 1.3 `npm run lint` passes — 617812b
+- [x] 1.2 `npx astro check` passes — a66d738
+- [x] 1.3 `npm run lint` passes — a66d738
 
 #### Manual
 
