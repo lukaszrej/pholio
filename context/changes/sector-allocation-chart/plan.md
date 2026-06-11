@@ -301,8 +301,8 @@ No changes to the `transactions` or `prices` tables. The new `sectors` table is 
 
 #### Manual
 
-- [x] 1.4 `sectors` table visible in Supabase Dashboard with correct columns
-- [x] 1.5 RLS enabled on `sectors` table
+- [x] 1.4 `sectors` table visible in Supabase Dashboard with correct columns — a66d738
+- [x] 1.5 RLS enabled on `sectors` table — a66d738
 
 ### Phase 2: Finnhub sector client + dashboard.astro wiring
 
@@ -313,9 +313,9 @@ No changes to the `transactions` or `prices` tables. The new `sectors` table is 
 
 #### Manual
 
-- [x] 2.3 Supabase `sectors` table has rows after first page load
-- [x] 2.4 Second load within 7 days does not update `fetched_at` (cache hit)
-- [x] 2.5 Ticker with no Finnhub coverage: no row in `sectors` table
+- [x] 2.3 Supabase `sectors` table has rows after first page load — 08bede0
+- [x] 2.4 Second load within 7 days does not update `fetched_at` (cache hit) — 08bede0
+- [x] 2.5 Ticker with no Finnhub coverage: no row in `sectors` table — 08bede0
 
 ### Phase 3: Sector allocation logic + donut chart + DashboardView integration
 
