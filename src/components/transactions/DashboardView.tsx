@@ -127,12 +127,6 @@ export default function DashboardView({ initialTransactions, initialPrices, init
         </div>
       </div>
 
-      {/* Sector Allocation Chart */}
-      <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-        <h2 className="mb-4 text-lg font-semibold text-blue-100/80">Sector Allocation</h2>
-        <SectorAllocationChart slices={sectorSlices} />
-      </div>
-
       {/* Portfolio table or empty state */}
       {transactions.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 py-20 text-center backdrop-blur-xl">
@@ -257,6 +251,12 @@ export default function DashboardView({ initialTransactions, initialPrices, init
         >
           Add transaction
         </Button>
+      </div>
+
+      {/* Sector Allocation Chart */}
+      <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+        <h2 className="mb-4 text-lg font-semibold text-blue-100/80">Sector Allocation</h2>
+        <SectorAllocationChart slices={sectorSlices} />
       </div>
 
       {/* Add transaction dialog */}
