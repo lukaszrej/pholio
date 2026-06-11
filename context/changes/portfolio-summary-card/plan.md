@@ -170,13 +170,13 @@ Add `excludedCount` to `PortfolioSummary`, update `computePortfolioSummary` to p
 
 #### Automated
 
-- [x] 2.1 Type check passes (`npx astro check`)
-- [x] 2.2 Lint passes (`npm run lint`)
-- [x] 2.3 Build succeeds (`npm run build`)
+- [x] 2.1 Type check passes (`npx astro check`) — 331bc1c
+- [x] 2.2 Lint passes (`npm run lint`) — 331bc1c
+- [x] 2.3 Build succeeds (`npm run build`) — 331bc1c
 
 #### Manual
 
-- [ ] 2.4 Desktop width: 3 columns side by side
-- [ ] 2.5 Narrow width (< 640 px): cells stack vertically
-- [ ] 2.6 Single-currency portfolio: no footnote
-- [ ] 2.7 Multi-currency ticker present: footnote shows correct count
+- [x] 2.4 Desktop width: 3 columns side by side — 331bc1c
+- [x] 2.5 Narrow width (< 640 px): cells stack vertically — 331bc1c
+- [x] 2.6 Single-currency portfolio: no footnote — 331bc1c
+- [x] 2.7 Multi-currency ticker present: footnote shows correct count — 331bc1c
