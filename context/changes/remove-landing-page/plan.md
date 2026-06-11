@@ -188,13 +188,13 @@ directly to `/auth/signin`, removing any reliance on the now-deleted landing pag
 
 #### Automated
 
-- [x] 2.1 TypeScript type-check passes
-- [x] 2.2 Lint passes
-- [x] 2.3 Build succeeds
+- [x] 2.1 TypeScript type-check passes — bc76100
+- [x] 2.2 Lint passes — bc76100
+- [x] 2.3 Build succeeds — bc76100
 
 #### Manual
 
-- [x] 2.4 Unauthenticated visit to `/` redirects to `/auth/signin`
-- [x] 2.5 Authenticated visit to `/` redirects to `/dashboard`
-- [x] 2.6 Sign-out lands on `/auth/signin`
-- [x] 2.7 No regressions on other auth flows
+- [x] 2.4 Unauthenticated visit to `/` redirects to `/auth/signin` — bc76100
+- [x] 2.5 Authenticated visit to `/` redirects to `/dashboard` — bc76100
+- [x] 2.6 Sign-out lands on `/auth/signin` — bc76100
+- [x] 2.7 No regressions on other auth flows — bc76100
