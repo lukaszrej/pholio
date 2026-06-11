@@ -26,15 +26,12 @@ interface Props {
 function useIsSmall() {
   const [isSmall, setIsSmall] = useState(false);
   useEffect(() => {
+    if (!window.matchMedia) return;
     const mq = window.matchMedia("(max-width: 767px)");
-    const update = () => {
-      setIsSmall(mq.matches);
-    };
-    update();
-    mq.addEventListener("change", update);
-    return () => {
-      mq.removeEventListener("change", update);
-    };
+    setIsSmall(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsSmall(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
   return isSmall;
 }

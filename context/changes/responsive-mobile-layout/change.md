@@ -1,7 +1,7 @@
 ---
 id: responsive-mobile-layout
 title: Responsive mobile layout — sticky ticker column + legend below chart
-status: implemented
+status: impl_reviewed
 created: 2026-06-11
 updated: 2026-06-11
 ---
