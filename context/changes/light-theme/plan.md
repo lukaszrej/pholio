@@ -294,15 +294,15 @@ Replace dark utility classes in the five React/TSX components: `FormField.tsx`, 
 
 #### Automated
 
-- [x] 2.1 `npx astro check` passes with zero errors
-- [x] 2.2 `npm run lint` passes
-- [x] 2.3 `npm run build` succeeds
+- [x] 2.1 `npx astro check` passes with zero errors — a1cf9b1
+- [x] 2.2 `npm run lint` passes — a1cf9b1
+- [x] 2.3 `npm run build` succeeds — a1cf9b1
 
 #### Manual
 
-- [x] 2.4 Dashboard table renders with white bg, gray borders, dark text
-- [x] 2.5 ROI colors visible with adequate contrast (`text-emerald-600` / `text-red-600`)
-- [x] 2.6 Auth form fields show dark text on white input bg
-- [x] 2.7 Form validation errors and server error banners render in light-mode red
-- [x] 2.8 Sector chart legend text is dark and readable
-- [x] 2.9 No dark artifacts visible in dialogs or on hover
+- [x] 2.4 Dashboard table renders with white bg, gray borders, dark text — a1cf9b1
+- [x] 2.5 ROI colors visible with adequate contrast (`text-emerald-600` / `text-red-600`) — a1cf9b1
+- [x] 2.6 Auth form fields show dark text on white input bg — a1cf9b1
+- [x] 2.7 Form validation errors and server error banners render in light-mode red — a1cf9b1
+- [x] 2.8 Sector chart legend text is dark and readable — a1cf9b1
+- [x] 2.9 No dark artifacts visible in dialogs or on hover — a1cf9b1
