@@ -137,7 +137,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200 text-left text-gray-500">
-                  <th className="px-4 py-3 font-medium">Ticker</th>
+                  <th className="sticky left-0 z-20 bg-white px-4 py-3 font-medium">Ticker</th>
                   <th className="px-4 py-3 font-medium">Shares</th>
                   <th className="px-4 py-3 font-medium">Avg. Cost</th>
                   <th className="px-4 py-3 font-medium">Current Price</th>
@@ -151,12 +151,14 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                 {positions.map((pos) => (
                   <Fragment key={pos.ticker}>
                     <tr
-                      className="cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
+                      className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
                       onClick={() => {
                         toggleExpanded(pos.ticker);
                       }}
                     >
-                      <td className="px-4 py-3 font-semibold">{pos.ticker}</td>
+                      <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
+                        {pos.ticker}
+                      </td>
                       <td className="px-4 py-3">{pos.totalShares.toFixed(4)}</td>
                       <td className="px-4 py-3">
                         {pos.avgCost.toFixed(2)}
@@ -181,7 +183,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                     </tr>
                     {expandedTickers.has(pos.ticker) && (
                       <tr key={`${pos.ticker}-txns`}>
-                        <td colSpan={8} className="bg-gray-50 px-6 pt-1 pb-3">
+                        <td colSpan={8} className="overflow-x-auto bg-gray-50 px-6 pt-1 pb-3">
                           <table className="w-full text-xs">
                             <thead>
                               <tr className="text-gray-400">
