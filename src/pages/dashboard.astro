@@ -2,7 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import DashboardView from "@/components/transactions/DashboardView";
 import { createClient } from "@/lib/supabase";
-import { fetchQuote } from "@/lib/finnhub";
+import { fetchQuote, fetchSector } from "@/lib/finnhub";
 import type { PriceData } from "@/lib/portfolio";
 import type { Transaction } from "@/types/transaction";
 import pLimit from "p-limit";
@@ -54,8 +54,48 @@ if (supabase && uniqueTickers.length > 0) {
     ),
   );
 }
+
+const sectors: Record<string, string> = {};
+const SECTOR_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+if (supabase && uniqueTickers.length > 0) {
+  const sb = supabase;
+  const { data: cachedSectorRows } = await sb.from("sectors").select("*").in("ticker", uniqueTickers);
+  const sectorCacheMap = new Map<string, { sector: string; fetched_at: string }>();
+  for (const row of (cachedSectorRows ?? []) as { ticker: string; sector: string; fetched_at: string }[]) {
+    sectorCacheMap.set(row.ticker, { sector: row.sector, fetched_at: row.fetched_at });
+  }
+
+  const sectorLimit = pLimit(10);
+  await Promise.allSettled(
+    uniqueTickers.map((ticker) =>
+      sectorLimit(async () => {
+        const cached = sectorCacheMap.get(ticker);
+        if (cached && Date.now() - new Date(cached.fetched_at).getTime() < SECTOR_TTL_MS) {
+          sectors[ticker] = cached.sector;
+          return;
+        }
+
+        const result = await fetchSector(ticker);
+        if (result !== null) {
+          const fetched_at = new Date().toISOString();
+          const { error: upsertErr } = await sb.from("sectors").upsert({ ticker, sector: result, fetched_at });
+          // eslint-disable-next-line no-console
+          if (upsertErr) console.error("[sectors] upsert failed", ticker, upsertErr.message);
+          sectors[ticker] = result;
+        }
+      }),
+    ),
+  );
+}
 ---
 
 <Layout title="Dashboard">
-  <DashboardView client:load initialTransactions={transactions} initialPrices={prices} userEmail={user?.email} />
+  <DashboardView
+    client:load
+    initialTransactions={transactions}
+    initialPrices={prices}
+    initialSectors={sectors}
+    userEmail={user?.email}
+  />
 </Layout>
