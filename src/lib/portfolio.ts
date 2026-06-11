@@ -33,6 +33,7 @@ export interface PortfolioSummary {
   totalPnL: number | null;
   totalPnLPct: number | null;
   currency: string | null;
+  excludedCount: number;
 }
 
 export function computePortfolioSummary(positions: PortfolioPosition[]): PortfolioSummary {
@@ -54,7 +55,9 @@ export function computePortfolioSummary(positions: PortfolioPosition[]): Portfol
   const currencies = new Set(positions.filter((p) => !p.hasMultipleCurrencies).map((p) => p.currency));
   const currency = currencies.size === 1 ? [...currencies][0] : null;
 
-  return { positionCount, totalInvested, currentValue, totalPnL, totalPnLPct, currency };
+  const excludedCount = positions.filter((p) => p.hasMultipleCurrencies).length;
+
+  return { positionCount, totalInvested, currentValue, totalPnL, totalPnLPct, currency, excludedCount };
 }
 
 export function computeSectorAllocation(

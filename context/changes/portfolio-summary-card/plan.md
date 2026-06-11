@@ -159,20 +159,20 @@ Add `excludedCount` to `PortfolioSummary`, update `computePortfolioSummary` to p
 
 #### Automated
 
-- [x] 1.1 Type check passes (`npx astro check`)
-- [x] 1.2 Lint passes (`npm run lint`)
+- [x] 1.1 Type check passes (`npx astro check`) — eec50ba
+- [x] 1.2 Lint passes (`npm run lint`) — eec50ba
 
 #### Manual
 
-- [x] 1.3 Dashboard loads without visual change — card and table formatting identical to before
+- [x] 1.3 Dashboard loads without visual change — card and table formatting identical to before — eec50ba
 
 ### Phase 2: Harden card — responsive layout + multi-currency footnote
 
 #### Automated
 
-- [ ] 2.1 Type check passes (`npx astro check`)
-- [ ] 2.2 Lint passes (`npm run lint`)
-- [ ] 2.3 Build succeeds (`npm run build`)
+- [x] 2.1 Type check passes (`npx astro check`)
+- [x] 2.2 Lint passes (`npm run lint`)
+- [x] 2.3 Build succeeds (`npm run build`)
 
 #### Manual
 
