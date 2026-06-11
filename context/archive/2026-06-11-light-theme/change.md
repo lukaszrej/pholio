@@ -1,10 +1,10 @@
 ---
 change_id: light-theme
 title: Light theme
-status: impl_reviewed
+status: archived
 created: 2026-06-11
 updated: 2026-06-11
-archived_at: null
+archived_at: 2026-06-11T09:27:27Z
 ---
 
 ## Notes
