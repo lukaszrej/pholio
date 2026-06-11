@@ -20,6 +20,15 @@ If you connect a Cloudflare Worker to a GitHub repo via the Cloudflare dashboard
 
 ---
 
+## Always include both USING and WITH CHECK on Supabase RLS UPDATE policies
+
+- **Context**: `supabase/migrations/` — any table with an UPDATE RLS policy
+- **Problem**: The `prices` migration's UPDATE policy only had `USING (auth.role() = 'authenticated')`, missing `WITH CHECK`. A follow-up fix migration (`20260609000001`) was needed to add it. Without `WITH CHECK`, Postgres enforces the condition on existing rows being read but not on the new row values being written.
+- **Rule**: Always define RLS UPDATE policies with both `USING (...)` **and** `WITH CHECK (...)`. Write both clauses even when they're identical.
+- **Applies to**: 10x-implement, 10x-plan, 10x-impl-review — any task touching Supabase migrations
+
+---
+
 ## Always use double quotes in TypeScript files
 
 - **Context**: Any new TypeScript file in src/
