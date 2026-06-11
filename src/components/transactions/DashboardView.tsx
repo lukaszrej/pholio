@@ -1,6 +1,12 @@
 import { useState, useMemo, Fragment } from "react";
 import type { Transaction } from "@/types/transaction";
-import { computePositions, computePortfolioSummary, computeSectorAllocation, type PriceData, type PortfolioPosition } from "@/lib/portfolio";
+import {
+  computePositions,
+  computePortfolioSummary,
+  computeSectorAllocation,
+  type PriceData,
+  type PortfolioPosition,
+} from "@/lib/portfolio";
 import SectorAllocationChart from "@/components/portfolio/SectorAllocationChart";
 import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
 import AddTransactionForm from "@/components/transactions/AddTransactionForm";
@@ -16,6 +22,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { formatSigned, pnlClass } from "@/lib/format";
 
 interface Props {
   initialTransactions: Transaction[];
@@ -35,17 +42,6 @@ function formatCurrentPrice(pos: PortfolioPosition): string {
     return `${price} ⚠ ${date}`;
   }
   return price;
-}
-
-function roiClass(value: number | null): string {
-  if (value === null) return "text-gray-400";
-  return value >= 0 ? "text-emerald-600" : "text-red-600";
-}
-
-function formatSigned(value: number | null, decimals = 2): string {
-  if (value === null) return "—";
-  const sign = value >= 0 ? "+" : "";
-  return `${sign}${value.toFixed(decimals)}`;
 }
 
 export default function DashboardView({ initialTransactions, initialPrices, initialSectors = {}, userEmail }: Props) {
@@ -137,112 +133,112 @@ export default function DashboardView({ initialTransactions, initialPrices, init
       ) : (
         <>
           <PortfolioSummaryCard summary={portfolioSummary} />
-        <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200 text-left text-gray-500">
-                <th className="px-4 py-3 font-medium">Ticker</th>
-                <th className="px-4 py-3 font-medium">Shares</th>
-                <th className="px-4 py-3 font-medium">Avg. Cost</th>
-                <th className="px-4 py-3 font-medium">Current Price</th>
-                <th className="px-4 py-3 font-medium">Value</th>
-                <th className="px-4 py-3 font-medium">Unrealized P&amp;L %</th>
-                <th className="px-4 py-3 font-medium">Unrealized P&amp;L</th>
-                <th className="w-8 px-2 py-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {positions.map((pos) => (
-                <Fragment key={pos.ticker}>
-                  <tr
-                    className="cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
-                    onClick={() => {
-                      toggleExpanded(pos.ticker);
-                    }}
-                  >
-                    <td className="px-4 py-3 font-semibold">{pos.ticker}</td>
-                    <td className="px-4 py-3">{pos.totalShares.toFixed(4)}</td>
-                    <td className="px-4 py-3">
-                      {pos.avgCost.toFixed(2)}
-                      {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
-                    </td>
-                    <td className="px-4 py-3">{formatCurrentPrice(pos)}</td>
-                    <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
-                    <td className={`px-4 py-3 ${roiClass(pos.roiPct)}`}>
-                      {formatSigned(pos.roiPct)}
-                      {pos.roiPct !== null && "%"}
-                    </td>
-                    <td className={`px-4 py-3 ${roiClass(pos.roiAbs)}`}>
-                      {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
-                    </td>
-                    <td className="px-2 py-3 text-gray-400">
-                      {expandedTickers.has(pos.ticker) ? (
-                        <ChevronDown className="size-4" />
-                      ) : (
-                        <ChevronRight className="size-4" />
-                      )}
-                    </td>
-                  </tr>
-                  {expandedTickers.has(pos.ticker) && (
-                    <tr key={`${pos.ticker}-txns`}>
-                      <td colSpan={8} className="bg-gray-50 px-6 pt-1 pb-3">
-                        <table className="w-full text-xs">
-                          <thead>
-                            <tr className="text-gray-400">
-                              <th className="py-1 text-left font-normal">Date</th>
-                              <th className="py-1 text-left font-normal">Shares</th>
-                              <th className="py-1 text-left font-normal">Price</th>
-                              <th className="py-1 text-left font-normal">Currency</th>
-                              <th></th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {transactions
-                              .filter((t) => t.ticker.toUpperCase() === pos.ticker)
-                              .sort((a, b) => a.purchase_date.localeCompare(b.purchase_date))
-                              .map((t) => (
-                                <tr key={t.id} className="border-t border-gray-100">
-                                  <td className="py-1.5">{t.purchase_date}</td>
-                                  <td className="py-1.5">{t.shares.toFixed(4)}</td>
-                                  <td className="py-1.5">{t.purchase_price.toFixed(2)}</td>
-                                  <td className="py-1.5">{t.currency}</td>
-                                  <td className="py-1.5">
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => {
-                                        setEditingTransaction(t);
-                                      }}
-                                    >
-                                      Edit
-                                    </Button>
-                                  </td>
-                                  <td className="py-1.5">
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-red-600 hover:text-red-600"
-                                      onClick={() => {
-                                        setDeleteError(null);
-                                        setDeletingTransaction(t);
-                                      }}
-                                    >
-                                      Delete
-                                    </Button>
-                                  </td>
-                                </tr>
-                              ))}
-                          </tbody>
-                        </table>
+          <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200 text-left text-gray-500">
+                  <th className="px-4 py-3 font-medium">Ticker</th>
+                  <th className="px-4 py-3 font-medium">Shares</th>
+                  <th className="px-4 py-3 font-medium">Avg. Cost</th>
+                  <th className="px-4 py-3 font-medium">Current Price</th>
+                  <th className="px-4 py-3 font-medium">Value</th>
+                  <th className="px-4 py-3 font-medium">Unrealized P&amp;L %</th>
+                  <th className="px-4 py-3 font-medium">Unrealized P&amp;L</th>
+                  <th className="w-8 px-2 py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {positions.map((pos) => (
+                  <Fragment key={pos.ticker}>
+                    <tr
+                      className="cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
+                      onClick={() => {
+                        toggleExpanded(pos.ticker);
+                      }}
+                    >
+                      <td className="px-4 py-3 font-semibold">{pos.ticker}</td>
+                      <td className="px-4 py-3">{pos.totalShares.toFixed(4)}</td>
+                      <td className="px-4 py-3">
+                        {pos.avgCost.toFixed(2)}
+                        {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
+                      </td>
+                      <td className="px-4 py-3">{formatCurrentPrice(pos)}</td>
+                      <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
+                      <td className={`px-4 py-3 ${pnlClass(pos.roiPct)}`}>
+                        {formatSigned(pos.roiPct)}
+                        {pos.roiPct !== null && "%"}
+                      </td>
+                      <td className={`px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
+                        {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
+                      </td>
+                      <td className="px-2 py-3 text-gray-400">
+                        {expandedTickers.has(pos.ticker) ? (
+                          <ChevronDown className="size-4" />
+                        ) : (
+                          <ChevronRight className="size-4" />
+                        )}
                       </td>
                     </tr>
-                  )}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    {expandedTickers.has(pos.ticker) && (
+                      <tr key={`${pos.ticker}-txns`}>
+                        <td colSpan={8} className="bg-gray-50 px-6 pt-1 pb-3">
+                          <table className="w-full text-xs">
+                            <thead>
+                              <tr className="text-gray-400">
+                                <th className="py-1 text-left font-normal">Date</th>
+                                <th className="py-1 text-left font-normal">Shares</th>
+                                <th className="py-1 text-left font-normal">Price</th>
+                                <th className="py-1 text-left font-normal">Currency</th>
+                                <th></th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {transactions
+                                .filter((t) => t.ticker.toUpperCase() === pos.ticker)
+                                .sort((a, b) => a.purchase_date.localeCompare(b.purchase_date))
+                                .map((t) => (
+                                  <tr key={t.id} className="border-t border-gray-100">
+                                    <td className="py-1.5">{t.purchase_date}</td>
+                                    <td className="py-1.5">{t.shares.toFixed(4)}</td>
+                                    <td className="py-1.5">{t.purchase_price.toFixed(2)}</td>
+                                    <td className="py-1.5">{t.currency}</td>
+                                    <td className="py-1.5">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                          setEditingTransaction(t);
+                                        }}
+                                      >
+                                        Edit
+                                      </Button>
+                                    </td>
+                                    <td className="py-1.5">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-red-600 hover:text-red-600"
+                                        onClick={() => {
+                                          setDeleteError(null);
+                                          setDeletingTransaction(t);
+                                        }}
+                                      >
+                                        Delete
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
 

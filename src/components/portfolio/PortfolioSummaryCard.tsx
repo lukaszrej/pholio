@@ -1,18 +1,8 @@
 import type { PortfolioSummary } from "@/lib/portfolio";
+import { formatSigned, pnlClass } from "@/lib/format";
 
 interface Props {
   summary: PortfolioSummary;
-}
-
-function pnlClass(value: number | null): string {
-  if (value === null) return "text-gray-400";
-  return value >= 0 ? "text-emerald-600" : "text-red-600";
-}
-
-function formatSigned(value: number | null, decimals = 2): string {
-  if (value === null) return "—";
-  const sign = value >= 0 ? "+" : "";
-  return `${sign}${value.toFixed(decimals)}`;
 }
 
 export default function PortfolioSummaryCard({ summary }: Props) {
@@ -29,25 +19,23 @@ export default function PortfolioSummaryCard({ summary }: Props) {
       </div>
       <div className="grid grid-cols-3 gap-6">
         <div>
-          <p className="mb-1 text-xs uppercase tracking-wide text-gray-500">Total Invested</p>
+          <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Total Invested</p>
           <p className="text-xl font-semibold text-gray-800">
             {totalInvested.toFixed(2)}
             {currencyLabel}
           </p>
         </div>
         <div>
-          <p className="mb-1 text-xs uppercase tracking-wide text-gray-500">Current Value</p>
+          <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Current Value</p>
           <p className="text-xl font-semibold text-gray-800">
             {currentValue !== null ? `${currentValue.toFixed(2)}${currencyLabel}` : "—"}
           </p>
         </div>
         <div>
-          <p className="mb-1 text-xs uppercase tracking-wide text-gray-500">Unrealized P&amp;L</p>
+          <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Unrealized P&amp;L</p>
           <p className={`text-xl font-semibold ${pnlClass(totalPnL)}`}>
             {totalPnL !== null ? `${formatSigned(totalPnL)}${currencyLabel}` : "—"}
-            {totalPnLPct !== null && (
-              <span className="ml-2 text-sm font-normal">({formatSigned(totalPnLPct)}%)</span>
-            )}
+            {totalPnLPct !== null && <span className="ml-2 text-sm font-normal">({formatSigned(totalPnLPct)}%)</span>}
           </p>
         </div>
       </div>
