@@ -292,8 +292,8 @@ No changes to the `transactions` or `prices` tables. The new `sectors` table is 
 
 #### Manual
 
-- [ ] 1.4 `sectors` table visible in Supabase Dashboard with correct columns
-- [ ] 1.5 RLS enabled on `sectors` table
+- [x] 1.4 `sectors` table visible in Supabase Dashboard with correct columns
+- [x] 1.5 RLS enabled on `sectors` table
 
 ### Phase 2: Finnhub sector client + dashboard.astro wiring
 
@@ -304,23 +304,23 @@ No changes to the `transactions` or `prices` tables. The new `sectors` table is 
 
 #### Manual
 
-- [ ] 2.3 Supabase `sectors` table has rows after first page load
-- [ ] 2.4 Second load within 7 days does not update `fetched_at` (cache hit)
-- [ ] 2.5 Ticker with no Finnhub coverage: no row in `sectors` table
+- [x] 2.3 Supabase `sectors` table has rows after first page load
+- [x] 2.4 Second load within 7 days does not update `fetched_at` (cache hit)
+- [x] 2.5 Ticker with no Finnhub coverage: no row in `sectors` table
 
 ### Phase 3: Sector allocation logic + donut chart + DashboardView integration
 
 #### Automated
 
-- [ ] 3.1 `npx astro check` passes with zero errors
-- [ ] 3.2 `npm run lint` passes
-- [ ] 3.3 `npm run build` succeeds
+- [x] 3.1 `npx astro check` passes with zero errors
+- [x] 3.2 `npm run lint` passes
+- [x] 3.3 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 3.4 Donut chart renders above portfolio table with "Sector Allocation" heading
-- [ ] 3.5 Slice percentages match expected allocation by position value
-- [ ] 3.6 Tooltip shows sector name, percentage, and value
-- [ ] 3.7 "Other" slice is gray when present
-- [ ] 3.8 Adding a transaction updates the chart without page reload
-- [ ] 3.9 Empty portfolio shows empty-state card in chart area
+- [x] 3.4 Donut chart renders above portfolio table with "Sector Allocation" heading
+- [x] 3.5 Slice percentages match expected allocation by position value
+- [x] 3.6 Tooltip shows sector name, percentage, and value
+- [x] 3.7 "Other" slice is gray when present
+- [x] 3.8 Adding a transaction updates the chart without page reload
+- [x] 3.9 Empty portfolio shows empty-state card in chart area

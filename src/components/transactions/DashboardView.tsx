@@ -1,6 +1,7 @@
 import { useState, useMemo, Fragment } from "react";
 import type { Transaction } from "@/types/transaction";
-import { computePositions, type PriceData, type PortfolioPosition } from "@/lib/portfolio";
+import { computePositions, computeSectorAllocation, type PriceData, type PortfolioPosition } from "@/lib/portfolio";
+import SectorAllocationChart from "@/components/portfolio/SectorAllocationChart";
 import AddTransactionForm from "@/components/transactions/AddTransactionForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -46,9 +47,10 @@ function formatSigned(value: number | null, decimals = 2): string {
   return `${sign}${value.toFixed(decimals)}`;
 }
 
-export default function DashboardView({ initialTransactions, initialPrices, userEmail }: Props) {
+export default function DashboardView({ initialTransactions, initialPrices, initialSectors = {}, userEmail }: Props) {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [prices] = useState(initialPrices); // prices are server-fetched once; new tickers show — until next page load
+  const [sectors] = useState(initialSectors);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [expandedTickers, setExpandedTickers] = useState<Set<string>>(new Set());
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
@@ -57,6 +59,7 @@ export default function DashboardView({ initialTransactions, initialPrices, user
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const positions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
+  const sectorSlices = useMemo(() => computeSectorAllocation(positions, sectors), [positions, sectors]);
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
@@ -122,6 +125,12 @@ export default function DashboardView({ initialTransactions, initialPrices, user
             </button>
           </form>
         </div>
+      </div>
+
+      {/* Sector Allocation Chart */}
+      <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+        <h2 className="mb-4 text-lg font-semibold text-blue-100/80">Sector Allocation</h2>
+        <SectorAllocationChart slices={sectorSlices} />
       </div>
 
       {/* Portfolio table or empty state */}

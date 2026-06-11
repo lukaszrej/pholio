@@ -1,5 +1,43 @@
 import type { Transaction } from "@/types/transaction";
 
+export interface SectorSlice {
+  sector: string;
+  value: number;
+  percentage: number;
+}
+
+export function computeSectorAllocation(
+  positions: PortfolioPosition[],
+  sectors: Record<string, string>,
+): SectorSlice[] {
+  const valued = positions.filter((p): p is PortfolioPosition & { positionValue: number } => p.positionValue !== null);
+  const sectorTotals = new Map<string, number>();
+
+  for (const pos of valued) {
+    const sector = sectors[pos.ticker] ?? "Other";
+    sectorTotals.set(sector, (sectorTotals.get(sector) ?? 0) + pos.positionValue);
+  }
+
+  const total = [...sectorTotals.values()].reduce((sum, v) => sum + v, 0);
+  if (total === 0) return [];
+
+  const slices: SectorSlice[] = [...sectorTotals.entries()].map(([sector, value]) => ({
+    sector,
+    value,
+    percentage: (value / total) * 100,
+  }));
+
+  slices.sort((a, b) => b.value - a.value);
+
+  const otherIdx = slices.findIndex((s) => s.sector === "Other");
+  if (otherIdx > 0) {
+    const [other] = slices.splice(otherIdx, 1);
+    slices.push(other);
+  }
+
+  return slices;
+}
+
 export interface PriceData {
   price: number;
   fetched_at: string;
