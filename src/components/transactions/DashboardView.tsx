@@ -1,7 +1,8 @@
 import { useState, useMemo, Fragment } from "react";
 import type { Transaction } from "@/types/transaction";
-import { computePositions, computeSectorAllocation, type PriceData, type PortfolioPosition } from "@/lib/portfolio";
+import { computePositions, computePortfolioSummary, computeSectorAllocation, type PriceData, type PortfolioPosition } from "@/lib/portfolio";
 import SectorAllocationChart from "@/components/portfolio/SectorAllocationChart";
+import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
 import AddTransactionForm from "@/components/transactions/AddTransactionForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -60,6 +61,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
 
   const positions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
   const sectorSlices = useMemo(() => computeSectorAllocation(positions, sectors), [positions, sectors]);
+  const portfolioSummary = useMemo(() => computePortfolioSummary(positions), [positions]);
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
@@ -133,6 +135,8 @@ export default function DashboardView({ initialTransactions, initialPrices, init
           <p className="text-gray-500">No transactions yet</p>
         </div>
       ) : (
+        <>
+          <PortfolioSummaryCard summary={portfolioSummary} />
         <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
           <table className="w-full text-sm">
             <thead>
@@ -239,6 +243,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       {/* Add transaction button — always below the table/empty state */}

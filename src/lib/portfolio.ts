@@ -26,6 +26,37 @@ export interface SectorSlice {
   percentage: number;
 }
 
+export interface PortfolioSummary {
+  positionCount: number;
+  totalInvested: number;
+  currentValue: number | null;
+  totalPnL: number | null;
+  totalPnLPct: number | null;
+  currency: string | null;
+}
+
+export function computePortfolioSummary(positions: PortfolioPosition[]): PortfolioSummary {
+  const positionCount = positions.length;
+
+  const totalInvested = positions.reduce((sum, p) => sum + p.avgCost * p.totalShares, 0);
+
+  const valuedPositions = positions.filter(
+    (p): p is PortfolioPosition & { positionValue: number } => p.positionValue !== null,
+  );
+  const currentValue = valuedPositions.length > 0 ? valuedPositions.reduce((sum, p) => sum + p.positionValue, 0) : null;
+
+  const pnlPositions = positions.filter((p): p is PortfolioPosition & { roiAbs: number } => p.roiAbs !== null);
+  const totalPnL = pnlPositions.length > 0 ? pnlPositions.reduce((sum, p) => sum + p.roiAbs, 0) : null;
+
+  const pnlCostBasis = pnlPositions.reduce((sum, p) => sum + p.avgCost * p.totalShares, 0);
+  const totalPnLPct = totalPnL !== null && pnlCostBasis > 0 ? (totalPnL / pnlCostBasis) * 100 : null;
+
+  const currencies = new Set(positions.filter((p) => !p.hasMultipleCurrencies).map((p) => p.currency));
+  const currency = currencies.size === 1 ? [...currencies][0] : null;
+
+  return { positionCount, totalInvested, currentValue, totalPnL, totalPnLPct, currency };
+}
+
 export function computeSectorAllocation(
   positions: PortfolioPosition[],
   sectors: Record<string, string>,
