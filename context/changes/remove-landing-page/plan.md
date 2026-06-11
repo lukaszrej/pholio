@@ -176,25 +176,25 @@ directly to `/auth/signin`, removing any reliance on the now-deleted landing pag
 
 #### Automated
 
-- [x] 1.1 TypeScript type-check passes with no missing-import errors
-- [x] 1.2 Lint passes
-- [x] 1.3 Build succeeds
+- [x] 1.1 TypeScript type-check passes with no missing-import errors — d6b29e1
+- [x] 1.2 Lint passes — d6b29e1
+- [x] 1.3 Build succeeds — d6b29e1
 
 #### Manual
 
-- [x] 1.4 Visiting `/` returns a 404 in dev server (page is gone)
+- [x] 1.4 Visiting `/` returns a 404 in dev server (page is gone) — d6b29e1
 
 ### Phase 2: Wire Root Redirect and Fix Sign-Out Target
 
 #### Automated
 
-- [ ] 2.1 TypeScript type-check passes
-- [ ] 2.2 Lint passes
-- [ ] 2.3 Build succeeds
+- [x] 2.1 TypeScript type-check passes
+- [x] 2.2 Lint passes
+- [x] 2.3 Build succeeds
 
 #### Manual
 
-- [ ] 2.4 Unauthenticated visit to `/` redirects to `/auth/signin`
-- [ ] 2.5 Authenticated visit to `/` redirects to `/dashboard`
-- [ ] 2.6 Sign-out lands on `/auth/signin`
-- [ ] 2.7 No regressions on other auth flows
+- [x] 2.4 Unauthenticated visit to `/` redirects to `/auth/signin`
+- [x] 2.5 Authenticated visit to `/` redirects to `/dashboard`
+- [x] 2.6 Sign-out lands on `/auth/signin`
+- [x] 2.7 No regressions on other auth flows
