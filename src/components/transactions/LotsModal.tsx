@@ -14,7 +14,7 @@ interface Props {
 
 export default function LotsModal({ ticker, open, onOpenChange, transactions, onEditRequest, onDeleteRequest }: Props) {
   const lots = transactions
-    .filter((t) => t.ticker.toUpperCase() === ticker)
+    .filter((t) => t.ticker.toUpperCase() === ticker.toUpperCase())
     .sort((a, b) => a.purchase_date.localeCompare(b.purchase_date));
 
   return (

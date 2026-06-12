@@ -1,4 +1,4 @@
-import { useState, useMemo, Fragment } from "react";
+import { useState, useMemo } from "react";
 import type { Transaction } from "@/types/transaction";
 import {
   computePositions,
@@ -87,6 +87,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
         setDeleteError(json.error ?? "Unexpected error");
         return;
       }
+      // read pre-delete state before setTransactions updates the array
       const ticker = deletingTransaction.ticker.toUpperCase();
       const hasRemainingLots = transactions.some(
         (t) => t.id !== deletingTransaction.id && t.ticker.toUpperCase() === ticker,
@@ -146,38 +147,37 @@ export default function DashboardView({ initialTransactions, initialPrices, init
               </thead>
               <tbody>
                 {positions.map((pos) => (
-                  <Fragment key={pos.ticker}>
-                    <tr
-                      className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
-                      onClick={() => {
-                        setSelectedTicker(pos.ticker);
-                      }}
-                    >
-                      <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
-                        {pos.ticker}
-                      </td>
-                      <td className="px-4 py-3">{formatShares(pos.totalShares)}</td>
-                      <td className="px-4 py-3">
-                        {pos.avgCost.toFixed(2)}
-                        {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
-                      </td>
-                      <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>
-                        {formatCurrentPrice(pos)}
-                      </td>
-                      <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>{formatPriceDate(pos)}</td>
-                      <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
-                      <td className={`px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
-                        {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
-                      </td>
-                      <td className={`px-4 py-3 ${pnlClass(pos.roiPct)}`}>
-                        {formatSigned(pos.roiPct)}
-                        {pos.roiPct !== null && "%"}
-                      </td>
-                      <td className="px-2 py-3 text-gray-400">
-                        <ChevronRight className="size-4" />
-                      </td>
-                    </tr>
-                  </Fragment>
+                  <tr
+                    key={pos.ticker}
+                    className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
+                    onClick={() => {
+                      setSelectedTicker(pos.ticker);
+                    }}
+                  >
+                    <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
+                      {pos.ticker}
+                    </td>
+                    <td className="px-4 py-3">{formatShares(pos.totalShares)}</td>
+                    <td className="px-4 py-3">
+                      {pos.avgCost.toFixed(2)}
+                      {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
+                    </td>
+                    <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>
+                      {formatCurrentPrice(pos)}
+                    </td>
+                    <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>{formatPriceDate(pos)}</td>
+                    <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
+                    <td className={`px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
+                      {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
+                    </td>
+                    <td className={`px-4 py-3 ${pnlClass(pos.roiPct)}`}>
+                      {formatSigned(pos.roiPct)}
+                      {pos.roiPct !== null && "%"}
+                    </td>
+                    <td className="px-2 py-3 text-gray-400">
+                      <ChevronRight className="size-4" />
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -258,7 +258,10 @@ export default function DashboardView({ initialTransactions, initialPrices, init
       <AlertDialog
         open={deletingTransaction !== null}
         onOpenChange={(open) => {
-          if (!open && !isDeleteLoading) setDeletingTransaction(null);
+          if (!open && !isDeleteLoading) {
+            setDeletingTransaction(null);
+            setDeleteError(null);
+          }
         }}
       >
         <AlertDialogContent>

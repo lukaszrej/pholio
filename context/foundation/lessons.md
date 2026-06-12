@@ -29,6 +29,15 @@ If you connect a Cloudflare Worker to a GitHub repo via the Cloudflare dashboard
 
 ---
 
+## When specifying utility helper signatures in plans, check actual TypeScript field types
+
+- **Context**: `src/lib/format.ts` — format helpers consumed by portfolio/transaction UI components
+- **Problem**: Plan spec'd `formatShares(n: number)` but `Transaction.shares` is `number | null`. Implementation correctly widened the signature, but it created a plan-drift note that was avoidable. Database-backed interfaces frequently have nullable fields.
+- **Rule**: Before specifying a function signature in a plan, look up the actual TypeScript type of the fields it will receive (especially in `src/types/`). Format helpers that receive database-sourced values should default to accepting `T | null` signatures unless the field is provably non-nullable in the schema.
+- **Applies to**: 10x-plan, 10x-impl-review — any task specifying utility or format function signatures
+
+---
+
 ## Always use double quotes in TypeScript files
 
 - **Context**: Any new TypeScript file in src/
