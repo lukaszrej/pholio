@@ -38,7 +38,9 @@ function formatCurrentPrice(pos: PortfolioPosition): string {
 
 function formatPriceDate(pos: PortfolioPosition): string {
   if (pos.priceDate === null) return "—";
-  return new Date(pos.priceDate).toLocaleDateString("en-GB", {
+  const date = new Date(pos.priceDate);
+  if (isNaN(date.getTime())) return "—";
+  return date.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
   });
@@ -165,8 +167,10 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                         {pos.avgCost.toFixed(2)}
                         {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
                       </td>
-                      <td className="px-4 py-3">{formatCurrentPrice(pos)}</td>
-                      <td className={`px-4 py-3 ${!pos.isFresh ? "text-gray-400" : ""}`}>{formatPriceDate(pos)}</td>
+                      <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>
+                        {formatCurrentPrice(pos)}
+                      </td>
+                      <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>{formatPriceDate(pos)}</td>
                       <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
                       <td className={`px-4 py-3 ${pnlClass(pos.roiPct)}`}>
                         {formatSigned(pos.roiPct)}

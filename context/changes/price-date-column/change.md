@@ -1,7 +1,7 @@
 ---
 change_id: price-date-column
 title: Price date column
-status: implemented
+status: impl_reviewed
 created: 2026-06-12
 updated: 2026-06-12
 archived_at: null
