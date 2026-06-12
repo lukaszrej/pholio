@@ -206,12 +206,12 @@ Add two new columns to the portfolio table. "% of net liq" is inserted after the
 
 #### Automated
 
-- [x] 2.1 TypeScript typecheck passes (`npm run typecheck`)
-- [x] 2.2 Lint passes (`npm run lint`)
+- [x] 2.1 TypeScript typecheck passes (`npm run typecheck`) — 173077a
+- [x] 2.2 Lint passes (`npm run lint`) — 173077a
 
 #### Manual
 
-- [x] 2.3 "% of net liq" appears as second column (after Ticker, before Shares); shows `X.XX%` for priced rows, "—" for unpriced
-- [x] 2.4 Sum of all "% of net liq" values for priced rows ≈ 100%
-- [x] 2.5 "Cost basis" appears immediately before "Market value"; shows `avgCost × totalShares` to 2 decimals, no currency suffix
-- [x] 2.6 Existing columns (Shares, Avg. Price, Current Price, Price Date, Unrealized P&L, Unrealized P&L %) are correct and unaffected
+- [x] 2.3 "% of net liq" appears as second column (after Ticker, before Shares); shows `X.XX%` for priced rows, "—" for unpriced — 173077a
+- [x] 2.4 Sum of all "% of net liq" values for priced rows ≈ 100% — 173077a
+- [x] 2.5 "Cost basis" appears immediately before "Market value"; shows `avgCost × totalShares` to 2 decimals, no currency suffix — 173077a
+- [x] 2.6 Existing columns (Shares, Avg. Price, Current Price, Price Date, Unrealized P&L, Unrealized P&L %) are correct and unaffected — 173077a
