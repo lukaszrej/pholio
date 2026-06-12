@@ -33,15 +33,15 @@ interface Props {
 
 function formatCurrentPrice(pos: PortfolioPosition): string {
   if (pos.currentPrice === null) return "—";
-  const price = pos.currentPrice.toFixed(2);
-  if (!pos.isFresh && pos.priceDate) {
-    const date = new Date(pos.priceDate).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-    });
-    return `${price} ⚠ ${date}`;
-  }
-  return price;
+  return pos.currentPrice.toFixed(2);
+}
+
+function formatPriceDate(pos: PortfolioPosition): string {
+  if (pos.priceDate === null) return "—";
+  return new Date(pos.priceDate).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+  });
 }
 
 export default function DashboardView({ initialTransactions, initialPrices, initialSectors = {}, userEmail }: Props) {
@@ -141,6 +141,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                   <th className="px-4 py-3 font-medium">Shares</th>
                   <th className="px-4 py-3 font-medium">Avg. Cost</th>
                   <th className="px-4 py-3 font-medium">Current Price</th>
+                  <th className="px-4 py-3 font-medium">Price Date</th>
                   <th className="px-4 py-3 font-medium">Value</th>
                   <th className="px-4 py-3 font-medium">Unrealized P&amp;L %</th>
                   <th className="px-4 py-3 font-medium">Unrealized P&amp;L</th>
@@ -165,6 +166,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                         {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
                       </td>
                       <td className="px-4 py-3">{formatCurrentPrice(pos)}</td>
+                      <td className={`px-4 py-3 ${!pos.isFresh ? "text-gray-400" : ""}`}>{formatPriceDate(pos)}</td>
                       <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
                       <td className={`px-4 py-3 ${pnlClass(pos.roiPct)}`}>
                         {formatSigned(pos.roiPct)}
@@ -183,7 +185,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                     </tr>
                     {expandedTickers.has(pos.ticker) && (
                       <tr key={`${pos.ticker}-txns`}>
-                        <td colSpan={8} className="overflow-x-auto bg-gray-50 px-6 pt-1 pb-3">
+                        <td colSpan={9} className="overflow-x-auto bg-gray-50 px-6 pt-1 pb-3">
                           <table className="w-full text-xs">
                             <thead>
                               <tr className="text-gray-400">
