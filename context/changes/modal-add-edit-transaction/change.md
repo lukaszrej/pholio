@@ -1,7 +1,7 @@
 ---
 change_id: modal-add-edit-transaction
 title: Modal add/edit transaction
-status: impl_reviewed
+status: implemented
 created: 2026-06-12
 updated: 2026-06-13
 archived_at: null
