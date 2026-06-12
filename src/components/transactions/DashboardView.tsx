@@ -135,10 +135,12 @@ export default function DashboardView({ initialTransactions, initialPrices, init
               <thead>
                 <tr className="border-b border-gray-200 text-left text-gray-500">
                   <th className="sticky left-0 z-20 bg-white px-4 py-3 font-medium">Ticker</th>
+                  <th className="px-4 py-3 font-medium">% of net liq</th>
                   <th className="px-4 py-3 font-medium">Shares</th>
                   <th className="px-4 py-3 font-medium">Avg. Price</th>
                   <th className="px-4 py-3 font-medium">Current Price</th>
                   <th className="px-4 py-3 font-medium">Price Date</th>
+                  <th className="px-4 py-3 font-medium">Cost basis</th>
                   <th className="px-4 py-3 font-medium">Market value</th>
                   <th className="px-4 py-3 font-medium">Unrealized P&amp;L</th>
                   <th className="px-4 py-3 font-medium">Unrealized P&amp;L %</th>
@@ -157,6 +159,11 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                     <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
                       {pos.ticker}
                     </td>
+                    <td className="px-4 py-3">
+                      {pos.positionValue !== null && portfolioSummary.currentValue !== null
+                        ? ((pos.positionValue / portfolioSummary.currentValue) * 100).toFixed(2) + "%"
+                        : "—"}
+                    </td>
                     <td className="px-4 py-3">{formatShares(pos.totalShares)}</td>
                     <td className="px-4 py-3">
                       {pos.avgCost.toFixed(2)}
@@ -166,6 +173,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       {formatCurrentPrice(pos)}
                     </td>
                     <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>{formatPriceDate(pos)}</td>
+                    <td className="px-4 py-3">{(pos.avgCost * pos.totalShares).toFixed(2)}</td>
                     <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
                     <td className={`px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
                       {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}

@@ -193,25 +193,25 @@ Add two new columns to the portfolio table. "% of net liq" is inserted after the
 
 #### Automated
 
-- [x] 1.1 TypeScript typecheck passes (`npm run typecheck`)
-- [x] 1.2 Lint passes (`npm run lint`)
+- [x] 1.1 TypeScript typecheck passes (`npm run typecheck`) — b53a709
+- [x] 1.2 Lint passes (`npm run lint`) — b53a709
 
 #### Manual
 
-- [ ] 1.3 "Value" column header now reads "Market value" in the UI
-- [ ] 1.4 "Current Value" summary label now reads "Market value" in the UI
-- [ ] 1.5 All cell values are unchanged
+- [x] 1.3 "Value" column header now reads "Market value" in the UI
+- [x] 1.4 "Current Value" summary label now reads "Market value" in the UI
+- [x] 1.5 All cell values are unchanged
 
 ### Phase 2: Add % of Net Liq and Cost Basis Columns
 
 #### Automated
 
-- [ ] 2.1 TypeScript typecheck passes (`npm run typecheck`)
-- [ ] 2.2 Lint passes (`npm run lint`)
+- [x] 2.1 TypeScript typecheck passes (`npm run typecheck`)
+- [x] 2.2 Lint passes (`npm run lint`)
 
 #### Manual
 
-- [ ] 2.3 "% of net liq" appears as second column (after Ticker, before Shares); shows `X.XX%` for priced rows, "—" for unpriced
-- [ ] 2.4 Sum of all "% of net liq" values for priced rows ≈ 100%
-- [ ] 2.5 "Cost basis" appears immediately before "Market value"; shows `avgCost × totalShares` to 2 decimals, no currency suffix
-- [ ] 2.6 Existing columns (Shares, Avg. Price, Current Price, Price Date, Unrealized P&L, Unrealized P&L %) are correct and unaffected
+- [x] 2.3 "% of net liq" appears as second column (after Ticker, before Shares); shows `X.XX%` for priced rows, "—" for unpriced
+- [x] 2.4 Sum of all "% of net liq" values for priced rows ≈ 100%
+- [x] 2.5 "Cost basis" appears immediately before "Market value"; shows `avgCost × totalShares` to 2 decimals, no currency suffix
+- [x] 2.6 Existing columns (Shares, Avg. Price, Current Price, Price Date, Unrealized P&L, Unrealized P&L %) are correct and unaffected
