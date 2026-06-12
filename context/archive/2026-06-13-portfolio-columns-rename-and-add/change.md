@@ -1,10 +1,10 @@
 ---
 change_id: portfolio-columns-rename-and-add
 title: Portfolio table: add Cost basis and % of net liq columns, rename value labels
-status: implemented
+status: archived
 created: 2026-06-13
 updated: 2026-06-13
-archived_at: null
+archived_at: 2026-06-12T22:13:44Z
 ---
 
 ## Notes
