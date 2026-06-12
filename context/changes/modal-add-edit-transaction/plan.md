@@ -249,14 +249,14 @@ In `handleDeleteConfirm` (line 91), add the auto-close logic after the `response
 
 #### Automated
 
-- [x] 2.1 TypeScript compiles with no errors after Phase 2 changes
-- [x] 2.2 Lint passes on DashboardView
+- [x] 2.1 TypeScript compiles with no errors after Phase 2 changes — a8217d7
+- [x] 2.2 Lint passes on DashboardView — a8217d7
 
 #### Manual
 
-- [ ] 2.3 Clicking a ticker row opens LotsModal with correct ticker and lots
-- [ ] 2.4 Edit button inside LotsModal opens Edit dialog; saving updates the lot in-place
-- [ ] 2.5 Delete button inside LotsModal opens Delete confirmation; confirming removes the lot
-- [ ] 2.6 Deleting last lot for a ticker auto-closes LotsModal
-- [ ] 2.7 Global "Add transaction" button still opens Add dialog (no ticker pre-filled)
-- [ ] 2.8 No inline sub-table expansion remains on any ticker row
+- [x] 2.3 Clicking a ticker row opens LotsModal with correct ticker and lots
+- [x] 2.4 Edit button inside LotsModal opens Edit dialog; saving updates the lot in-place
+- [x] 2.5 Delete button inside LotsModal opens Delete confirmation; confirming removes the lot
+- [x] 2.6 Deleting last lot for a ticker auto-closes LotsModal
+- [x] 2.7 Global "Add transaction" button still opens Add dialog (no ticker pre-filled)
+- [x] 2.8 No inline sub-table expansion remains on any ticker row
