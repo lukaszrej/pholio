@@ -15,7 +15,9 @@ export interface PortfolioPosition {
   currentPrice: number | null;
   isFresh: boolean;
   priceDate: string | null;
+  costBasis: number;
   positionValue: number | null;
+  weightPct: number | null;
   roiPct: number | null;
   roiAbs: number | null;
 }
@@ -105,7 +107,7 @@ export function computePositions(transactions: Transaction[], prices: Record<str
     }
   }
 
-  return [...groups.entries()].map(([ticker, txns]) => {
+  const rawPositions = [...groups.entries()].map(([ticker, txns]) => {
     const totalShares = txns.reduce((sum, t) => sum + t.shares, 0);
     const weightedSum = txns.reduce((sum, t) => sum + t.shares * t.purchase_price, 0);
     const avgCost = totalShares > 0 ? weightedSum / totalShares : 0;
@@ -116,6 +118,7 @@ export function computePositions(transactions: Transaction[], prices: Record<str
     const currentPrice = priceEntry?.price ?? null;
     const isFresh = priceEntry?.is_fresh ?? false;
     const priceDate = priceEntry?.fetched_at ?? null;
+    const costBasis = avgCost * totalShares;
     const positionValue = currentPrice != null ? currentPrice * totalShares : null;
     const roiAbs = !hasMultipleCurrencies && currentPrice != null ? (currentPrice - avgCost) * totalShares : null;
     const roiPct = !hasMultipleCurrencies && currentPrice != null ? ((currentPrice - avgCost) / avgCost) * 100 : null;
@@ -129,9 +132,16 @@ export function computePositions(transactions: Transaction[], prices: Record<str
       currentPrice,
       isFresh,
       priceDate,
+      costBasis,
       positionValue,
       roiAbs,
       roiPct,
     };
   });
+
+  const totalValue = rawPositions.reduce((sum, p) => (p.positionValue != null ? sum + p.positionValue : sum), 0);
+  return rawPositions.map((p) => ({
+    ...p,
+    weightPct: p.positionValue !== null && totalValue > 0 ? (p.positionValue / totalValue) * 100 : null,
+  }));
 }
