@@ -15,7 +15,8 @@
       "Read",
       "Edit",
       "Write",
-      "WebSearch"
+      "WebSearch",
+      "Bash(echo \"exit:$?\")"
     ],
     "deny": [
       "Bash(rm -rf *)"
