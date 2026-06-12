@@ -128,14 +128,14 @@ Edit `DashboardView.tsx` to split the current combined price+date string into tw
 
 #### Automated
 
-- [x] 1.1 Linting passes: `npm run lint`
-- [x] 1.2 Type checking passes: `npm run typecheck`
+- [x] 1.1 Linting passes: `npm run lint` — eb84bcd
+- [x] 1.2 Type checking passes: `npm run typecheck` — eb84bcd
 
 #### Manual
 
-- [x] 1.3 "Price Date" column appears to the right of "Current Price"
-- [x] 1.4 Price cells show plain numbers only — no ⚠ triangle
-- [x] 1.5 Fresh dates render in normal colour; stale dates in muted grey
-- [x] 1.6 Tickers with no price show "—" in the Price Date column
-- [x] 1.7 Expanded position row still spans full table width
-- [x] 1.8 Horizontal scroll on mobile still works
+- [x] 1.3 "Price Date" column appears to the right of "Current Price" — eb84bcd
+- [x] 1.4 Price cells show plain numbers only — no ⚠ triangle — eb84bcd
+- [x] 1.5 Fresh dates render in normal colour; stale dates in muted grey — eb84bcd
+- [x] 1.6 Tickers with no price show "—" in the Price Date column — eb84bcd
+- [x] 1.7 Expanded position row still spans full table width — eb84bcd
+- [x] 1.8 Horizontal scroll on mobile still works — eb84bcd
