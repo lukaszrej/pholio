@@ -1,4 +1,5 @@
-export function formatShares(n: number): string {
+export function formatShares(n: number | null): string {
+  if (n == null || isNaN(n)) return "—";
   if (Number.isInteger(n)) return String(n);
   return n.toFixed(4).replace(/\.?0+$/, "");
 }

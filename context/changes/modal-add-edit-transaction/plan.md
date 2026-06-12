@@ -238,19 +238,19 @@ In `handleDeleteConfirm` (line 91), add the auto-close logic after the `response
 
 #### Automated
 
-- [x] 1.1 TypeScript compiles with no errors after Phase 1 changes
-- [x] 1.2 Lint passes on LotsModal, format.ts, DashboardView
+- [x] 1.1 TypeScript compiles with no errors after Phase 1 changes — 2fc306a
+- [x] 1.2 Lint passes on LotsModal, format.ts, DashboardView — 2fc306a
 
 #### Manual
 
-- [ ] 1.3 UI unchanged — inline row expansion still works after Phase 1
+- [x] 1.3 UI unchanged — inline row expansion still works after Phase 1 — 2fc306a
 
 ### Phase 2: Replace Inline Expansion with `LotsModal` in `DashboardView`
 
 #### Automated
 
-- [ ] 2.1 TypeScript compiles with no errors after Phase 2 changes
-- [ ] 2.2 Lint passes on DashboardView
+- [x] 2.1 TypeScript compiles with no errors after Phase 2 changes
+- [x] 2.2 Lint passes on DashboardView
 
 #### Manual
 

@@ -10,6 +10,7 @@ import {
 import SectorAllocationChart from "@/components/portfolio/SectorAllocationChart";
 import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
 import AddTransactionForm from "@/components/transactions/AddTransactionForm";
+import LotsModal from "@/components/transactions/LotsModal";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -21,7 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { formatShares, formatSigned, pnlClass } from "@/lib/format";
 
 interface Props {
@@ -51,7 +52,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
   const [prices] = useState(initialPrices); // prices are server-fetched once; new tickers show — until next page load
   const [sectors] = useState(initialSectors);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [expandedTickers, setExpandedTickers] = useState<Set<string>>(new Set());
+  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -64,18 +65,6 @@ export default function DashboardView({ initialTransactions, initialPrices, init
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
     setIsDialogOpen(false);
-  }
-
-  function toggleExpanded(ticker: string) {
-    setExpandedTickers((prev) => {
-      const next = new Set(prev);
-      if (next.has(ticker)) {
-        next.delete(ticker);
-      } else {
-        next.add(ticker);
-      }
-      return next;
-    });
   }
 
   function handleEditSuccess(updated: Transaction) {
@@ -98,8 +87,13 @@ export default function DashboardView({ initialTransactions, initialPrices, init
         setDeleteError(json.error ?? "Unexpected error");
         return;
       }
+      const ticker = deletingTransaction.ticker.toUpperCase();
+      const hasRemainingLots = transactions.some(
+        (t) => t.id !== deletingTransaction.id && t.ticker.toUpperCase() === ticker,
+      );
       setTransactions((prev) => prev.filter((t) => t.id !== deletingTransaction.id));
       setDeletingTransaction(null);
+      if (!hasRemainingLots) setSelectedTicker(null);
     } catch {
       setDeleteError("Network error. Please check your connection and try again.");
     } finally {
@@ -156,7 +150,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                     <tr
                       className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
                       onClick={() => {
-                        toggleExpanded(pos.ticker);
+                        setSelectedTicker(pos.ticker);
                       }}
                     >
                       <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
@@ -180,68 +174,9 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                         {pos.roiPct !== null && "%"}
                       </td>
                       <td className="px-2 py-3 text-gray-400">
-                        {expandedTickers.has(pos.ticker) ? (
-                          <ChevronDown className="size-4" />
-                        ) : (
-                          <ChevronRight className="size-4" />
-                        )}
+                        <ChevronRight className="size-4" />
                       </td>
                     </tr>
-                    {expandedTickers.has(pos.ticker) && (
-                      <tr key={`${pos.ticker}-txns`}>
-                        <td colSpan={9} className="overflow-x-auto bg-gray-50 px-6 pt-1 pb-3">
-                          <table className="w-full text-xs">
-                            <thead>
-                              <tr className="text-gray-400">
-                                <th className="py-1 text-left font-normal">Date</th>
-                                <th className="py-1 text-left font-normal">Shares</th>
-                                <th className="py-1 text-left font-normal">Price</th>
-                                <th className="py-1 text-left font-normal">Currency</th>
-                                <th></th>
-                                <th></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {transactions
-                                .filter((t) => t.ticker.toUpperCase() === pos.ticker)
-                                .sort((a, b) => a.purchase_date.localeCompare(b.purchase_date))
-                                .map((t) => (
-                                  <tr key={t.id} className="border-t border-gray-100">
-                                    <td className="py-1.5">{t.purchase_date}</td>
-                                    <td className="py-1.5">{formatShares(t.shares)}</td>
-                                    <td className="py-1.5">{t.purchase_price.toFixed(2)}</td>
-                                    <td className="py-1.5">{t.currency}</td>
-                                    <td className="py-1.5">
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => {
-                                          setEditingTransaction(t);
-                                        }}
-                                      >
-                                        Edit
-                                      </Button>
-                                    </td>
-                                    <td className="py-1.5">
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="text-red-600 hover:text-red-600"
-                                        onClick={() => {
-                                          setDeleteError(null);
-                                          setDeletingTransaction(t);
-                                        }}
-                                      >
-                                        Delete
-                                      </Button>
-                                    </td>
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </table>
-                        </td>
-                      </tr>
-                    )}
                   </Fragment>
                 ))}
               </tbody>
@@ -303,6 +238,21 @@ export default function DashboardView({ initialTransactions, initialPrices, init
           />
         </DialogContent>
       </Dialog>
+
+      {/* Lots modal */}
+      <LotsModal
+        ticker={selectedTicker ?? ""}
+        open={selectedTicker !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedTicker(null);
+        }}
+        transactions={transactions}
+        onEditRequest={setEditingTransaction}
+        onDeleteRequest={(t) => {
+          setDeleteError(null);
+          setDeletingTransaction(t);
+        }}
+      />
 
       {/* Delete confirmation dialog */}
       <AlertDialog
