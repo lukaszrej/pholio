@@ -139,7 +139,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                   <th className="px-4 py-3 font-medium">Avg. Price</th>
                   <th className="px-4 py-3 font-medium">Current Price</th>
                   <th className="px-4 py-3 font-medium">Price Date</th>
-                  <th className="px-4 py-3 font-medium">Value</th>
+                  <th className="px-4 py-3 font-medium">Market value</th>
                   <th className="px-4 py-3 font-medium">Unrealized P&amp;L</th>
                   <th className="px-4 py-3 font-medium">Unrealized P&amp;L %</th>
                   <th className="w-8 px-2 py-3"></th>

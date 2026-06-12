@@ -26,7 +26,7 @@ export default function PortfolioSummaryCard({ summary }: Props) {
           </p>
         </div>
         <div>
-          <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Current Value</p>
+          <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Market value</p>
           <p className="text-xl font-semibold text-gray-800">
             {currentValue !== null ? `${currentValue.toFixed(2)}${currencyLabel}` : "—"}
           </p>
