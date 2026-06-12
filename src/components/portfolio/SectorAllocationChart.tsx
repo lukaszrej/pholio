@@ -24,14 +24,18 @@ interface Props {
 }
 
 function useIsSmall() {
-  const [isSmall, setIsSmall] = useState(false);
+  const [isSmall, setIsSmall] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches,
+  );
   useEffect(() => {
-    if (!window.matchMedia) return;
     const mq = window.matchMedia("(max-width: 767px)");
-    setIsSmall(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsSmall(e.matches);
+    const handler = (e: MediaQueryListEvent) => {
+      setIsSmall(e.matches);
+    };
     mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    return () => {
+      mq.removeEventListener("change", handler);
+    };
   }, []);
   return isSmall;
 }
