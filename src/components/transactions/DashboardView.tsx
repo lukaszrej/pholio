@@ -22,18 +22,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
-import { formatSigned, pnlClass } from "@/lib/format";
+import { formatShares, formatSigned, pnlClass } from "@/lib/format";
 
 interface Props {
   initialTransactions: Transaction[];
   initialPrices: Record<string, PriceData>;
   initialSectors?: Record<string, string>;
   userEmail?: string;
-}
-
-function formatShares(n: number): string {
-  if (Number.isInteger(n)) return String(n);
-  return n.toFixed(4).replace(/\.?0+$/, "");
 }
 
 function formatCurrentPrice(pos: PortfolioPosition): string {
