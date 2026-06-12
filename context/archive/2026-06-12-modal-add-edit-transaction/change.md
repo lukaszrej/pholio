@@ -1,10 +1,10 @@
 ---
 change_id: modal-add-edit-transaction
 title: Modal add/edit transaction
-status: implemented
+status: archived
 created: 2026-06-12
 updated: 2026-06-13
-archived_at: null
+archived_at: 2026-06-12T21:16:41Z
 ---
 
 ## Notes
