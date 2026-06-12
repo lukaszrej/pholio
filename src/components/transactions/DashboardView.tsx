@@ -31,6 +31,11 @@ interface Props {
   userEmail?: string;
 }
 
+function formatShares(n: number): string {
+  if (Number.isInteger(n)) return String(n);
+  return n.toFixed(4).replace(/\.?0+$/, "");
+}
+
 function formatCurrentPrice(pos: PortfolioPosition): string {
   if (pos.currentPrice === null) return "—";
   return pos.currentPrice.toFixed(2);
@@ -141,12 +146,12 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                 <tr className="border-b border-gray-200 text-left text-gray-500">
                   <th className="sticky left-0 z-20 bg-white px-4 py-3 font-medium">Ticker</th>
                   <th className="px-4 py-3 font-medium">Shares</th>
-                  <th className="px-4 py-3 font-medium">Avg. Cost</th>
+                  <th className="px-4 py-3 font-medium">Avg. Price</th>
                   <th className="px-4 py-3 font-medium">Current Price</th>
                   <th className="px-4 py-3 font-medium">Price Date</th>
                   <th className="px-4 py-3 font-medium">Value</th>
-                  <th className="px-4 py-3 font-medium">Unrealized P&amp;L %</th>
                   <th className="px-4 py-3 font-medium">Unrealized P&amp;L</th>
+                  <th className="px-4 py-3 font-medium">Unrealized P&amp;L %</th>
                   <th className="w-8 px-2 py-3"></th>
                 </tr>
               </thead>
@@ -162,7 +167,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
                         {pos.ticker}
                       </td>
-                      <td className="px-4 py-3">{pos.totalShares.toFixed(4)}</td>
+                      <td className="px-4 py-3">{formatShares(pos.totalShares)}</td>
                       <td className="px-4 py-3">
                         {pos.avgCost.toFixed(2)}
                         {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
@@ -172,12 +177,12 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       </td>
                       <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>{formatPriceDate(pos)}</td>
                       <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
+                      <td className={`px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
+                        {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
+                      </td>
                       <td className={`px-4 py-3 ${pnlClass(pos.roiPct)}`}>
                         {formatSigned(pos.roiPct)}
                         {pos.roiPct !== null && "%"}
-                      </td>
-                      <td className={`px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
-                        {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
                       </td>
                       <td className="px-2 py-3 text-gray-400">
                         {expandedTickers.has(pos.ticker) ? (
@@ -208,7 +213,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                                 .map((t) => (
                                   <tr key={t.id} className="border-t border-gray-100">
                                     <td className="py-1.5">{t.purchase_date}</td>
-                                    <td className="py-1.5">{t.shares.toFixed(4)}</td>
+                                    <td className="py-1.5">{formatShares(t.shares)}</td>
                                     <td className="py-1.5">{t.purchase_price.toFixed(2)}</td>
                                     <td className="py-1.5">{t.currency}</td>
                                     <td className="py-1.5">
