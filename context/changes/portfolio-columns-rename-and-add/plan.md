@@ -198,9 +198,9 @@ Add two new columns to the portfolio table. "% of net liq" is inserted after the
 
 #### Manual
 
-- [x] 1.3 "Value" column header now reads "Market value" in the UI
-- [x] 1.4 "Current Value" summary label now reads "Market value" in the UI
-- [x] 1.5 All cell values are unchanged
+- [x] 1.3 "Value" column header now reads "Market value" in the UI — b53a709
+- [x] 1.4 "Current Value" summary label now reads "Market value" in the UI — b53a709
+- [x] 1.5 All cell values are unchanged — b53a709
 
 ### Phase 2: Add % of Net Liq and Cost Basis Columns
 
