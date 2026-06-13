@@ -18,7 +18,8 @@
       "WebSearch",
       "Bash(echo \"exit:$?\")",
       "Bash(echo \"staged_exit:$?\")",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "mcp__exa__web_search_exa"
     ],
     "deny": [
       "Bash(rm -rf *)"
