@@ -68,6 +68,15 @@ export default function DashboardView({
 
   const allPositions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
   const combinedSummary = useMemo(() => computePortfolioSummary(allPositions), [allPositions]);
+  const txByPortfolio = useMemo(() => {
+    const map = new Map<string, Transaction[]>();
+    for (const t of transactions) {
+      const arr = map.get(t.portfolio_id) ?? [];
+      arr.push(t);
+      map.set(t.portfolio_id, arr);
+    }
+    return map;
+  }, [transactions]);
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
@@ -177,6 +186,7 @@ export default function DashboardView({
         return;
       }
       setPortfolios((prev) => prev.filter((p) => p.id !== deletingPortfolio.id));
+      setTransactions((prev) => prev.filter((t) => t.portfolio_id !== deletingPortfolio.id));
       if (lotsContext?.portfolioId === deletingPortfolio.id) setLotsContext(null);
       setDeletingPortfolio(null);
     } catch {
@@ -242,7 +252,7 @@ export default function DashboardView({
             <PortfolioSection
               key={p.id}
               portfolio={p}
-              transactions={transactions.filter((t) => t.portfolio_id === p.id)}
+              transactions={txByPortfolio.get(p.id) ?? []}
               prices={prices}
               sectors={sectors}
               onAddTransaction={(id) => {
@@ -271,7 +281,7 @@ export default function DashboardView({
         onOpenChange={(open) => {
           if (!open) setLotsContext(null);
         }}
-        transactions={transactions.filter((t) => t.portfolio_id === lotsContext?.portfolioId)}
+        transactions={lotsContext ? (txByPortfolio.get(lotsContext.portfolioId) ?? []) : []}
         onEditRequest={setEditingTransaction}
         onDeleteRequest={(t) => {
           setDeleteError(null);
@@ -360,7 +370,7 @@ export default function DashboardView({
       <Dialog
         open={isAddPortfolioDialogOpen}
         onOpenChange={(open) => {
-          if (!open) setIsAddPortfolioDialogOpen(false);
+          if (!open) { setIsAddPortfolioDialogOpen(false); setAddPortfolioError(null); }
         }}
       >
         <DialogContent>

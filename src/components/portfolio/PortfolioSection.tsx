@@ -143,12 +143,10 @@ export default function PortfolioSection({
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-          {/* Summary */}
-          <div className="p-5 pb-8">
-            <PortfolioSummaryCard summary={summary} embedded />
-          </div>
+        <>
+          <PortfolioSummaryCard summary={summary} />
 
+          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
           {/* Positions table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -274,7 +272,8 @@ export default function PortfolioSection({
             <h3 className="mb-4 text-base font-semibold text-gray-700">Sector Allocation</h3>
             <SectorAllocationChart slices={sectorSlices} />
           </div>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

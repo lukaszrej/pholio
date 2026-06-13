@@ -19,9 +19,12 @@ if (result?.error) {
 }
 const transactions = (result?.data ?? []) as Transaction[];
 
-const { data: portfoliosData } = supabase
+const { data: portfoliosData, error: portfoliosError } = supabase
   ? await supabase.from("portfolios").select("*").order("created_at", { ascending: true })
-  : { data: [] };
+  : { data: [], error: null };
+if (portfoliosError) {
+  console.error("[dashboard] failed to load portfolios", portfoliosError.message);
+}
 
 const today = new Date().toISOString().split("T")[0];
 const uniqueTickers = [...new Set(transactions.map((t) => t.ticker.toUpperCase()))];

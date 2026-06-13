@@ -4,15 +4,14 @@ import { formatSigned, pnlClass } from "@/lib/format";
 interface Props {
   summary: PortfolioSummary;
   title?: string;
-  embedded?: boolean;
 }
 
-export default function PortfolioSummaryCard({ summary, title, embedded }: Props) {
+export default function PortfolioSummaryCard({ summary, title }: Props) {
   const { positionCount, totalInvested, currentValue, totalPnL, totalPnLPct, currency, excludedCount } = summary;
   const currencyLabel = currency ? ` ${currency}` : "";
 
-  const content = (
-    <>
+  return (
+    <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-700">{title ?? "Portfolio Summary"}</h2>
         <span className="text-sm text-gray-400">
@@ -46,10 +45,6 @@ export default function PortfolioSummaryCard({ summary, title, embedded }: Props
           )}
         </div>
       </div>
-    </>
+    </div>
   );
-
-  if (embedded) return content;
-
-  return <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">{content}</div>;
 }

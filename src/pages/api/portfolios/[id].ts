@@ -104,7 +104,8 @@ export const DELETE: APIRoute = async (context) => {
   const { count, error: countError } = await supabase
     .from("transactions")
     .select("*", { count: "exact", head: true })
-    .eq("portfolio_id", id);
+    .eq("portfolio_id", id)
+    .eq("user_id", context.locals.user.id);
 
   if (countError) {
     // eslint-disable-next-line no-console
