@@ -17,7 +17,8 @@
       "Write",
       "WebSearch",
       "Bash(echo \"exit:$?\")",
-      "Bash(echo \"staged_exit:$?\")"
+      "Bash(echo \"staged_exit:$?\")",
+      "Read(//tmp/**)"
     ],
     "deny": [
       "Bash(rm -rf *)"

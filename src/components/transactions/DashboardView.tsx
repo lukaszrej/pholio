@@ -90,18 +90,21 @@ export default function DashboardView({ initialTransactions, initialPrices, init
       if (aVal === null && bVal === null) return 0;
       if (aVal === null) return 1;
       if (bVal === null) return -1;
-      return sortDir === "desc" ? (bVal as number) - (aVal as number) : (aVal as number) - (bVal as number);
+      return sortDir === "desc" ? bVal - aVal : aVal - bVal;
     });
   }, [positions, sortKey, sortDir]);
 
-  const handleSortClick = useCallback((key: Exclude<SortKey, "weightPct">): void => {
-    if (key === sortKey) {
-      setSortDir(sortDir === "desc" ? "asc" : "desc");
-    } else {
-      setSortKey(key);
-      setSortDir("desc");
-    }
-  }, [sortKey, sortDir]);
+  const handleSortClick = useCallback(
+    (key: Exclude<SortKey, "weightPct">): void => {
+      if (key === sortKey) {
+        setSortDir(sortDir === "desc" ? "asc" : "desc");
+      } else {
+        setSortKey(key);
+        setSortDir("desc");
+      }
+    },
+    [sortKey, sortDir],
+  );
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);

@@ -405,29 +405,29 @@ New dialogs to add (after existing dialog JSX):
 
 #### Automated
 
-- [x] 1.1 Migrations apply cleanly: `npx supabase db push`
-- [x] 1.2 TypeScript compilation passes: `npm run build`
+- [x] 1.1 Migrations apply cleanly: `npx supabase db push` — 85641b4
+- [x] 1.2 TypeScript compilation passes: `npm run build` — 85641b4
 
 #### Manual
 
-- [x] 1.3 Supabase Studio: portfolios table structure and RLS policies correct
-- [x] 1.4 Supabase Studio: transactions.portfolio_id is NOT NULL on all rows
-- [x] 1.5 Supabase Studio: existing transactions assigned to a "My Portfolio" row per user
+- [x] 1.3 Supabase Studio: portfolios table structure and RLS policies correct — 85641b4
+- [x] 1.4 Supabase Studio: transactions.portfolio_id is NOT NULL on all rows — 85641b4
+- [x] 1.5 Supabase Studio: existing transactions assigned to a "My Portfolio" row per user — 85641b4
 
 ### Phase 2: Portfolio CRUD API
 
 #### Automated
 
-- [ ] 2.1 TypeScript compilation passes: `npm run build`
-- [ ] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 TypeScript compilation passes: `npm run build`
+- [x] 2.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.3 GET /api/portfolios returns portfolios array
-- [ ] 2.4 POST /api/portfolios creates and returns a portfolio (201)
-- [ ] 2.5 PUT /api/portfolios/[id] renames portfolio (200)
-- [ ] 2.6 DELETE /api/portfolios/[id] with transactions returns 409
-- [ ] 2.7 DELETE /api/portfolios/[id] with no transactions returns 200
+- [x] 2.3 GET /api/portfolios returns portfolios array
+- [x] 2.4 POST /api/portfolios creates and returns a portfolio (201)
+- [x] 2.5 PUT /api/portfolios/[id] renames portfolio (200)
+- [x] 2.6 DELETE /api/portfolios/[id] with transactions returns 409
+- [x] 2.7 DELETE /api/portfolios/[id] with no transactions returns 200
 
 ### Phase 3: Transaction Assignment
 
