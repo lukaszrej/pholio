@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import type { Transaction } from "@/types/transaction";
 import {
   computePositions,
@@ -47,6 +47,25 @@ function formatPriceDate(pos: PortfolioPosition): string {
   });
 }
 
+type SortKey =
+  | "totalShares"
+  | "avgCost"
+  | "currentPrice"
+  | "costBasis"
+  | "positionValue"
+  | "roiAbs"
+  | "roiPct"
+  | "weightPct";
+
+function sortIcon(key: Exclude<SortKey, "weightPct">, sortKey: SortKey, sortDir: "asc" | "desc") {
+  if (sortKey !== key) return <ArrowUpDown className="ml-1 inline size-3 text-gray-400" />;
+  return sortDir === "desc" ? (
+    <ChevronDown className="ml-1 inline size-3" />
+  ) : (
+    <ChevronUp className="ml-1 inline size-3" />
+  );
+}
+
 export default function DashboardView({ initialTransactions, initialPrices, initialSectors = {}, userEmail }: Props) {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [prices] = useState(initialPrices); // prices are server-fetched once; new tickers show — until next page load
@@ -57,23 +76,12 @@ export default function DashboardView({ initialTransactions, initialPrices, init
   const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<SortKey>("weightPct");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   const positions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
   const sectorSlices = useMemo(() => computeSectorAllocation(positions, sectors), [positions, sectors]);
   const portfolioSummary = useMemo(() => computePortfolioSummary(positions), [positions]);
-
-  type SortKey =
-    | "totalShares"
-    | "avgCost"
-    | "currentPrice"
-    | "costBasis"
-    | "positionValue"
-    | "roiAbs"
-    | "roiPct"
-    | "weightPct";
-
-  const [sortKey, setSortKey] = useState<SortKey>("weightPct");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   const sortedPositions = useMemo(() => {
     return [...positions].sort((a, b) => {
@@ -82,27 +90,18 @@ export default function DashboardView({ initialTransactions, initialPrices, init
       if (aVal === null && bVal === null) return 0;
       if (aVal === null) return 1;
       if (bVal === null) return -1;
-      return sortDir === "desc" ? bVal - aVal : aVal - bVal;
+      return sortDir === "desc" ? (bVal as number) - (aVal as number) : (aVal as number) - (bVal as number);
     });
   }, [positions, sortKey, sortDir]);
 
-  function handleSortClick(key: Exclude<SortKey, "weightPct">): void {
+  const handleSortClick = useCallback((key: Exclude<SortKey, "weightPct">): void => {
     if (key === sortKey) {
       setSortDir(sortDir === "desc" ? "asc" : "desc");
     } else {
       setSortKey(key);
       setSortDir("desc");
     }
-  }
-
-  function sortIcon(key: Exclude<SortKey, "weightPct">) {
-    if (sortKey !== key) return <ArrowUpDown className="ml-1 inline size-3 text-gray-400" />;
-    return sortDir === "desc" ? (
-      <ChevronDown className="ml-1 inline size-3" />
-    ) : (
-      <ChevronUp className="ml-1 inline size-3" />
-    );
-  }
+  }, [sortKey, sortDir]);
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
@@ -184,7 +183,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       handleSortClick("totalShares");
                     }}
                   >
-                    Shares{sortIcon("totalShares")}
+                    Shares{sortIcon("totalShares", sortKey, sortDir)}
                   </th>
                   <th
                     className="cursor-pointer px-4 py-3 font-medium select-none"
@@ -192,7 +191,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       handleSortClick("avgCost");
                     }}
                   >
-                    Avg. Price{sortIcon("avgCost")}
+                    Avg. Price{sortIcon("avgCost", sortKey, sortDir)}
                   </th>
                   <th
                     className="cursor-pointer px-4 py-3 font-medium select-none"
@@ -200,7 +199,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       handleSortClick("currentPrice");
                     }}
                   >
-                    Current Price{sortIcon("currentPrice")}
+                    Current Price{sortIcon("currentPrice", sortKey, sortDir)}
                   </th>
                   <th className="px-4 py-3 font-medium">Price Date</th>
                   <th
@@ -209,7 +208,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       handleSortClick("costBasis");
                     }}
                   >
-                    Cost basis{sortIcon("costBasis")}
+                    Cost basis{sortIcon("costBasis", sortKey, sortDir)}
                   </th>
                   <th
                     className="cursor-pointer px-4 py-3 font-medium select-none"
@@ -217,7 +216,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       handleSortClick("positionValue");
                     }}
                   >
-                    Market value{sortIcon("positionValue")}
+                    Market value{sortIcon("positionValue", sortKey, sortDir)}
                   </th>
                   <th
                     className="cursor-pointer px-4 py-3 font-medium select-none"
@@ -225,7 +224,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       handleSortClick("roiAbs");
                     }}
                   >
-                    Unrealized P&amp;L{sortIcon("roiAbs")}
+                    Unrealized P&amp;L{sortIcon("roiAbs", sortKey, sortDir)}
                   </th>
                   <th
                     className="cursor-pointer px-4 py-3 font-medium select-none"
@@ -233,7 +232,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                       handleSortClick("roiPct");
                     }}
                   >
-                    Unrealized P&amp;L %{sortIcon("roiPct")}
+                    Unrealized P&amp;L %{sortIcon("roiPct", sortKey, sortDir)}
                   </th>
                   <th className="w-8 px-2 py-3"></th>
                 </tr>
