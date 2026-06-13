@@ -168,16 +168,16 @@ Non-sortable headers (`Ticker` line 137, `% of net liq` line 138, `Price Date` l
 
 #### Automated
 
-- [x] 1.1 TypeScript check passes: `npm run typecheck`
-- [x] 1.2 Lint passes: `npm run lint`
+- [x] 1.1 TypeScript check passes: `npm run typecheck` — c8443a7
+- [x] 1.2 Lint passes: `npm run lint` — c8443a7
 
 #### Manual
 
-- [x] 1.3 Table loads with largest-weightPct position at top; no sort icon on % of net liq header
-- [x] 1.4 Clicking Shares sorts descending on first click, ChevronDown appears
-- [x] 1.5 Clicking Shares again toggles to ascending, ChevronUp appears
-- [x] 1.6 Clicking a different column resets previous column's icon to ArrowUpDown
-- [x] 1.7 Null-priced position always appears at the bottom when sorting by Current Price (both directions)
-- [x] 1.8 Non-sortable headers (Ticker, % of net liq, Price Date) show no icon and do nothing on click
-- [x] 1.9 Row click still opens LotsModal for the correct ticker
-- [x] 1.10 Sticky Ticker column works correctly during horizontal scroll
+- [x] 1.3 Table loads with largest-weightPct position at top; no sort icon on % of net liq header — c8443a7
+- [x] 1.4 Clicking Shares sorts descending on first click, ChevronDown appears — c8443a7
+- [x] 1.5 Clicking Shares again toggles to ascending, ChevronUp appears — c8443a7
+- [x] 1.6 Clicking a different column resets previous column's icon to ArrowUpDown — c8443a7
+- [x] 1.7 Null-priced position always appears at the bottom when sorting by Current Price (both directions) — c8443a7
+- [x] 1.8 Non-sortable headers (Ticker, % of net liq, Price Date) show no icon and do nothing on click — c8443a7
+- [x] 1.9 Row click still opens LotsModal for the correct ticker — c8443a7
+- [x] 1.10 Sticky Ticker column works correctly during horizontal scroll — c8443a7
