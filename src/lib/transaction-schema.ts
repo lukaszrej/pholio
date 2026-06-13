@@ -15,6 +15,7 @@ export const transactionSchema = z.object({
     .refine((v) => !isNaN(Date.parse(v)), "Purchase date must be a valid date"),
   currency: z.enum(CURRENCIES),
   shares: z.coerce.number().positive("Shares must be positive"),
+  portfolio_id: z.uuid({ message: "Invalid portfolio ID" }),
 });
 
 export type TransactionFormValues = z.infer<typeof transactionSchema>;

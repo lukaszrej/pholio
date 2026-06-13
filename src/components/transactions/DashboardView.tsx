@@ -311,6 +311,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
             onCancel={() => {
               setIsDialogOpen(false);
             }}
+            portfolios={[]}
           />
         </DialogContent>
       </Dialog>
@@ -332,6 +333,7 @@ export default function DashboardView({ initialTransactions, initialPrices, init
             onCancel={() => {
               setEditingTransaction(null);
             }}
+            portfolios={[]}
           />
         </DialogContent>
       </Dialog>

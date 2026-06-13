@@ -48,6 +48,18 @@ export const PUT: APIRoute = async (context) => {
     });
   }
 
+  const { data: portfolioRow } = await supabase
+    .from("portfolios")
+    .select("id")
+    .eq("id", result.data.portfolio_id)
+    .maybeSingle();
+  if (!portfolioRow) {
+    return new Response(JSON.stringify({ error: "Portfolio not found" }), {
+      status: 400,
+      headers: JSON_HEADERS,
+    });
+  }
+
   // RLS (auth.uid() = user_id) scopes this update to the authenticated user's rows.
   const { data: updatedRow, error: dbError } = (await supabase
     .from("transactions")

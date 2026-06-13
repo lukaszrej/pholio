@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleAlert, Loader2 } from "lucide-react";
 import { transactionSchema, CURRENCIES, type TransactionFormValues } from "@/lib/transaction-schema";
 import type { Transaction } from "@/types/transaction";
+import type { Portfolio } from "@/types/portfolio";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,9 +13,17 @@ interface Props {
   onSuccess: (transaction: Transaction) => void;
   onCancel: () => void;
   transaction?: Transaction;
+  portfolios: Portfolio[];
+  defaultPortfolioId?: string;
 }
 
-export default function AddTransactionForm({ onSuccess, onCancel, transaction }: Props) {
+export default function AddTransactionForm({
+  onSuccess,
+  onCancel,
+  transaction,
+  portfolios,
+  defaultPortfolioId,
+}: Props) {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionSchema) as Resolver<TransactionFormValues>,
     defaultValues: transaction
@@ -24,11 +33,13 @@ export default function AddTransactionForm({ onSuccess, onCancel, transaction }:
           purchase_price: transaction.purchase_price,
           currency: transaction.currency,
           shares: transaction.shares,
+          portfolio_id: transaction.portfolio_id,
         }
       : {
           ticker: "",
           purchase_date: "",
           currency: "USD",
+          portfolio_id: defaultPortfolioId ?? portfolios.at(0)?.id ?? "",
         },
   });
 
@@ -73,6 +84,35 @@ export default function AddTransactionForm({ onSuccess, onCancel, transaction }:
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      {/* Portfolio */}
+      <div className="space-y-1">
+        <Label htmlFor="portfolio_id">Portfolio</Label>
+        <Controller
+          control={control}
+          name="portfolio_id"
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger id="portfolio_id" className="w-full" aria-invalid={!!errors.portfolio_id}>
+                <SelectValue placeholder="Select portfolio" />
+              </SelectTrigger>
+              <SelectContent>
+                {portfolios.map((portfolio) => (
+                  <SelectItem key={portfolio.id} value={portfolio.id}>
+                    {portfolio.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        {errors.portfolio_id && (
+          <p className="flex items-center gap-1 text-xs text-red-400">
+            <CircleAlert className="size-3" />
+            {errors.portfolio_id.message}
+          </p>
+        )}
+      </div>
+
       {/* Ticker */}
       <div className="space-y-1">
         <Label htmlFor="ticker">Ticker</Label>

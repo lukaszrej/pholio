@@ -39,6 +39,18 @@ export const POST: APIRoute = async (context) => {
     });
   }
 
+  const { data: portfolioRow } = await supabase
+    .from("portfolios")
+    .select("id")
+    .eq("id", result.data.portfolio_id)
+    .maybeSingle();
+  if (!portfolioRow) {
+    return new Response(JSON.stringify({ error: "Portfolio not found" }), {
+      status: 400,
+      headers: JSON_HEADERS,
+    });
+  }
+
   const { data: insertedRow, error: dbError } = (await supabase
     .from("transactions")
     .insert([{ user_id: context.locals.user.id, ...result.data }])

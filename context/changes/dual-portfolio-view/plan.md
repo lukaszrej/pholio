@@ -418,29 +418,29 @@ New dialogs to add (after existing dialog JSX):
 
 #### Automated
 
-- [x] 2.1 TypeScript compilation passes: `npm run build`
-- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 TypeScript compilation passes: `npm run build` — 91aae4c
+- [x] 2.2 Lint passes: `npm run lint` — 91aae4c
 
 #### Manual
 
-- [x] 2.3 GET /api/portfolios returns portfolios array
-- [x] 2.4 POST /api/portfolios creates and returns a portfolio (201)
-- [x] 2.5 PUT /api/portfolios/[id] renames portfolio (200)
-- [x] 2.6 DELETE /api/portfolios/[id] with transactions returns 409
-- [x] 2.7 DELETE /api/portfolios/[id] with no transactions returns 200
+- [x] 2.3 GET /api/portfolios returns portfolios array — 91aae4c
+- [x] 2.4 POST /api/portfolios creates and returns a portfolio (201) — 91aae4c
+- [x] 2.5 PUT /api/portfolios/[id] renames portfolio (200) — 91aae4c
+- [x] 2.6 DELETE /api/portfolios/[id] with transactions returns 409 — 91aae4c
+- [x] 2.7 DELETE /api/portfolios/[id] with no transactions returns 200 — 91aae4c
 
 ### Phase 3: Transaction Assignment
 
 #### Automated
 
-- [ ] 3.1 TypeScript compilation passes: `npm run build`
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 TypeScript compilation passes: `npm run build`
+- [x] 3.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.3 Add transaction form shows portfolio selector; pre-selects first portfolio
-- [ ] 3.4 Edit transaction form shows current portfolio; allows reassignment
-- [ ] 3.5 POST /api/transactions with unknown portfolio_id returns 400
+- [x] 3.3 Add transaction form shows portfolio selector; pre-selects first portfolio
+- [x] 3.4 Edit transaction form shows current portfolio; allows reassignment
+- [x] 3.5 POST /api/transactions with unknown portfolio_id returns 400
 
 ### Phase 4: Dashboard Restructure
 
