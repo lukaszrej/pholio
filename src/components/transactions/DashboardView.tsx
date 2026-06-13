@@ -370,7 +370,10 @@ export default function DashboardView({
       <Dialog
         open={isAddPortfolioDialogOpen}
         onOpenChange={(open) => {
-          if (!open) { setIsAddPortfolioDialogOpen(false); setAddPortfolioError(null); }
+          if (!open) {
+            setIsAddPortfolioDialogOpen(false);
+            setAddPortfolioError(null);
+          }
         }}
       >
         <DialogContent>

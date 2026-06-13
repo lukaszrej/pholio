@@ -147,131 +147,131 @@ export default function PortfolioSection({
           <PortfolioSummaryCard summary={summary} />
 
           <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-          {/* Positions table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 text-left text-gray-500">
-                  <th className="sticky left-0 z-20 bg-white px-4 py-3 font-medium">Ticker</th>
-                  <th className="px-4 py-3 font-medium">% of net liq</th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("totalShares");
-                    }}
-                  >
-                    Shares{sortIcon("totalShares", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("avgCost");
-                    }}
-                  >
-                    Avg. Price{sortIcon("avgCost", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("currentPrice");
-                    }}
-                  >
-                    Current Price{sortIcon("currentPrice", sortKey, sortDir)}
-                  </th>
-                  <th className="px-4 py-3 font-medium">Price Date</th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("costBasis");
-                    }}
-                  >
-                    Cost basis{sortIcon("costBasis", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("positionValue");
-                    }}
-                  >
-                    Market value{sortIcon("positionValue", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("roiAbs");
-                    }}
-                  >
-                    Unrealized P&amp;L{sortIcon("roiAbs", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("roiPct");
-                    }}
-                  >
-                    Unrealized P&amp;L %{sortIcon("roiPct", sortKey, sortDir)}
-                  </th>
-                  <th className="w-8 px-2 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedPositions.map((pos) => (
-                  <tr
-                    key={pos.ticker}
-                    className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
-                    onClick={() => {
-                      onShowLots(pos.ticker, portfolio.id);
-                    }}
-                  >
-                    <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
-                      {pos.ticker}
-                    </td>
-                    <td className="px-4 py-3">{pos.weightPct !== null ? `${pos.weightPct.toFixed(2)}%` : "—"}</td>
-                    <td className="px-4 py-3">{formatShares(pos.totalShares)}</td>
-                    <td className="px-4 py-3">
-                      {pos.avgCost.toFixed(2)}
-                      {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
-                    </td>
-                    <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>
-                      {formatCurrentPrice(pos)}
-                    </td>
-                    <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>{formatPriceDate(pos)}</td>
-                    <td className="px-4 py-3">{pos.costBasis.toFixed(2)}</td>
-                    <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
-                    <td className={`px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
-                      {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
-                    </td>
-                    <td className={`px-4 py-3 ${pnlClass(pos.roiPct)}`}>
-                      {formatSigned(pos.roiPct)}
-                      {pos.roiPct !== null && "%"}
-                    </td>
-                    <td className="px-2 py-3 text-gray-400">
-                      <ChevronRight className="size-4" />
-                    </td>
+            {/* Positions table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200 text-left text-gray-500">
+                    <th className="sticky left-0 z-20 bg-white px-4 py-3 font-medium">Ticker</th>
+                    <th className="px-4 py-3 font-medium">% of net liq</th>
+                    <th
+                      className="cursor-pointer px-4 py-3 font-medium select-none"
+                      onClick={() => {
+                        handleSortClick("totalShares");
+                      }}
+                    >
+                      Shares{sortIcon("totalShares", sortKey, sortDir)}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 font-medium select-none"
+                      onClick={() => {
+                        handleSortClick("avgCost");
+                      }}
+                    >
+                      Avg. Price{sortIcon("avgCost", sortKey, sortDir)}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 font-medium select-none"
+                      onClick={() => {
+                        handleSortClick("currentPrice");
+                      }}
+                    >
+                      Current Price{sortIcon("currentPrice", sortKey, sortDir)}
+                    </th>
+                    <th className="px-4 py-3 font-medium">Price Date</th>
+                    <th
+                      className="cursor-pointer px-4 py-3 font-medium select-none"
+                      onClick={() => {
+                        handleSortClick("costBasis");
+                      }}
+                    >
+                      Cost basis{sortIcon("costBasis", sortKey, sortDir)}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 font-medium select-none"
+                      onClick={() => {
+                        handleSortClick("positionValue");
+                      }}
+                    >
+                      Market value{sortIcon("positionValue", sortKey, sortDir)}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 font-medium select-none"
+                      onClick={() => {
+                        handleSortClick("roiAbs");
+                      }}
+                    >
+                      Unrealized P&amp;L{sortIcon("roiAbs", sortKey, sortDir)}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 font-medium select-none"
+                      onClick={() => {
+                        handleSortClick("roiPct");
+                      }}
+                    >
+                      Unrealized P&amp;L %{sortIcon("roiPct", sortKey, sortDir)}
+                    </th>
+                    <th className="w-8 px-2 py-3"></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {sortedPositions.map((pos) => (
+                    <tr
+                      key={pos.ticker}
+                      className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
+                      onClick={() => {
+                        onShowLots(pos.ticker, portfolio.id);
+                      }}
+                    >
+                      <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
+                        {pos.ticker}
+                      </td>
+                      <td className="px-4 py-3">{pos.weightPct !== null ? `${pos.weightPct.toFixed(2)}%` : "—"}</td>
+                      <td className="px-4 py-3">{formatShares(pos.totalShares)}</td>
+                      <td className="px-4 py-3">
+                        {pos.avgCost.toFixed(2)}
+                        {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
+                      </td>
+                      <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>
+                        {formatCurrentPrice(pos)}
+                      </td>
+                      <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>{formatPriceDate(pos)}</td>
+                      <td className="px-4 py-3">{pos.costBasis.toFixed(2)}</td>
+                      <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
+                      <td className={`px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
+                        {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
+                      </td>
+                      <td className={`px-4 py-3 ${pnlClass(pos.roiPct)}`}>
+                        {formatSigned(pos.roiPct)}
+                        {pos.roiPct !== null && "%"}
+                      </td>
+                      <td className="px-2 py-3 text-gray-400">
+                        <ChevronRight className="size-4" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Add transaction */}
-          <div className="px-4 pt-2 pb-5">
-            <Button
-              className="bg-gradient-to-r from-blue-600 to-violet-600 font-medium text-white shadow-sm transition-all duration-200 hover:from-blue-500 hover:to-violet-500 hover:shadow-md"
-              onClick={() => {
-                onAddTransaction(portfolio.id);
-              }}
-            >
-              <Plus className="mr-2 size-4" />
-              Add transaction
-            </Button>
-          </div>
+            {/* Add transaction */}
+            <div className="px-4 pt-2 pb-5">
+              <Button
+                className="bg-gradient-to-r from-blue-600 to-violet-600 font-medium text-white shadow-sm transition-all duration-200 hover:from-blue-500 hover:to-violet-500 hover:shadow-md"
+                onClick={() => {
+                  onAddTransaction(portfolio.id);
+                }}
+              >
+                <Plus className="mr-2 size-4" />
+                Add transaction
+              </Button>
+            </div>
 
-          {/* Sector chart */}
-          <div className="p-5 pb-8">
-            <h3 className="mb-4 text-base font-semibold text-gray-700">Sector Allocation</h3>
-            <SectorAllocationChart slices={sectorSlices} />
-          </div>
+            {/* Sector chart */}
+            <div className="p-5 pb-8">
+              <h3 className="mb-4 text-base font-semibold text-gray-700">Sector Allocation</h3>
+              <SectorAllocationChart slices={sectorSlices} />
+            </div>
           </div>
         </>
       )}
