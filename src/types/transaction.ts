@@ -10,6 +10,7 @@ export interface Transaction {
   purchase_date: string;
   currency: Currency;
   shares: number;
+  portfolio_id: string;
   created_at: string;
   updated_at: string;
 }
