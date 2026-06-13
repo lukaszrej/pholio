@@ -22,7 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight, Loader2, ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import { formatShares, formatSigned, pnlClass } from "@/lib/format";
 
 interface Props {
@@ -61,6 +61,48 @@ export default function DashboardView({ initialTransactions, initialPrices, init
   const positions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
   const sectorSlices = useMemo(() => computeSectorAllocation(positions, sectors), [positions, sectors]);
   const portfolioSummary = useMemo(() => computePortfolioSummary(positions), [positions]);
+
+  type SortKey =
+    | "totalShares"
+    | "avgCost"
+    | "currentPrice"
+    | "costBasis"
+    | "positionValue"
+    | "roiAbs"
+    | "roiPct"
+    | "weightPct";
+
+  const [sortKey, setSortKey] = useState<SortKey>("weightPct");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+  const sortedPositions = useMemo(() => {
+    return [...positions].sort((a, b) => {
+      const aVal = a[sortKey];
+      const bVal = b[sortKey];
+      if (aVal === null && bVal === null) return 0;
+      if (aVal === null) return 1;
+      if (bVal === null) return -1;
+      return sortDir === "desc" ? bVal - aVal : aVal - bVal;
+    });
+  }, [positions, sortKey, sortDir]);
+
+  function handleSortClick(key: Exclude<SortKey, "weightPct">): void {
+    if (key === sortKey) {
+      setSortDir(sortDir === "desc" ? "asc" : "desc");
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  }
+
+  function sortIcon(key: Exclude<SortKey, "weightPct">) {
+    if (sortKey !== key) return <ArrowUpDown className="ml-1 inline size-3 text-gray-400" />;
+    return sortDir === "desc" ? (
+      <ChevronDown className="ml-1 inline size-3" />
+    ) : (
+      <ChevronUp className="ml-1 inline size-3" />
+    );
+  }
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
@@ -136,19 +178,68 @@ export default function DashboardView({ initialTransactions, initialPrices, init
                 <tr className="border-b border-gray-200 text-left text-gray-500">
                   <th className="sticky left-0 z-20 bg-white px-4 py-3 font-medium">Ticker</th>
                   <th className="px-4 py-3 font-medium">% of net liq</th>
-                  <th className="px-4 py-3 font-medium">Shares</th>
-                  <th className="px-4 py-3 font-medium">Avg. Price</th>
-                  <th className="px-4 py-3 font-medium">Current Price</th>
+                  <th
+                    className="cursor-pointer px-4 py-3 font-medium select-none"
+                    onClick={() => {
+                      handleSortClick("totalShares");
+                    }}
+                  >
+                    Shares{sortIcon("totalShares")}
+                  </th>
+                  <th
+                    className="cursor-pointer px-4 py-3 font-medium select-none"
+                    onClick={() => {
+                      handleSortClick("avgCost");
+                    }}
+                  >
+                    Avg. Price{sortIcon("avgCost")}
+                  </th>
+                  <th
+                    className="cursor-pointer px-4 py-3 font-medium select-none"
+                    onClick={() => {
+                      handleSortClick("currentPrice");
+                    }}
+                  >
+                    Current Price{sortIcon("currentPrice")}
+                  </th>
                   <th className="px-4 py-3 font-medium">Price Date</th>
-                  <th className="px-4 py-3 font-medium">Cost basis</th>
-                  <th className="px-4 py-3 font-medium">Market value</th>
-                  <th className="px-4 py-3 font-medium">Unrealized P&amp;L</th>
-                  <th className="px-4 py-3 font-medium">Unrealized P&amp;L %</th>
+                  <th
+                    className="cursor-pointer px-4 py-3 font-medium select-none"
+                    onClick={() => {
+                      handleSortClick("costBasis");
+                    }}
+                  >
+                    Cost basis{sortIcon("costBasis")}
+                  </th>
+                  <th
+                    className="cursor-pointer px-4 py-3 font-medium select-none"
+                    onClick={() => {
+                      handleSortClick("positionValue");
+                    }}
+                  >
+                    Market value{sortIcon("positionValue")}
+                  </th>
+                  <th
+                    className="cursor-pointer px-4 py-3 font-medium select-none"
+                    onClick={() => {
+                      handleSortClick("roiAbs");
+                    }}
+                  >
+                    Unrealized P&amp;L{sortIcon("roiAbs")}
+                  </th>
+                  <th
+                    className="cursor-pointer px-4 py-3 font-medium select-none"
+                    onClick={() => {
+                      handleSortClick("roiPct");
+                    }}
+                  >
+                    Unrealized P&amp;L %{sortIcon("roiPct")}
+                  </th>
                   <th className="w-8 px-2 py-3"></th>
                 </tr>
               </thead>
               <tbody>
-                {positions.map((pos) => (
+                {sortedPositions.map((pos) => (
                   <tr
                     key={pos.ticker}
                     className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
