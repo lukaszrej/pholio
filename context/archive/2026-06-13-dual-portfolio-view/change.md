@@ -1,12 +1,12 @@
 ---
 change_id: dual-portfolio-view
 title: Dual portfolio view with named tables, split summary, and per-portfolio sector charts
-status: impl_reviewed
+status: archived
 created: 2026-06-13
 updated: 2026-06-13
 impl_reviewed: 2026-06-13
 planned: 2026-06-13
-archived_at: null
+archived_at: 2026-06-13T17:13:15Z
 ---
 
 ## Notes
