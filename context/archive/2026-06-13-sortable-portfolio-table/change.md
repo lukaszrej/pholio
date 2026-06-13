@@ -1,10 +1,10 @@
 ---
 change_id: sortable-portfolio-table
 title: Sortable portfolio table with default sort by % of net liq
-status: impl_reviewed
+status: archived
 created: 2026-06-13
 updated: 2026-06-13
-archived_at: null
+archived_at: 2026-06-13T09:10:34Z
 ---
 
 ## Notes
