@@ -197,7 +197,8 @@ export default function DashboardView({
   }
 
   return (
-    <div className="bg-cosmic min-h-screen p-6 text-gray-900">
+    <div className="bg-cosmic min-h-screen text-gray-900">
+      <div className="mx-auto max-w-6xl px-6 py-6">
       {/* Toolbar */}
       <div className="mb-6 flex items-center justify-between">
         <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
@@ -504,6 +505,7 @@ export default function DashboardView({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </div>
     </div>
   );
 }
