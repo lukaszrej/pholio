@@ -39,11 +39,19 @@ export const POST: APIRoute = async (context) => {
     });
   }
 
-  const { data: portfolioRow } = await supabase
+  const { data: portfolioRow, error: portfolioLookupError } = await supabase
     .from("portfolios")
     .select("id")
     .eq("id", result.data.portfolio_id)
     .maybeSingle();
+  if (portfolioLookupError) {
+    // eslint-disable-next-line no-console
+    console.error("[api/transactions] portfolio lookup error", portfolioLookupError.message);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: JSON_HEADERS,
+    });
+  }
   if (!portfolioRow) {
     return new Response(JSON.stringify({ error: "Portfolio not found" }), {
       status: 400,
@@ -64,10 +72,13 @@ export const POST: APIRoute = async (context) => {
       // eslint-disable-next-line no-console
       console.error("[api/transactions] DB error", dbError.message);
     }
-    return new Response(JSON.stringify({ error: isConstraintViolation ? dbError.message : "Internal server error" }), {
-      status,
-      headers: JSON_HEADERS,
-    });
+    return new Response(
+      JSON.stringify({ error: isConstraintViolation ? "Invalid request" : "Internal server error" }),
+      {
+        status,
+        headers: JSON_HEADERS,
+      },
+    );
   }
 
   return new Response(JSON.stringify({ data: insertedRow }), {

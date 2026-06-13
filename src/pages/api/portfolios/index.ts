@@ -88,10 +88,13 @@ export const POST: APIRoute = async (context) => {
       // eslint-disable-next-line no-console
       console.error("[api/portfolios] POST DB error", dbError.message);
     }
-    return new Response(JSON.stringify({ error: isConstraintViolation ? dbError.message : "Internal server error" }), {
-      status,
-      headers: JSON_HEADERS,
-    });
+    return new Response(
+      JSON.stringify({ error: isConstraintViolation ? "Invalid request" : "Internal server error" }),
+      {
+        status,
+        headers: JSON_HEADERS,
+      },
+    );
   }
 
   return new Response(JSON.stringify({ data: insertedRow }), {

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase";
 import { fetchQuote, fetchSector } from "@/lib/finnhub";
 import type { PriceData } from "@/lib/portfolio";
 import type { Transaction } from "@/types/transaction";
+import type { Portfolio } from "@/types/portfolio";
 import pLimit from "p-limit";
 
 const { user } = Astro.locals;
@@ -17,6 +18,10 @@ if (result?.error) {
   console.error("[dashboard] failed to load transactions", result.error.message);
 }
 const transactions = (result?.data ?? []) as Transaction[];
+
+const { data: portfoliosData } = supabase
+  ? await supabase.from("portfolios").select("*").order("created_at", { ascending: true })
+  : { data: [] };
 
 const today = new Date().toISOString().split("T")[0];
 const uniqueTickers = [...new Set(transactions.map((t) => t.ticker.toUpperCase()))];
@@ -98,6 +103,7 @@ if (supabase && uniqueTickers.length > 0) {
     initialTransactions={transactions}
     initialPrices={prices}
     initialSectors={sectors}
+    initialPortfolios={(portfoliosData ?? []) as Portfolio[]}
     userEmail={user?.email}
   />
 </Layout>

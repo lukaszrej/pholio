@@ -1,17 +1,14 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import type { Transaction } from "@/types/transaction";
-import {
-  computePositions,
-  computePortfolioSummary,
-  computeSectorAllocation,
-  type PriceData,
-  type PortfolioPosition,
-} from "@/lib/portfolio";
-import SectorAllocationChart from "@/components/portfolio/SectorAllocationChart";
+import type { Portfolio } from "@/types/portfolio";
+import { computePositions, computePortfolioSummary, type PriceData } from "@/lib/portfolio";
 import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
+import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import AddTransactionForm from "@/components/transactions/AddTransactionForm";
 import LotsModal from "@/components/transactions/LotsModal";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -22,93 +19,59 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ChevronRight, Loader2, ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
-import { formatShares, formatSigned, pnlClass } from "@/lib/format";
+import { Loader2, Plus } from "lucide-react";
 
 interface Props {
   initialTransactions: Transaction[];
   initialPrices: Record<string, PriceData>;
   initialSectors?: Record<string, string>;
+  initialPortfolios: Portfolio[];
   userEmail?: string;
 }
 
-function formatCurrentPrice(pos: PortfolioPosition): string {
-  if (pos.currentPrice === null) return "—";
-  return pos.currentPrice.toFixed(2);
-}
-
-function formatPriceDate(pos: PortfolioPosition): string {
-  if (pos.priceDate === null) return "—";
-  const date = new Date(pos.priceDate);
-  if (isNaN(date.getTime())) return "—";
-  return date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-  });
-}
-
-type SortKey =
-  | "totalShares"
-  | "avgCost"
-  | "currentPrice"
-  | "costBasis"
-  | "positionValue"
-  | "roiAbs"
-  | "roiPct"
-  | "weightPct";
-
-function sortIcon(key: Exclude<SortKey, "weightPct">, sortKey: SortKey, sortDir: "asc" | "desc") {
-  if (sortKey !== key) return <ArrowUpDown className="ml-1 inline size-3 text-gray-400" />;
-  return sortDir === "desc" ? (
-    <ChevronDown className="ml-1 inline size-3" />
-  ) : (
-    <ChevronUp className="ml-1 inline size-3" />
-  );
-}
-
-export default function DashboardView({ initialTransactions, initialPrices, initialSectors = {}, userEmail }: Props) {
+export default function DashboardView({
+  initialTransactions,
+  initialPrices,
+  initialSectors = {},
+  initialPortfolios,
+  userEmail,
+}: Props) {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
-  const [prices] = useState(initialPrices); // prices are server-fetched once; new tickers show — until next page load
+  const [prices] = useState(initialPrices);
   const [sectors] = useState(initialSectors);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
+  const [portfolios, setPortfolios] = useState<Portfolio[]>(initialPortfolios);
+
+  // Transaction dialogs
+  const [addTransactionPortfolioId, setAddTransactionPortfolioId] = useState<string | null>(null);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [sortKey, setSortKey] = useState<SortKey>("weightPct");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
-  const positions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
-  const sectorSlices = useMemo(() => computeSectorAllocation(positions, sectors), [positions, sectors]);
-  const portfolioSummary = useMemo(() => computePortfolioSummary(positions), [positions]);
+  // Lots modal
+  const [lotsContext, setLotsContext] = useState<{ ticker: string; portfolioId: string } | null>(null);
 
-  const sortedPositions = useMemo(() => {
-    return [...positions].sort((a, b) => {
-      const aVal = a[sortKey];
-      const bVal = b[sortKey];
-      if (aVal === null && bVal === null) return 0;
-      if (aVal === null) return 1;
-      if (bVal === null) return -1;
-      return sortDir === "desc" ? bVal - aVal : aVal - bVal;
-    });
-  }, [positions, sortKey, sortDir]);
+  // Portfolio CRUD dialogs
+  const [isAddPortfolioDialogOpen, setIsAddPortfolioDialogOpen] = useState(false);
+  const [addPortfolioName, setAddPortfolioName] = useState("");
+  const [isAddPortfolioLoading, setIsAddPortfolioLoading] = useState(false);
+  const [addPortfolioError, setAddPortfolioError] = useState<string | null>(null);
 
-  const handleSortClick = useCallback(
-    (key: Exclude<SortKey, "weightPct">): void => {
-      if (key === sortKey) {
-        setSortDir(sortDir === "desc" ? "asc" : "desc");
-      } else {
-        setSortKey(key);
-        setSortDir("desc");
-      }
-    },
-    [sortKey, sortDir],
-  );
+  const [editPortfolio, setEditPortfolio] = useState<Portfolio | null>(null);
+  const [editPortfolioName, setEditPortfolioName] = useState("");
+  const [isEditPortfolioLoading, setIsEditPortfolioLoading] = useState(false);
+  const [editPortfolioError, setEditPortfolioError] = useState<string | null>(null);
+
+  const [deletingPortfolio, setDeletingPortfolio] = useState<{ id: string; name: string } | null>(null);
+  const [isDeletePortfolioLoading, setIsDeletePortfolioLoading] = useState(false);
+  const [deletePortfolioError, setDeletePortfolioError] = useState<string | null>(null);
+
+  const allPositions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
+  const combinedSummary = useMemo(() => computePortfolioSummary(allPositions), [allPositions]);
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
-    setIsDialogOpen(false);
+    setAddTransactionPortfolioId(null);
   }
 
   function handleEditSuccess(updated: Transaction) {
@@ -116,33 +79,110 @@ export default function DashboardView({ initialTransactions, initialPrices, init
     setEditingTransaction(null);
   }
 
-  async function handleDeleteConfirm() {
+  async function handleDeleteTransactionConfirm() {
     if (!deletingTransaction) return;
     setIsDeleteLoading(true);
     setDeleteError(null);
     try {
-      const response = await fetch(`/api/transactions/${deletingTransaction.id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(`/api/transactions/${deletingTransaction.id}`, { method: "DELETE" });
       if (!response.ok) {
-        const json = (await response.json().catch(() => ({ error: "Unexpected error" }))) as {
-          error?: string;
-        };
+        const json = (await response.json().catch(() => ({ error: "Unexpected error" }))) as { error?: string };
         setDeleteError(json.error ?? "Unexpected error");
         return;
       }
-      // read pre-delete state before setTransactions updates the array
       const ticker = deletingTransaction.ticker.toUpperCase();
+      const portfolioId = deletingTransaction.portfolio_id;
       const hasRemainingLots = transactions.some(
-        (t) => t.id !== deletingTransaction.id && t.ticker.toUpperCase() === ticker,
+        (t) => t.id !== deletingTransaction.id && t.ticker.toUpperCase() === ticker && t.portfolio_id === portfolioId,
       );
       setTransactions((prev) => prev.filter((t) => t.id !== deletingTransaction.id));
       setDeletingTransaction(null);
-      if (!hasRemainingLots) setSelectedTicker(null);
+      if (
+        !hasRemainingLots &&
+        lotsContext !== null &&
+        lotsContext.ticker.toUpperCase() === ticker &&
+        lotsContext.portfolioId === portfolioId
+      ) {
+        setLotsContext(null);
+      }
     } catch {
       setDeleteError("Network error. Please check your connection and try again.");
     } finally {
       setIsDeleteLoading(false);
+    }
+  }
+
+  async function handleAddPortfolioSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setIsAddPortfolioLoading(true);
+    setAddPortfolioError(null);
+    try {
+      const response = await fetch("/api/portfolios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: addPortfolioName }),
+      });
+      if (!response.ok) {
+        const json = (await response.json().catch(() => ({ error: "Unexpected error" }))) as { error?: string };
+        setAddPortfolioError(json.error ?? "Unexpected error");
+        return;
+      }
+      const json = (await response.json()) as { data: Portfolio };
+      setPortfolios((prev) => [...prev, json.data]);
+      setIsAddPortfolioDialogOpen(false);
+      setAddPortfolioName("");
+    } catch {
+      setAddPortfolioError("Network error. Please check your connection and try again.");
+    } finally {
+      setIsAddPortfolioLoading(false);
+    }
+  }
+
+  async function handleEditPortfolioSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!editPortfolio) return;
+    setIsEditPortfolioLoading(true);
+    setEditPortfolioError(null);
+    try {
+      const response = await fetch(`/api/portfolios/${editPortfolio.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: editPortfolioName }),
+      });
+      if (!response.ok) {
+        const json = (await response.json().catch(() => ({ error: "Unexpected error" }))) as { error?: string };
+        setEditPortfolioError(json.error ?? "Unexpected error");
+        return;
+      }
+      const json = (await response.json()) as { data: Portfolio };
+      setPortfolios((prev) => prev.map((p) => (p.id === json.data.id ? json.data : p)));
+      setEditPortfolio(null);
+      setEditPortfolioName("");
+    } catch {
+      setEditPortfolioError("Network error. Please check your connection and try again.");
+    } finally {
+      setIsEditPortfolioLoading(false);
+    }
+  }
+
+  async function handleDeletePortfolioConfirm() {
+    if (!deletingPortfolio) return;
+    setIsDeletePortfolioLoading(true);
+    setDeletePortfolioError(null);
+    try {
+      const response = await fetch(`/api/portfolios/${deletingPortfolio.id}`, { method: "DELETE" });
+      if (!response.ok) {
+        const json = (await response.json().catch(() => ({ error: "Unexpected error" }))) as { error?: string };
+        setDeletePortfolioError(json.error ?? "Unexpected error");
+        return;
+      }
+      setPortfolios((prev) => prev.filter((p) => p.id !== deletingPortfolio.id));
+      if (lotsContext?.portfolioId === deletingPortfolio.id) setLotsContext(null);
+      setDeletingPortfolio(null);
+    } catch {
+      setDeletePortfolioError("Network error. Please check your connection and try again.");
+    } finally {
+      setIsDeletePortfolioLoading(false);
     }
   }
 
@@ -155,6 +195,18 @@ export default function DashboardView({ initialTransactions, initialPrices, init
         </h1>
         <div className="flex items-center gap-3">
           {userEmail && <span className="text-sm text-gray-500">{userEmail}</span>}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setAddPortfolioName("");
+              setAddPortfolioError(null);
+              setIsAddPortfolioDialogOpen(true);
+            }}
+          >
+            <Plus className="mr-1 size-4" />
+            Add portfolio
+          </Button>
           <form method="POST" action="/api/auth/signout">
             <button
               type="submit"
@@ -166,142 +218,74 @@ export default function DashboardView({ initialTransactions, initialPrices, init
         </div>
       </div>
 
-      {/* Portfolio table or empty state */}
-      {transactions.length === 0 ? (
+      {portfolios.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-20 text-center">
-          <p className="text-gray-500">No transactions yet</p>
+          <p className="mb-4 text-gray-500">No portfolios yet.</p>
+          <Button
+            className="bg-emerald-500 text-white hover:bg-emerald-600"
+            onClick={() => {
+              setAddPortfolioName("");
+              setAddPortfolioError(null);
+              setIsAddPortfolioDialogOpen(true);
+            }}
+          >
+            Create your first portfolio
+          </Button>
         </div>
       ) : (
         <>
-          <PortfolioSummaryCard summary={portfolioSummary} />
-          <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 text-left text-gray-500">
-                  <th className="sticky left-0 z-20 bg-white px-4 py-3 font-medium">Ticker</th>
-                  <th className="px-4 py-3 font-medium">% of net liq</th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("totalShares");
-                    }}
-                  >
-                    Shares{sortIcon("totalShares", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("avgCost");
-                    }}
-                  >
-                    Avg. Price{sortIcon("avgCost", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("currentPrice");
-                    }}
-                  >
-                    Current Price{sortIcon("currentPrice", sortKey, sortDir)}
-                  </th>
-                  <th className="px-4 py-3 font-medium">Price Date</th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("costBasis");
-                    }}
-                  >
-                    Cost basis{sortIcon("costBasis", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("positionValue");
-                    }}
-                  >
-                    Market value{sortIcon("positionValue", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("roiAbs");
-                    }}
-                  >
-                    Unrealized P&amp;L{sortIcon("roiAbs", sortKey, sortDir)}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 font-medium select-none"
-                    onClick={() => {
-                      handleSortClick("roiPct");
-                    }}
-                  >
-                    Unrealized P&amp;L %{sortIcon("roiPct", sortKey, sortDir)}
-                  </th>
-                  <th className="w-8 px-2 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedPositions.map((pos) => (
-                  <tr
-                    key={pos.ticker}
-                    className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
-                    onClick={() => {
-                      setSelectedTicker(pos.ticker);
-                    }}
-                  >
-                    <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
-                      {pos.ticker}
-                    </td>
-                    <td className="px-4 py-3">{pos.weightPct !== null ? `${pos.weightPct.toFixed(2)}%` : "—"}</td>
-                    <td className="px-4 py-3">{formatShares(pos.totalShares)}</td>
-                    <td className="px-4 py-3">
-                      {pos.avgCost.toFixed(2)}
-                      {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
-                    </td>
-                    <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>
-                      {formatCurrentPrice(pos)}
-                    </td>
-                    <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>{formatPriceDate(pos)}</td>
-                    <td className="px-4 py-3">{pos.costBasis.toFixed(2)}</td>
-                    <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
-                    <td className={`px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
-                      {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
-                    </td>
-                    <td className={`px-4 py-3 ${pnlClass(pos.roiPct)}`}>
-                      {formatSigned(pos.roiPct)}
-                      {pos.roiPct !== null && "%"}
-                    </td>
-                    <td className="px-2 py-3 text-gray-400">
-                      <ChevronRight className="size-4" />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* Combined summary */}
+          <PortfolioSummaryCard summary={combinedSummary} title="All Portfolios" />
+
+          {/* Per-portfolio sections */}
+          {portfolios.map((p) => (
+            <PortfolioSection
+              key={p.id}
+              portfolio={p}
+              transactions={transactions.filter((t) => t.portfolio_id === p.id)}
+              prices={prices}
+              sectors={sectors}
+              onAddTransaction={(id) => {
+                setAddTransactionPortfolioId(id);
+              }}
+              onEditPortfolio={(portfolio) => {
+                setEditPortfolio(portfolio);
+                setEditPortfolioName(portfolio.name);
+                setEditPortfolioError(null);
+              }}
+              onDeletePortfolio={(id) => {
+                setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
+              }}
+              onShowLots={(ticker, portfolioId) => {
+                setLotsContext({ ticker, portfolioId });
+              }}
+            />
+          ))}
         </>
       )}
 
-      {/* Add transaction button — always below the table/empty state */}
-      <div className="mt-4">
-        <Button
-          className="bg-emerald-500 text-white hover:bg-emerald-600"
-          onClick={() => {
-            setIsDialogOpen(true);
-          }}
-        >
-          Add transaction
-        </Button>
-      </div>
-
-      {/* Sector Allocation Chart */}
-      <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-700">Sector Allocation</h2>
-        <SectorAllocationChart slices={sectorSlices} />
-      </div>
+      {/* Lots modal */}
+      <LotsModal
+        ticker={lotsContext?.ticker ?? ""}
+        open={lotsContext !== null}
+        onOpenChange={(open) => {
+          if (!open) setLotsContext(null);
+        }}
+        transactions={transactions.filter((t) => t.portfolio_id === lotsContext?.portfolioId)}
+        onEditRequest={setEditingTransaction}
+        onDeleteRequest={(t) => {
+          setDeleteError(null);
+          setDeletingTransaction(t);
+        }}
+      />
 
       {/* Add transaction dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog
+        open={addTransactionPortfolioId !== null}
+        onOpenChange={(open) => {
+          if (!open) setAddTransactionPortfolioId(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add transaction</DialogTitle>
@@ -309,9 +293,10 @@ export default function DashboardView({ initialTransactions, initialPrices, init
           <AddTransactionForm
             onSuccess={handleAddSuccess}
             onCancel={() => {
-              setIsDialogOpen(false);
+              setAddTransactionPortfolioId(null);
             }}
-            portfolios={[]}
+            portfolios={portfolios}
+            defaultPortfolioId={addTransactionPortfolioId ?? undefined}
           />
         </DialogContent>
       </Dialog>
@@ -333,27 +318,12 @@ export default function DashboardView({ initialTransactions, initialPrices, init
             onCancel={() => {
               setEditingTransaction(null);
             }}
-            portfolios={[]}
+            portfolios={portfolios}
           />
         </DialogContent>
       </Dialog>
 
-      {/* Lots modal */}
-      <LotsModal
-        ticker={selectedTicker ?? ""}
-        open={selectedTicker !== null}
-        onOpenChange={(open) => {
-          if (!open) setSelectedTicker(null);
-        }}
-        transactions={transactions}
-        onEditRequest={setEditingTransaction}
-        onDeleteRequest={(t) => {
-          setDeleteError(null);
-          setDeletingTransaction(t);
-        }}
-      />
-
-      {/* Delete confirmation dialog */}
+      {/* Delete transaction dialog */}
       <AlertDialog
         open={deletingTransaction !== null}
         onOpenChange={(open) => {
@@ -378,9 +348,145 @@ export default function DashboardView({ initialTransactions, initialPrices, init
           )}
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleteLoading}>Cancel</AlertDialogCancel>
-            <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isDeleteLoading}>
+            <Button variant="destructive" onClick={handleDeleteTransactionConfirm} disabled={isDeleteLoading}>
               {isDeleteLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
               {isDeleteLoading ? "Deleting..." : "Delete"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Add portfolio dialog */}
+      <Dialog
+        open={isAddPortfolioDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setIsAddPortfolioDialogOpen(false);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add portfolio</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddPortfolioSubmit} className="space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="portfolio-name">Name</Label>
+              <Input
+                id="portfolio-name"
+                type="text"
+                placeholder="e.g. Regular Investing"
+                value={addPortfolioName}
+                onChange={(e) => {
+                  setAddPortfolioName(e.target.value);
+                }}
+                maxLength={100}
+                required
+              />
+            </div>
+            {addPortfolioError && (
+              <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {addPortfolioError}
+              </p>
+            )}
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsAddPortfolioDialogOpen(false);
+                }}
+                disabled={isAddPortfolioLoading}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isAddPortfolioLoading}>
+                {isAddPortfolioLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {isAddPortfolioLoading ? "Creating..." : "Create"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rename portfolio dialog */}
+      <Dialog
+        open={editPortfolio !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditPortfolio(null);
+            setEditPortfolioName("");
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename portfolio</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEditPortfolioSubmit} className="space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="edit-portfolio-name">Name</Label>
+              <Input
+                id="edit-portfolio-name"
+                type="text"
+                value={editPortfolioName}
+                onChange={(e) => {
+                  setEditPortfolioName(e.target.value);
+                }}
+                maxLength={100}
+                required
+              />
+            </div>
+            {editPortfolioError && (
+              <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {editPortfolioError}
+              </p>
+            )}
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setEditPortfolio(null);
+                }}
+                disabled={isEditPortfolioLoading}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isEditPortfolioLoading}>
+                {isEditPortfolioLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {isEditPortfolioLoading ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete portfolio dialog */}
+      <AlertDialog
+        open={deletingPortfolio !== null}
+        onOpenChange={(open) => {
+          if (!open && !isDeletePortfolioLoading) {
+            setDeletingPortfolio(null);
+            setDeletePortfolioError(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete portfolio</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete &quot;{deletingPortfolio?.name}&quot;? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {deletePortfolioError && (
+            <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {deletePortfolioError}
+            </p>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletePortfolioLoading}>Cancel</AlertDialogCancel>
+            <Button variant="destructive" onClick={handleDeletePortfolioConfirm} disabled={isDeletePortfolioLoading}>
+              {isDeletePortfolioLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {isDeletePortfolioLoading ? "Deleting..." : "Delete"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -38,6 +38,15 @@ If you connect a Cloudflare Worker to a GitHub repo via the Cloudflare dashboard
 
 ---
 
+## In Zod v4, use z.uuid() not z.string().uuid()
+
+- **Context**: `src/lib/transaction-schema.ts` — any Zod schema in the project
+- **Problem**: Plan spec'd `z.string().uuid("Invalid portfolio ID")` (Zod v3 form). Implementation correctly used `z.uuid({ message: "Invalid portfolio ID" })` — the Zod v4 standalone API. Both validate identically, but the v3 form in plans will create misleading drift notes in future reviews.
+- **Rule**: In Zod v4, UUID validation is a standalone schema: `z.uuid({ message: "..." })`. Do not use `z.string().uuid("message")` — that is the Zod v3 refinement form. Same applies to other standalone schemas: `z.email()`, `z.url()`, `z.ip()`.
+- **Applies to**: 10x-plan, 10x-implement, 10x-impl-review — any task specifying or reviewing Zod validation schemas
+
+---
+
 ## Always use double quotes in TypeScript files
 
 - **Context**: Any new TypeScript file in src/

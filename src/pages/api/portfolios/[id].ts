@@ -135,6 +135,15 @@ export const DELETE: APIRoute = async (context) => {
         headers: JSON_HEADERS,
       });
     }
+    if (dbError.code === "23503") {
+      return new Response(
+        JSON.stringify({ error: "This portfolio has transactions. Reassign or delete them first." }),
+        {
+          status: 409,
+          headers: JSON_HEADERS,
+        },
+      );
+    }
     // eslint-disable-next-line no-console
     console.error("[api/portfolios/[id]] DELETE DB error", dbError.message);
     return new Response(JSON.stringify({ error: "Internal server error" }), {

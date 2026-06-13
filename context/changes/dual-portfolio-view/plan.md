@@ -433,28 +433,28 @@ New dialogs to add (after existing dialog JSX):
 
 #### Automated
 
-- [x] 3.1 TypeScript compilation passes: `npm run build`
-- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 TypeScript compilation passes: `npm run build` — 7776689
+- [x] 3.2 Lint passes: `npm run lint` — 7776689
 
 #### Manual
 
-- [x] 3.3 Add transaction form shows portfolio selector; pre-selects first portfolio
-- [x] 3.4 Edit transaction form shows current portfolio; allows reassignment
-- [x] 3.5 POST /api/transactions with unknown portfolio_id returns 400
+- [x] 3.3 Add transaction form shows portfolio selector; pre-selects first portfolio — 7776689
+- [x] 3.4 Edit transaction form shows current portfolio; allows reassignment — 7776689
+- [x] 3.5 POST /api/transactions with unknown portfolio_id returns 400 — 7776689
 
 ### Phase 4: Dashboard Restructure
 
 #### Automated
 
-- [ ] 4.1 TypeScript compilation passes: `npm run build`
-- [ ] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 TypeScript compilation passes: `npm run build`
+- [x] 4.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 4.3 Dashboard shows "All Portfolios" combined summary card at top
-- [ ] 4.4 Each portfolio renders as a named section with summary, table, and chart
-- [ ] 4.5 Portfolio sections sort independently
-- [ ] 4.6 Add portfolio, rename portfolio, and delete portfolio (with and without transactions) all work correctly
-- [ ] 4.7 Add transaction button in each section pre-selects that portfolio
-- [ ] 4.8 LotsModal is scoped to the portfolio from which it was opened
-- [ ] 4.9 No regressions in transaction add, edit, and delete flows
+- [x] 4.3 Dashboard shows "All Portfolios" combined summary card at top
+- [x] 4.4 Each portfolio renders as a named section with summary, table, and chart
+- [x] 4.5 Portfolio sections sort independently
+- [x] 4.6 Add portfolio, rename portfolio, and delete portfolio (with and without transactions) all work correctly
+- [x] 4.7 Add transaction button in each section pre-selects that portfolio
+- [x] 4.8 LotsModal is scoped to the portfolio from which it was opened
+- [x] 4.9 No regressions in transaction add, edit, and delete flows
