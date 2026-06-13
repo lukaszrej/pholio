@@ -80,11 +80,11 @@ Split the root div into a full-bleed background shell and a centered `max-w-7xl`
 
 #### Automated
 
-- [x] 1.1 TypeScript passes: `npx tsc --noEmit`
+- [x] 1.1 TypeScript passes: `npx tsc --noEmit` — 9d49654
 
 #### Manual
 
-- [x] 1.2 Content centered with equal margins at ≥1440px viewport
-- [x] 1.3 Background gradient full-bleed
-- [x] 1.4 No layout regressions on tablet/mobile
-- [x] 1.5 Dialogs still centered correctly
+- [x] 1.2 Content centered with equal margins at ≥1440px viewport — 9d49654
+- [x] 1.3 Background gradient full-bleed — 9d49654
+- [x] 1.4 No layout regressions on tablet/mobile — 9d49654
+- [x] 1.5 Dialogs still centered correctly — 9d49654
