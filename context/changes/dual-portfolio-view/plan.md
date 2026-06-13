@@ -446,15 +446,15 @@ New dialogs to add (after existing dialog JSX):
 
 #### Automated
 
-- [x] 4.1 TypeScript compilation passes: `npm run build`
-- [x] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 TypeScript compilation passes: `npm run build` — b546ac5
+- [x] 4.2 Lint passes: `npm run lint` — b546ac5
 
 #### Manual
 
-- [x] 4.3 Dashboard shows "All Portfolios" combined summary card at top
-- [x] 4.4 Each portfolio renders as a named section with summary, table, and chart
-- [x] 4.5 Portfolio sections sort independently
-- [x] 4.6 Add portfolio, rename portfolio, and delete portfolio (with and without transactions) all work correctly
-- [x] 4.7 Add transaction button in each section pre-selects that portfolio
-- [x] 4.8 LotsModal is scoped to the portfolio from which it was opened
-- [x] 4.9 No regressions in transaction add, edit, and delete flows
+- [x] 4.3 Dashboard shows "All Portfolios" combined summary card at top — b546ac5
+- [x] 4.4 Each portfolio renders as a named section with summary, table, and chart — b546ac5
+- [x] 4.5 Portfolio sections sort independently — b546ac5
+- [x] 4.6 Add portfolio, rename portfolio, and delete portfolio (with and without transactions) all work correctly — b546ac5
+- [x] 4.7 Add transaction button in each section pre-selects that portfolio — b546ac5
+- [x] 4.8 LotsModal is scoped to the portfolio from which it was opened — b546ac5
+- [x] 4.9 No regressions in transaction add, edit, and delete flows — b546ac5
