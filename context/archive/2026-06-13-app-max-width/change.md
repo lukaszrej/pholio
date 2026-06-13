@@ -1,10 +1,10 @@
 ---
 change_id: app-max-width
 title: Constrain dashboard layout to a readable max-width on wide desktop screens
-status: implemented
+status: archived
 created: 2026-06-13
 updated: 2026-06-13
-archived_at: null
+archived_at: 2026-06-13T17:33:05Z
 ---
 
 ## Notes
