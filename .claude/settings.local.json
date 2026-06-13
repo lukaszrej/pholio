@@ -16,7 +16,8 @@
       "Edit",
       "Write",
       "WebSearch",
-      "Bash(echo \"exit:$?\")"
+      "Bash(echo \"exit:$?\")",
+      "Bash(echo \"staged_exit:$?\")"
     ],
     "deny": [
       "Bash(rm -rf *)"
