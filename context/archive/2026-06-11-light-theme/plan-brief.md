@@ -17,19 +17,20 @@ Every page renders on a light slate gradient background. Cards are white with a 
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| Scope | Light-only replacement | User explicitly said "change it to light" — no toggle | User |
-| Gradient headings | Darken to `from-blue-600 via-purple-600 to-pink-600` | `from-blue-200` washes out on white bg | User ("darken it") |
-| Page background | Subtle slate gradient `#f8fafc → #f1f5f9 → #f8fafc` | Retains structural depth without being stark white | Plan |
-| Card style | White + `border-gray-200 shadow-sm` | Standard light-mode elevated card; clean and readable | Plan |
-| Welcome decorations | Remove orbs + star field entirely | White-dot radial gradients and blur blobs don't work on light bg | Plan |
-| shadcn components | No changes | Already CSS-variable-aware and rendering light | Research |
-| ROI colors | Darken to `-600` variants | `emerald-400` / `red-400` have poor contrast on white | Plan |
+| Decision            | Choice                                               | Why (1 sentence)                                                 | Source             |
+| ------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- | ------------------ |
+| Scope               | Light-only replacement                               | User explicitly said "change it to light" — no toggle            | User               |
+| Gradient headings   | Darken to `from-blue-600 via-purple-600 to-pink-600` | `from-blue-200` washes out on white bg                           | User ("darken it") |
+| Page background     | Subtle slate gradient `#f8fafc → #f1f5f9 → #f8fafc`  | Retains structural depth without being stark white               | Plan               |
+| Card style          | White + `border-gray-200 shadow-sm`                  | Standard light-mode elevated card; clean and readable            | Plan               |
+| Welcome decorations | Remove orbs + star field entirely                    | White-dot radial gradients and blur blobs don't work on light bg | Plan               |
+| shadcn components   | No changes                                           | Already CSS-variable-aware and rendering light                   | Research           |
+| ROI colors          | Darken to `-600` variants                            | `emerald-400` / `red-400` have poor contrast on white            | Plan               |
 
 ## Scope
 
 **In scope:**
+
 - `src/styles/global.css` — redefine `bg-cosmic`, remove `.dark` block
 - `src/components/Welcome.astro` — remove decorative elements, update dark classes
 - `src/components/Topbar.astro` — update dark classes
@@ -39,6 +40,7 @@ Every page renders on a light slate gradient background. Cards are white with a 
 - `src/components/portfolio/SectorAllocationChart.tsx` — empty state + legend color
 
 **Out of scope:**
+
 - `src/components/ui/*` (shadcn) — already light-mode ready
 - `src/components/auth/SubmitButton.tsx` — purple CTA is fine on light bg
 - Dark/light toggle mechanism
@@ -50,10 +52,10 @@ Single-source dark theme: the `bg-cosmic` utility in `global.css` covers the ful
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
+| Phase                | What it delivers                                         | Key risk                                                                                   |
+| -------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | 1. CSS + Astro files | Light bg active, auth pages and Welcome visually correct | Removing star-field's inline style correctly (it's in a `style=""` attribute, not a class) |
-| 2. React/TSX sweep | Dashboard, auth forms, sector chart all light | DashboardView has the most class occurrences — easy to miss one |
+| 2. React/TSX sweep   | Dashboard, auth forms, sector chart all light            | DashboardView has the most class occurrences — easy to miss one                            |
 
 **Prerequisites:** Phase 1 must complete before Phase 2 (background must be correct to judge component contrast).  
 **Estimated effort:** ~1 session across 2 phases.

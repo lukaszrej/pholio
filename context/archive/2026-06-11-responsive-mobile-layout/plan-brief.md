@@ -17,25 +17,27 @@ On viewports narrower than 768px: the Ticker column stays pinned to the left whi
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|----------|--------|------------------|--------|
-| Hover state on sticky cells | `group`/`group-hover:` pattern | `background-color` is not CSS-inherited; without `group`, sticky cells stay white on row hover | Plan |
-| Expanded sub-rows on mobile | Add `overflow-x-auto` to expanded `<td>` | 1-line fix prevents the inner sub-table from overflowing its container | Plan |
-| Mobile/desktop breakpoint | `md` — 768px | Industry-standard mobile/tablet split; aligns with `matchMedia("(max-width: 767px)")` | Plan |
-| Viewport meta fix | Include in this change | Missing `initial-scale=1` breaks iOS Safari breakpoint behaviour; prerequisite for both features | Plan |
-| Legend position approach | JS `matchMedia` hook | Chart.js legend position is JavaScript-only; no CSS path exists | Research |
-| Chart container height | `h-[380px] md:h-[300px]` | Bottom legend needs ~80px extra space; pure Tailwind, no JS | Plan |
-| Hook initialization | `useState(false)` — always false on server | Prevents React hydration mismatch on Astro SSR; `useEffect` corrects to `mq.matches` on client | Plan |
-| `useIsSmall` location | Inline in `SectorAllocationChart.tsx` | Single usage; a shared hooks file would be over-engineering | Plan |
+| Decision                    | Choice                                     | Why (1 sentence)                                                                                 | Source   |
+| --------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------ | -------- |
+| Hover state on sticky cells | `group`/`group-hover:` pattern             | `background-color` is not CSS-inherited; without `group`, sticky cells stay white on row hover   | Plan     |
+| Expanded sub-rows on mobile | Add `overflow-x-auto` to expanded `<td>`   | 1-line fix prevents the inner sub-table from overflowing its container                           | Plan     |
+| Mobile/desktop breakpoint   | `md` — 768px                               | Industry-standard mobile/tablet split; aligns with `matchMedia("(max-width: 767px)")`            | Plan     |
+| Viewport meta fix           | Include in this change                     | Missing `initial-scale=1` breaks iOS Safari breakpoint behaviour; prerequisite for both features | Plan     |
+| Legend position approach    | JS `matchMedia` hook                       | Chart.js legend position is JavaScript-only; no CSS path exists                                  | Research |
+| Chart container height      | `h-[380px] md:h-[300px]`                   | Bottom legend needs ~80px extra space; pure Tailwind, no JS                                      | Plan     |
+| Hook initialization         | `useState(false)` — always false on server | Prevents React hydration mismatch on Astro SSR; `useEffect` corrects to `mq.matches` on client   | Plan     |
+| `useIsSmall` location       | Inline in `SectorAllocationChart.tsx`      | Single usage; a shared hooks file would be over-engineering                                      | Plan     |
 
 ## Scope
 
 **In scope:**
+
 - `src/layouts/Layout.astro` — add `initial-scale=1` to viewport meta
 - `src/components/transactions/DashboardView.tsx` — sticky Ticker th/td, group-hover, expanded sub-row overflow
 - `src/components/portfolio/SectorAllocationChart.tsx` — `useIsSmall` hook, conditional legend position, responsive container height
 
 **Out of scope:**
+
 - Sticky `<thead>` (vertical sticky header row)
 - Max-width container / dashboard layout restructure
 - Dark mode variants on sticky cells
@@ -48,10 +50,10 @@ Phase 1 is pure class additions — no new imports or logic. Phase 2 adds a 10-l
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|-------|-----------------|----------|
-| 1. Viewport meta + sticky column | Sticky Ticker column with correct hover; expanded rows scroll; iOS meta fix | Forgotten `bg-white` on sticky cells → bleed-through |
-| 2. Responsive chart legend | Legend below doughnut on mobile; live on resize | Hook initialized after early return → React rules-of-hooks error |
+| Phase                            | What it delivers                                                            | Key risk                                                         |
+| -------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 1. Viewport meta + sticky column | Sticky Ticker column with correct hover; expanded rows scroll; iOS meta fix | Forgotten `bg-white` on sticky cells → bleed-through             |
+| 2. Responsive chart legend       | Legend below doughnut on mobile; live on resize                             | Hook initialized after early return → React rules-of-hooks error |
 
 **Prerequisites:** None — the table scroll container and Chart.js are already in place.  
 **Estimated effort:** ~1 session across 2 phases (< 30 min implementation).

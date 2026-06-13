@@ -27,23 +27,23 @@ Indywidualny inwestor długoterminowy nie ma jednego miejsca, gdzie może zobacz
 
 ## At a glance
 
-| ID   | Change ID               | Outcome (użytkownik może …)                                                   | Prerequisites | PRD refs                   | Status   |
-| ---- | ----------------------- | ----------------------------------------------------------------------------- | ------------- | -------------------------- | -------- |
-| F-01 | transactions-schema     | (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane  | —             | FR-004, FR-007, §AC        | done     |
-| S-01 | auth-flow-complete      | zarejestrować konto, zalogować się i wylogować; zobaczyć pusty dashboard      | —             | FR-001, FR-002, FR-003     | done     |
-| S-02 | add-transaction         | dodać transakcję (ticker, cena, data, waluta, liczba akcji)                   | S-01, F-01    | FR-004                     | done     |
-| S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                      | S-02          | FR-007, US-01              | done     |
-| S-04 | transaction-crud        | edytować i trwale usunąć istniejącą transakcję                                | S-02          | FR-005, FR-006             | done     |
-| S-05 | sector-allocation-chart | zobaczyć wykres alokacji sektorowej portfela                                  | S-03          | FR-008                     | done     |
+| ID   | Change ID               | Outcome (użytkownik może …)                                                  | Prerequisites | PRD refs               | Status |
+| ---- | ----------------------- | ---------------------------------------------------------------------------- | ------------- | ---------------------- | ------ |
+| F-01 | transactions-schema     | (fundament) tabela transakcji z RLS; każdy użytkownik widzi tylko swoje dane | —             | FR-004, FR-007, §AC    | done   |
+| S-01 | auth-flow-complete      | zarejestrować konto, zalogować się i wylogować; zobaczyć pusty dashboard     | —             | FR-001, FR-002, FR-003 | done   |
+| S-02 | add-transaction         | dodać transakcję (ticker, cena, data, waluta, liczba akcji)                  | S-01, F-01    | FR-004                 | done   |
+| S-03 | portfolio-roi-view      | zobaczyć tabelę portfela z ceną EOD i ROI każdej pozycji                     | S-02          | FR-007, US-01          | done   |
+| S-04 | transaction-crud        | edytować i trwale usunąć istniejącą transakcję                               | S-02          | FR-005, FR-006         | done   |
+| S-05 | sector-allocation-chart | zobaczyć wykres alokacji sektorowej portfela                                 | S-03          | FR-008                 | done   |
 
 ## Streams
 
 Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
 
-| Stream | Theme             | Chain                                              | Note                                                                       |
-| ------ | ----------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
-| A      | Autoryzacja       | `S-01`                                             | Brak prerequisites — można zacząć równolegle z F-01                       |
-| B      | Dane & Portfel    | `F-01` → `S-02` → `S-03` / `S-04` (równolegle) → `S-05` | Główny trzon produktu; gwiazda przewodnia = S-03; S-04 biegnie równolegle z S-03 |
+| Stream | Theme          | Chain                                                   | Note                                                                             |
+| ------ | -------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| A      | Autoryzacja    | `S-01`                                                  | Brak prerequisites — można zacząć równolegle z F-01                              |
+| B      | Dane & Portfel | `F-01` → `S-02` → `S-03` / `S-04` (równolegle) → `S-05` | Główny trzon produktu; gwiazda przewodnia = S-03; S-04 biegnie równolegle z S-03 |
 
 ## Baseline
 
@@ -139,13 +139,13 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID               | Suggested issue title                             | Ready for `/10x-plan` | Notes                                  |
-| ---------- | ----------------------- | ------------------------------------------------- | --------------------- | -------------------------------------- |
-| F-01       | transactions-schema     | Stwórz schemat tabeli `transactions` z RLS        | yes                   | Run `/10x-plan transactions-schema`    |
-| S-01       | auth-flow-complete      | Dokończ i zweryfikuj flow rejestracji i logowania | yes                   | Run `/10x-plan auth-flow-complete`     |
-| S-02       | add-transaction         | Formularz dodawania transakcji zakupu             | no                    | Czeka na F-01 + S-01                   |
-| S-03       | portfolio-roi-view      | Tabela portfela z ceną EOD i ROI                  | no                    | Blocked: wybór dostawcy danych EOD     |
-| S-04       | transaction-crud        | Edycja i usuwanie transakcji                      | —                     | Archived 2026-06-10                    |
+| Roadmap ID | Change ID               | Suggested issue title                             | Ready for `/10x-plan` | Notes                                   |
+| ---------- | ----------------------- | ------------------------------------------------- | --------------------- | --------------------------------------- |
+| F-01       | transactions-schema     | Stwórz schemat tabeli `transactions` z RLS        | yes                   | Run `/10x-plan transactions-schema`     |
+| S-01       | auth-flow-complete      | Dokończ i zweryfikuj flow rejestracji i logowania | yes                   | Run `/10x-plan auth-flow-complete`      |
+| S-02       | add-transaction         | Formularz dodawania transakcji zakupu             | no                    | Czeka na F-01 + S-01                    |
+| S-03       | portfolio-roi-view      | Tabela portfela z ceną EOD i ROI                  | no                    | Blocked: wybór dostawcy danych EOD      |
+| S-04       | transaction-crud        | Edycja i usuwanie transakcji                      | —                     | Archived 2026-06-10                     |
 | S-05       | sector-allocation-chart | Wykres alokacji sektorowej                        | no                    | Blocked: dane sektorowe od dostawcy EOD |
 
 ## Open Roadmap Questions

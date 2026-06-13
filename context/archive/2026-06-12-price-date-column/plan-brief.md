@@ -16,12 +16,12 @@ The portfolio table has a "Price Date" column immediately after "Current Price".
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) |
-|---|---|---|
-| Column position | After Current Price | Date is contextually tied to the price it qualifies |
-| Fresh price date | Always show | Consistent column — no conditionally empty cells |
-| Stale date styling | Muted grey (`text-gray-400`) | Subtle signal without alarming the user |
-| Date format | DD Mon (e.g. "10 Jun") | Matches existing date display in the transactions sub-row |
+| Decision           | Choice                       | Why (1 sentence)                                          |
+| ------------------ | ---------------------------- | --------------------------------------------------------- |
+| Column position    | After Current Price          | Date is contextually tied to the price it qualifies       |
+| Fresh price date   | Always show                  | Consistent column — no conditionally empty cells          |
+| Stale date styling | Muted grey (`text-gray-400`) | Subtle signal without alarming the user                   |
+| Date format        | DD Mon (e.g. "10 Jun")       | Matches existing date display in the transactions sub-row |
 
 ## Scope
 
@@ -35,8 +35,8 @@ Pure UI change in a single component. No new components, no new state, no networ
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
+| Phase                    | What it delivers                                        | Key risk                   |
+| ------------------------ | ------------------------------------------------------- | -------------------------- |
 | 1. Add Price Date column | Separate date column, clean price cell, correct colSpan | None — self-contained edit |
 
 **Prerequisites:** None  

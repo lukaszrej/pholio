@@ -14,11 +14,13 @@ Create the `transactions` table in Supabase with Row Level Security, a user_id i
 ## Desired End State
 
 After this plan is complete:
+
 - A `public.transactions` table exists in Supabase with all fields required by FR-004, RLS enabled, and a user_id index
 - Every future query for the authenticated user's transactions passes RLS automatically
 - `src/types/transaction.ts` exports `Transaction`, `NewTransaction`, and `UpdateTransaction` — importable by S-02 and S-03 without changes to this schema
 
 ### Verify:
+
 1. Supabase Dashboard → Table Editor shows `transactions` with 9 columns
 2. Dashboard → Authentication → Policies shows 4 policies on `transactions`
 3. `npm run typecheck` passes with the new types file in place
@@ -96,6 +98,7 @@ Create the `supabase/migrations/` directory via the Supabase CLI, write the migr
    - DELETE: `USING (auth.uid() = user_id)`
 
 4. `updated_at` trigger function + trigger (`BEFORE UPDATE FOR EACH ROW`):
+
    ```sql
    CREATE OR REPLACE FUNCTION public.set_updated_at()
    RETURNS TRIGGER AS $$
@@ -150,7 +153,8 @@ Add a hand-written TypeScript file that exposes the transactions schema as typed
 
 **Intent**: Export the `Transaction` interface matching the DB schema exactly, plus `NewTransaction` and `UpdateTransaction` helper types for insert and update operations so S-02 and S-03 don't need to inline field lists.
 
-**Contract**: 
+**Contract**:
+
 - `Currency` — union type matching the CHECK constraint values
 - `Transaction` — full row shape (all 9 columns); numeric fields are `number` since Supabase JS returns `NUMERIC` as number; date fields are `string` (`'YYYY-MM-DD'` for DATE, ISO string for TIMESTAMPTZ)
 - `NewTransaction` — `Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>` — the shape a form submits

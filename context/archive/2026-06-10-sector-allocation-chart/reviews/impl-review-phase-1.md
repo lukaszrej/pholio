@@ -1,22 +1,23 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: Sector Allocation Chart
 
 - **Plan**: context/changes/sector-allocation-chart/plan.md
 - **Scope**: Phase 1 of 3
 - **Date**: 2026-06-11
 - **Verdict**: NEEDS ATTENTION (resolved via triage)
-- **Findings**: 0 critical  3 warnings  2 observations
+- **Findings**: 0 critical 3 warnings 2 observations
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| Plan Adherence | PASS |
-| Scope Discipline | PASS |
-| Safety & Quality | WARNING |
-| Architecture | PASS |
-| Pattern Consistency | PASS |
-| Success Criteria | PASS |
+| Dimension           | Verdict |
+| ------------------- | ------- |
+| Plan Adherence      | PASS    |
+| Scope Discipline    | PASS    |
+| Safety & Quality    | WARNING |
+| Architecture        | PASS    |
+| Pattern Consistency | PASS    |
+| Success Criteria    | PASS    |
 
 ## Findings
 

@@ -1,22 +1,23 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: Portfolio ROI View
 
 - **Plan**: context/changes/portfolio-roi-view/plan.md
 - **Scope**: All Phases (1–4 of 4)
 - **Date**: 2026-06-10
 - **Verdict**: NEEDS ATTENTION → resolved via triage
-- **Findings**: 0 critical  6 warnings  4 observations
+- **Findings**: 0 critical 6 warnings 4 observations
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| Plan Adherence | PASS |
-| Scope Discipline | WARNING |
-| Safety & Quality | WARNING |
-| Architecture | PASS |
+| Dimension           | Verdict |
+| ------------------- | ------- |
+| Plan Adherence      | PASS    |
+| Scope Discipline    | WARNING |
+| Safety & Quality    | WARNING |
+| Architecture        | PASS    |
 | Pattern Consistency | WARNING |
-| Success Criteria | WARNING |
+| Success Criteria    | WARNING |
 
 ## Findings
 
@@ -78,7 +79,7 @@
 - **Fix**: Add `if (result?.error) { console.error(...) }` before transactions assignment.
 - **Decision**: FIXED
 
-### F5 — Unbounded select("*") on transactions
+### F5 — Unbounded select("\*") on transactions
 
 - **Severity**: ⚠️ WARNING
 - **Impact**: 🏃 LOW — quick decision; fix is obvious and narrowly scoped

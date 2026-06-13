@@ -17,23 +17,25 @@ The table has 11 columns. "% of net liq" (position market value ÷ portfolio mar
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| % of net liq numerator | Position market value (`positionValue`) | Standard brokerage definition — shows how much of total portfolio value is tied up in each ticker | Plan |
-| Cost basis currency suffix | None | Match the existing Market value cell pattern (no suffix at DashboardView:169) | Plan |
-| % of net liq precision | 2 decimal places | Consistent with the rest of the table (`.toFixed(2)` convention) | Plan |
-| Type system changes | None | `avgCost` and `totalShares` are already non-nullable; `portfolioSummary` is in scope; inline arithmetic is the established pattern | Research |
-| New columns location in `portfolio.ts` | Not added | All values derivable inline; no reason to add to `PortfolioPosition` interface | Research |
+| Decision                               | Choice                                  | Why (1 sentence)                                                                                                                   | Source   |
+| -------------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| % of net liq numerator                 | Position market value (`positionValue`) | Standard brokerage definition — shows how much of total portfolio value is tied up in each ticker                                  | Plan     |
+| Cost basis currency suffix             | None                                    | Match the existing Market value cell pattern (no suffix at DashboardView:169)                                                      | Plan     |
+| % of net liq precision                 | 2 decimal places                        | Consistent with the rest of the table (`.toFixed(2)` convention)                                                                   | Plan     |
+| Type system changes                    | None                                    | `avgCost` and `totalShares` are already non-nullable; `portfolioSummary` is in scope; inline arithmetic is the established pattern | Research |
+| New columns location in `portfolio.ts` | Not added                               | All values derivable inline; no reason to add to `PortfolioPosition` interface                                                     | Research |
 
 ## Scope
 
 **In scope:**
+
 - Rename `<th>` "Value" → "Market value" (`DashboardView.tsx:142`)
 - Rename label "Current Value" → "Market value" (`PortfolioSummaryCard.tsx:29`)
 - Add "% of net liq" `<th>` + `<td>` after Ticker column
 - Add "Cost basis" `<th>` + `<td>` before Market value column
 
 **Out of scope:**
+
 - Changes to `portfolio.ts`, `PortfolioPosition`, or `PortfolioSummary`
 - Database migrations
 - Currency suffix on Cost basis
@@ -45,10 +47,10 @@ Pure UI layer. All new data is computed inline in `DashboardView.tsx` from alrea
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Rename Value Labels | Both files updated; "Market value" appears in table header and summary card | Near zero — pure text changes |
-| 2. Add New Columns | "% of net liq" and "Cost basis" appear in correct positions with correct values | Null guard on `positionValue` / `currentValue` must be correct; column ordering in `<thead>` and `<tbody>` must stay in sync |
+| Phase                  | What it delivers                                                                | Key risk                                                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1. Rename Value Labels | Both files updated; "Market value" appears in table header and summary card     | Near zero — pure text changes                                                                                                |
+| 2. Add New Columns     | "% of net liq" and "Cost basis" appear in correct positions with correct values | Null guard on `positionValue` / `currentValue` must be correct; column ordering in `<thead>` and `<tbody>` must stay in sync |
 
 **Prerequisites:** None — all required data is already computed and in scope  
 **Estimated effort:** ~1 session, 2 phases

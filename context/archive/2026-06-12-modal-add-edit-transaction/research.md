@@ -25,7 +25,7 @@ Move the per-ticker transaction sub-table (showing Date, Shares, Price, Currency
 
 ## Summary
 
-**The change is narrower than it first appears.** The add and edit *forms* already live in Dialog modals (`DashboardView.tsx:277–310`). What the user wants to move is the **discovery surface**: the inline sub-table that appears when a ticker row is expanded. Currently clicking a position row toggles `expandedTickers` state, which renders a nested `<table>` inline below that row (lines 195–248 of `DashboardView.tsx`). The goal is to replace this expansion with a modal that presents the same transaction list — and hosts the same Edit/Delete triggers — without breaking the add flow.
+**The change is narrower than it first appears.** The add and edit _forms_ already live in Dialog modals (`DashboardView.tsx:277–310`). What the user wants to move is the **discovery surface**: the inline sub-table that appears when a ticker row is expanded. Currently clicking a position row toggles `expandedTickers` state, which renders a nested `<table>` inline below that row (lines 195–248 of `DashboardView.tsx`). The goal is to replace this expansion with a modal that presents the same transaction list — and hosts the same Edit/Delete triggers — without breaking the add flow.
 
 All infrastructure needed is already present: `Dialog` and `AlertDialog` from `src/components/ui/dialog.tsx` and `alert-dialog.tsx` (Radix UI), `AddTransactionForm` for add/edit, and a clean `useState`-based modal state pattern in `DashboardView`.
 
@@ -41,13 +41,13 @@ The main design decision is **nested modal depth**: the new "transactions for th
 
 When `expandedTickers` contains a ticker symbol, the main portfolio table renders an extra `<tr>` with a nested `<table>` inside it:
 
-| Column header | Data source | Notes |
-|---|---|---|
-| Date | `t.purchase_date` | Displayed as-is (`YYYY-MM-DD`) |
-| Shares | `formatShares(t.shares)` | Smart formatting helper |
-| Price | `t.purchase_price.toFixed(2)` | 2 dp, no label |
-| Currency | `t.currency` | Plain text |
-| (Edit button) | `Button ghost sm` | `onClick: setEditingTransaction(t)` |
+| Column header   | Data source                    | Notes                                |
+| --------------- | ------------------------------ | ------------------------------------ |
+| Date            | `t.purchase_date`              | Displayed as-is (`YYYY-MM-DD`)       |
+| Shares          | `formatShares(t.shares)`       | Smart formatting helper              |
+| Price           | `t.purchase_price.toFixed(2)`  | 2 dp, no label                       |
+| Currency        | `t.currency`                   | Plain text                           |
+| (Edit button)   | `Button ghost sm`              | `onClick: setEditingTransaction(t)`  |
 | (Delete button) | `Button ghost sm text-red-600` | `onClick: setDeletingTransaction(t)` |
 
 The row expansion is toggled somewhere in the main ticker row (where `expandedTickers` is updated) — the exact click handler line needs to be confirmed at planning time.
@@ -74,7 +74,9 @@ After the change, `expandedTickers` becomes either `selectedTicker` (a single ti
 ```tsx
 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
   <DialogContent>
-    <DialogHeader><DialogTitle>Add transaction</DialogTitle></DialogHeader>
+    <DialogHeader>
+      <DialogTitle>Add transaction</DialogTitle>
+    </DialogHeader>
     <AddTransactionForm onSuccess={handleAddSuccess} onCancel={() => setIsDialogOpen(false)} />
   </DialogContent>
 </Dialog>
@@ -87,9 +89,16 @@ This modal already exists and does not need to move. The "Add transaction" butto
 `src/components/transactions/DashboardView.tsx:292–310`
 
 ```tsx
-<Dialog open={editingTransaction !== null} onOpenChange={(open) => { if (!open) setEditingTransaction(null); }}>
+<Dialog
+  open={editingTransaction !== null}
+  onOpenChange={(open) => {
+    if (!open) setEditingTransaction(null);
+  }}
+>
   <DialogContent>
-    <DialogHeader><DialogTitle>Edit transaction</DialogTitle></DialogHeader>
+    <DialogHeader>
+      <DialogTitle>Edit transaction</DialogTitle>
+    </DialogHeader>
     <AddTransactionForm
       transaction={editingTransaction ?? undefined}
       onSuccess={handleEditSuccess}
@@ -99,7 +108,7 @@ This modal already exists and does not need to move. The "Add transaction" butto
 </Dialog>
 ```
 
-The dialog itself does not change. Only the *trigger* (the Edit button) moves from the inline sub-table into the new ticker-transactions modal.
+The dialog itself does not change. Only the _trigger_ (the Edit button) moves from the inline sub-table into the new ticker-transactions modal.
 
 ### Delete Confirmation Dialog (unchanged structure, trigger moves)
 
@@ -110,6 +119,7 @@ The dialog itself does not change. Only the *trigger* (the Edit button) moves fr
 `src/components/transactions/AddTransactionForm.tsx:1–195`
 
 A single component handles both add and edit via optional `transaction` prop:
+
 - No `transaction` prop → POST `/api/transactions`, button label "Add transaction"
 - `transaction` prop present → PUT `/api/transactions/{id}`, button label "Save changes", ticker field disabled
 
@@ -136,11 +146,11 @@ On error: sets `root` error displayed in a red banner, plus field-level inline e
 
 ### API Routes
 
-| Method | Route | File | Purpose |
-|---|---|---|---|
-| POST | `/api/transactions` | `src/pages/api/transactions/index.ts:8–65` | Create; returns `{ data: Transaction }` HTTP 201 |
-| PUT | `/api/transactions/[id]` | `src/pages/api/transactions/[id].ts:9–79` | Update; returns `{ data: Transaction }` HTTP 200 |
-| DELETE | `/api/transactions/[id]` | `src/pages/api/transactions/[id].ts:81–131` | Delete; returns `{ success: true }` HTTP 200 |
+| Method | Route                    | File                                        | Purpose                                          |
+| ------ | ------------------------ | ------------------------------------------- | ------------------------------------------------ |
+| POST   | `/api/transactions`      | `src/pages/api/transactions/index.ts:8–65`  | Create; returns `{ data: Transaction }` HTTP 201 |
+| PUT    | `/api/transactions/[id]` | `src/pages/api/transactions/[id].ts:9–79`   | Update; returns `{ data: Transaction }` HTTP 200 |
+| DELETE | `/api/transactions/[id]` | `src/pages/api/transactions/[id].ts:81–131` | Delete; returns `{ success: true }` HTTP 200     |
 
 All three validate via `transactionSchema.safeParse`. Auth enforced both by middleware `/api/` guard and `context.locals.user` check inside each route. RLS enforces ownership at the DB layer.
 
@@ -150,12 +160,12 @@ All three validate via `transactionSchema.safeParse`. Auth enforced both by midd
 
 ```ts
 interface Transaction {
-  id: string;            // UUID
+  id: string; // UUID
   user_id: string;
   ticker: string;
   purchase_price: number;
   purchase_date: string; // YYYY-MM-DD
-  currency: Currency;    // "PLN" | "USD" | "EUR" | ...
+  currency: Currency; // "PLN" | "USD" | "EUR" | ...
   shares: number;
   created_at: string;
   updated_at: string;
@@ -177,9 +187,11 @@ Radix Dialog uses portals rendered to `document.body`. A Dialog opened from insi
 Two valid options:
 
 **Option A — add a single new state variable:**
+
 ```ts
 const [tickerModalTicker, setTickerModalTicker] = useState<string | null>(null);
 ```
+
 `expandedTickers` state is removed; click handler becomes `setTickerModalTicker(ticker)`.
 
 **Option B — extract a dedicated component:**

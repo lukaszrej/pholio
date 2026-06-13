@@ -23,12 +23,12 @@ already has a "Sign up" link, so no public entry point is lost.
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| Root redirect logic | Auth-aware (1 hop) | Avoids the double-hop of always sending to /auth/signin | Plan |
-| Sign-out target | /auth/signin directly | Explicit intent; no ghost redirect through deleted page | Plan |
-| Dead code scope | Delete all three files | index.astro, Welcome.astro, Topbar.astro have no other consumers | Plan |
-| Sign-up link | Already present | signin.astro:17–19 already has "Don't have an account? Sign up" | Research |
+| Decision            | Choice                 | Why (1 sentence)                                                 | Source   |
+| ------------------- | ---------------------- | ---------------------------------------------------------------- | -------- |
+| Root redirect logic | Auth-aware (1 hop)     | Avoids the double-hop of always sending to /auth/signin          | Plan     |
+| Sign-out target     | /auth/signin directly  | Explicit intent; no ghost redirect through deleted page          | Plan     |
+| Dead code scope     | Delete all three files | index.astro, Welcome.astro, Topbar.astro have no other consumers | Plan     |
+| Sign-up link        | Already present        | signin.astro:17–19 already has "Don't have an account? Sign up"  | Research |
 
 ## Scope
 
@@ -45,10 +45,10 @@ The existing auth-page guard (`/auth/signin` + `/auth/signup`) already redirects
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Delete orphaned landing files | index.astro, Welcome.astro, Topbar.astro gone; `/` returns 404 | None — grep confirmed no other consumers |
-| 2. Wire root redirect + fix signout | `/` never 404s; sign-out lands on /auth/signin | Middleware block must be placed after auth-user resolution |
+| Phase                               | What it delivers                                               | Key risk                                                   |
+| ----------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------- |
+| 1. Delete orphaned landing files    | index.astro, Welcome.astro, Topbar.astro gone; `/` returns 404 | None — grep confirmed no other consumers                   |
+| 2. Wire root redirect + fix signout | `/` never 404s; sign-out lands on /auth/signin                 | Middleware block must be placed after auth-user resolution |
 
 **Prerequisites:** None — standalone change, no migrations or dependencies.  
 **Estimated effort:** ~1 session, both phases in one sitting.

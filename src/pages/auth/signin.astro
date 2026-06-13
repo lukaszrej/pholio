@@ -5,17 +5,43 @@ import SignInForm from "@/components/auth/SignInForm";
 const error = Astro.url.searchParams.get("error");
 ---
 
-<Layout title="Sign in">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 text-gray-900 shadow-md">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-center text-2xl font-bold text-transparent"
-      >
-        Sign in
-      </h1>
-      <SignInForm serverError={error} client:load />
-      <p class="mt-4 text-center text-sm text-gray-500">
-        Don't have an account? <a href="/auth/signup" class="text-purple-600 hover:underline">Sign up</a>
+<Layout title="Sign in — Pholio">
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-6">
+    <div class="w-full max-w-sm">
+      <div class="mb-6 flex flex-col items-center gap-3">
+        <span
+          class="inline-flex h-12 w-12 items-center justify-center rounded-[13px] bg-gradient-to-br from-blue-600 to-violet-600 text-white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+            <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+          </svg>
+        </span>
+        <span
+          class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-4xl font-bold tracking-tight text-transparent"
+        >
+          Pholio
+        </span>
+        <p class="text-sm text-gray-500">Track every position, in one calm place.</p>
+      </div>
+      <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h1 class="mb-1 text-xl font-semibold text-gray-900">Sign in</h1>
+        <p class="mb-5 text-sm text-gray-500">Welcome back to your portfolio.</p>
+        <SignInForm serverError={error} client:load />
+      </div>
+      <p class="mt-5 text-center text-sm text-gray-500">
+        New here? <a href="/auth/signup" class="font-medium text-purple-600 hover:underline">Create an account</a>
       </p>
     </div>
   </div>

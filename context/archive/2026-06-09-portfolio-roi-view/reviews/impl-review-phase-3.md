@@ -1,22 +1,23 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: Portfolio ROI View
 
 - **Plan**: context/changes/portfolio-roi-view/plan.md
 - **Scope**: Phase 3 of 4
 - **Date**: 2026-06-10
 - **Verdict**: NEEDS ATTENTION
-- **Findings**: 0 critical  1 warning  2 observations
+- **Findings**: 0 critical 1 warning 2 observations
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| Plan Adherence | PASS |
-| Scope Discipline | WARNING |
-| Safety & Quality | PASS |
-| Architecture | PASS |
-| Pattern Consistency | PASS |
-| Success Criteria | PASS |
+| Dimension           | Verdict |
+| ------------------- | ------- |
+| Plan Adherence      | PASS    |
+| Scope Discipline    | WARNING |
+| Safety & Quality    | PASS    |
+| Architecture        | PASS    |
+| Pattern Consistency | PASS    |
+| Success Criteria    | PASS    |
 
 ## Findings
 

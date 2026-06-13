@@ -73,6 +73,7 @@ Add sort state and a sorted positions memo, wire click handlers to the 7 sortabl
 **Intent**: Define the `SortKey` type, initialize sort state to the default (`weightPct` / `desc`), and derive a sorted copy of `positions` for rendering — without re-running `computePositions`.
 
 **Contract**:
+
 - `SortKey` — a string union of the 8 keys that can appear as the active sort: the 7 user-sortable field names plus `"weightPct"` (used only for the initial default; user clicks can never set it back).
 - `const [sortKey, setSortKey] = useState<SortKey>("weightPct")` — initialized to default.
 - `const [sortDir, setSortDir] = useState<"asc" | "desc">("desc")` — initialized to default.
@@ -97,6 +98,7 @@ Add sort state and a sorted positions memo, wire click handlers to the 7 sortabl
 **Intent**: Make each sortable column header interactive and show the appropriate sort icon to communicate state to the user.
 
 **Contract**: For each of the 7 columns (`Shares`, `Avg. Price`, `Current Price`, `Cost basis`, `Market value`, `Unrealized P&L`, `Unrealized P&L %`):
+
 - Add `cursor-pointer select-none` to the `className`.
 - Add `onClick={() => handleSortClick(fieldKey)}` using the matching `PortfolioPosition` field name.
 - After the label text, render inline: `ArrowUpDown` (small, muted gray) when this column is not the active `sortKey`; `ChevronDown` when it is active and `sortDir === "desc"`; `ChevronUp` when active and `sortDir === "asc"`.

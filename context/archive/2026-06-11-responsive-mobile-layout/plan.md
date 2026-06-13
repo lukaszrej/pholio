@@ -20,6 +20,7 @@ Make the portfolio dashboard usable on mobile viewports: sticky Ticker column in
 ## Desired End State
 
 On viewports narrower than 768px:
+
 - The Ticker column stays pinned to the left edge while the user scrolls the table horizontally through the remaining 7 columns
 - The full-row hover highlight (gray-50) covers the sticky Ticker cell correctly
 - Expanded transaction sub-rows scroll horizontally if their columns overflow
@@ -92,6 +93,7 @@ Three files change: `Layout.astro` (1-word viewport fix), and `DashboardView.tsx
 **Intent**: Pin each Ticker data cell and preserve the full-row hover highlight for it. The existing `hover:bg-gray-50` on `<tr>` does not reach explicit-background `<td>` children; the `group`/`group-hover:` pattern fixes this.
 
 **Contract**:
+
 - Line 153 — add `group` to the existing `<tr>` class string (`cursor-pointer border-b ...`)
 - Line 159 — add `sticky left-0 z-10 bg-white group-hover:bg-gray-50` to the existing `px-4 py-3 font-semibold` class string on the Ticker `<td>`
 

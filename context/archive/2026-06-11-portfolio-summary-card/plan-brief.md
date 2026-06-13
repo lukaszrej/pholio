@@ -16,22 +16,24 @@ The card reads correctly at all viewport widths. When a portfolio contains multi
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| Formatting helpers | Extract to `src/lib/format.ts` | Prevents a third copy the next time a display component needs them | Plan |
-| Multi-currency transparency | Footnote on card when excluded count > 0 | Partial P&L without explanation will confuse users who have mixed-currency tickers | Plan |
-| Responsive layout | `grid-cols-1 sm:grid-cols-3` | Zero-cost Tailwind change; PRD targets desktop but a one-liner prevents breakage on narrow windows | Plan |
-| Unit tests | Deferred | No existing test suite; scope kept tight per user decision | Plan |
+| Decision                    | Choice                                   | Why (1 sentence)                                                                                   | Source |
+| --------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------- | ------ |
+| Formatting helpers          | Extract to `src/lib/format.ts`           | Prevents a third copy the next time a display component needs them                                 | Plan   |
+| Multi-currency transparency | Footnote on card when excluded count > 0 | Partial P&L without explanation will confuse users who have mixed-currency tickers                 | Plan   |
+| Responsive layout           | `grid-cols-1 sm:grid-cols-3`             | Zero-cost Tailwind change; PRD targets desktop but a one-liner prevents breakage on narrow windows | Plan   |
+| Unit tests                  | Deferred                                 | No existing test suite; scope kept tight per user decision                                         | Plan   |
 
 ## Scope
 
 **In scope:**
+
 - `src/lib/format.ts` — new shared formatting utility
 - `DashboardView.tsx` — import shared helpers, remove local copies
 - `PortfolioSummaryCard.tsx` — import shared helpers, responsive grid, multi-currency footnote
 - `portfolio.ts` — add `excludedCount` to `PortfolioSummary` + `computePortfolioSummary`
 
 **Out of scope:**
+
 - Unit tests for `computePortfolioSummary`
 - New metrics beyond the three in the draft
 - Currency conversion
@@ -43,10 +45,10 @@ Pure frontend change. Phase 1 is a safe refactor (extract helpers, no visible ch
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Extract shared formatting utilities | `src/lib/format.ts` + consumers updated | `roiClass` → `pnlClass` rename could miss a call-site |
-| 2. Harden card | Responsive grid + multi-currency footnote | `excludedCount` interface change must stay in sync across interface, compute fn, and component |
+| Phase                                  | What it delivers                          | Key risk                                                                                       |
+| -------------------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| 1. Extract shared formatting utilities | `src/lib/format.ts` + consumers updated   | `roiClass` → `pnlClass` rename could miss a call-site                                          |
+| 2. Harden card                         | Responsive grid + multi-currency footnote | `excludedCount` interface change must stay in sync across interface, compute fn, and component |
 
 **Prerequisites:** Draft commit `f45fc71` already on `main`  
 **Estimated effort:** ~1 session across 2 phases

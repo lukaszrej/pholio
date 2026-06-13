@@ -68,6 +68,7 @@ Creates the `portfolios` table with RLS, adds `portfolio_id` to `transactions` w
 **Intent**: Add a non-nullable portfolio_id FK to transactions, backfilling every existing row by auto-creating one "My Portfolio" per user.
 
 **Contract**:
+
 1. `ALTER TABLE public.transactions ADD COLUMN portfolio_id UUID REFERENCES public.portfolios(id) ON DELETE RESTRICT;`
 2. PL/pgSQL DO block: `FOR uid IN (SELECT DISTINCT user_id FROM public.transactions WHERE portfolio_id IS NULL)` — `INSERT INTO public.portfolios (user_id, name) VALUES (uid, 'My Portfolio') RETURNING id INTO pid` — `UPDATE public.transactions SET portfolio_id = pid WHERE user_id = uid AND portfolio_id IS NULL`
 3. `ALTER TABLE public.transactions ALTER COLUMN portfolio_id SET NOT NULL;`
@@ -129,6 +130,7 @@ Three new files deliver the full portfolio lifecycle: list, create, rename, and 
 **Intent**: List the current user's portfolios in creation order; create a named portfolio.
 
 **Contract**:
+
 - Both handlers: auth check → 401 if unauthenticated; Supabase client → 500 if unavailable. Follow the error-handling shape in `transactions/index.ts` throughout.
 - GET: `supabase.from("portfolios").select("*").order("created_at", { ascending: true })` → 200 `{ data: Portfolio[] }`
 - POST: parse body with `portfolioSchema` → 400 on validation failure; insert `{ user_id: context.locals.user.id, name: result.data.name }` with `.select().single()` → 201 `{ data: Portfolio }`. Constraint violation (code starts with "23") → 400; other DB error → 500.
@@ -140,6 +142,7 @@ Three new files deliver the full portfolio lifecycle: list, create, rename, and 
 **Intent**: Rename a portfolio; delete a portfolio only when it has no transactions.
 
 **Contract**:
+
 - UUID_RE validation on `context.params.id` (same constant pattern as `transactions/[id].ts`).
 - PUT: auth check → UUID validate → parse body with `portfolioSchema` → `.update({ name }).eq("id", id).select().single()` (RLS scopes update to the owner) → 200 `{ data: Portfolio }`. PGRST116 → 404.
 - DELETE: auth check → UUID validate → `supabase.from("transactions").select("*", { count: "exact", head: true }).eq("portfolio_id", id)` → if `(count ?? 0) > 0` return 409 `{ error: "This portfolio has transactions. Reassign or delete them first." }` → else `.delete().eq("id", id).select("id").single()` → 200 `{ success: true }`. PGRST116 → 404.
@@ -186,6 +189,7 @@ Extends the transaction schema and form with a required `portfolio_id` field; up
 **Intent**: Add a required portfolio picker so every transaction is assigned to a portfolio; default to the first portfolio for new transactions.
 
 **Contract**:
+
 - Props interface adds: `portfolios: Portfolio[]`, `defaultPortfolioId?: string`. Import `Portfolio` from `"@/types/portfolio"`.
 - Default values: add `portfolio_id: transaction?.portfolio_id ?? defaultPortfolioId ?? portfolios[0]?.id ?? ""`.
 - New field before the ticker field: a `Controller`-wrapped `Select` for `portfolio_id`, using the exact same pattern as the currency field (Controller → Select → SelectTrigger → SelectContent → SelectItem per portfolio). `value={portfolio.id}` label `{portfolio.name}`.
@@ -249,6 +253,7 @@ Introduces a `PortfolioSection` component for per-portfolio rendering, refactors
 
 **Contract**:
 Props:
+
 ```
 portfolio: Portfolio
 transactions: Transaction[]   // pre-filtered to this portfolio by the caller
@@ -259,11 +264,13 @@ onEditPortfolio: (portfolio: Portfolio) => void
 onDeletePortfolio: (portfolioId: string) => void
 onShowLots: (ticker: string, portfolioId: string) => void
 ```
+
 Internal state: `sortKey: SortKey`, `sortDir: "asc" | "desc"` — same `SortKey` union, `sortIcon`, `formatCurrentPrice`, `formatPriceDate` helpers moved from `DashboardView.tsx` to this file's module scope.
 
 Internal memos: `positions` (computePositions), `summary` (computePortfolioSummary), `sectorSlices` (computeSectorAllocation), `sortedPositions`.
 
 Render when `transactions.length > 0`:
+
 1. Section header div: `<h2>` with portfolio.name; Pencil icon button → `onEditPortfolio(portfolio)`; Trash2 icon button → `onDeletePortfolio(portfolio.id)`
 2. `<PortfolioSummaryCard summary={summary} />`
 3. Overflow table — exact markup extracted from current DashboardView lines 174–278; row onClick calls `onShowLots(pos.ticker, portfolio.id)` instead of `setSelectedTicker`
@@ -283,6 +290,7 @@ Render when `transactions.length === 0`: section header + small empty state div 
 Props: add `initialPortfolios: Portfolio[]`.
 
 State additions:
+
 - `portfolios: Portfolio[]` — initialised from `initialPortfolios`
 - `addTransactionPortfolioId: string | null` — replaces `isDialogOpen`; null means dialog closed
 - `editPortfolio: Portfolio | null`
@@ -295,6 +303,7 @@ State additions:
 State removals: `isDialogOpen`, `selectedTicker`.
 
 Memo additions:
+
 - `allPositions = useMemo(() => computePositions(transactions, prices), [transactions, prices])`
 - `combinedSummary = useMemo(() => computePortfolioSummary(allPositions), [allPositions])`
 
@@ -305,6 +314,7 @@ Toolbar: add "+ Add portfolio" button (opens `isAddPortfolioDialogOpen`) next to
 Empty state: condition changes from `transactions.length === 0` to `portfolios.length === 0`. New copy: "No portfolios yet." + "Create your first portfolio" button (opens `isAddPortfolioDialogOpen`).
 
 Render when portfolios exist:
+
 1. `<PortfolioSummaryCard summary={combinedSummary} title="All Portfolios" />`
 2. `portfolios.map(p => <PortfolioSection key={p.id} portfolio={p} transactions={transactions.filter(t => t.portfolio_id === p.id)} prices={prices} sectors={sectors} onAddTransaction={id => setAddTransactionPortfolioId(id)} onEditPortfolio={setEditPortfolio} onDeletePortfolio={id => setDeletingPortfolio({ id, name: portfolios.find(p => p.id === id)?.name ?? "" })} onShowLots={(ticker, portfolioId) => setLotsContext({ ticker, portfolioId })} />)`
 

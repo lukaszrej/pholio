@@ -22,14 +22,14 @@ Cloudflare Workers is the only platform in the candidate pool that scores Pass o
 
 ## Platform Comparison
 
-| Platform | CLI-first | Managed/Serverless | Agent docs | Deploy API | MCP | Score | Cost @ MVP |
-|---|---|---|---|---|---|---|---|
-| **Cloudflare Workers** | ✅ Pass | ✅ Pass | ✅ Pass | ✅ Pass | ✅ Pass | **5/5** | **$0** |
-| **Vercel** | ✅ Pass | ✅ Pass | ✅ Pass | ✅ Pass | ✅ Pass | **5/5** | $0 Hobby / $20/mo Pro (commercial) |
-| **Netlify** | 🟡 Partial | ✅ Pass | ✅ Pass | 🟡 Partial | ✅ Pass | **3.5/5** | ~$0 (volatile pricing) |
-| **Railway** | 🟡 Partial | ✅ Pass | ✅ Pass | 🟡 Partial | ✅ Pass | **3.5/5** | $5–10/mo (no ceiling) |
-| **Render** | 🟡 Partial | ✅ Pass | ✅ Pass | 🟡 Partial | ✅ Pass | **3.5/5** | $7/mo always-on |
-| **Fly.io** | ✅ Pass | 🟡 Partial | 🟡 Partial | 🟡 Partial | 🟡 Partial | **2.5/5** | $5–8/mo minimum |
+| Platform               | CLI-first  | Managed/Serverless | Agent docs | Deploy API | MCP        | Score     | Cost @ MVP                         |
+| ---------------------- | ---------- | ------------------ | ---------- | ---------- | ---------- | --------- | ---------------------------------- |
+| **Cloudflare Workers** | ✅ Pass    | ✅ Pass            | ✅ Pass    | ✅ Pass    | ✅ Pass    | **5/5**   | **$0**                             |
+| **Vercel**             | ✅ Pass    | ✅ Pass            | ✅ Pass    | ✅ Pass    | ✅ Pass    | **5/5**   | $0 Hobby / $20/mo Pro (commercial) |
+| **Netlify**            | 🟡 Partial | ✅ Pass            | ✅ Pass    | 🟡 Partial | ✅ Pass    | **3.5/5** | ~$0 (volatile pricing)             |
+| **Railway**            | 🟡 Partial | ✅ Pass            | ✅ Pass    | 🟡 Partial | ✅ Pass    | **3.5/5** | $5–10/mo (no ceiling)              |
+| **Render**             | 🟡 Partial | ✅ Pass            | ✅ Pass    | 🟡 Partial | ✅ Pass    | **3.5/5** | $7/mo always-on                    |
+| **Fly.io**             | ✅ Pass    | 🟡 Partial         | 🟡 Partial | 🟡 Partial | 🟡 Partial | **2.5/5** | $5–8/mo minimum                    |
 
 **Criteria scoring notes:**
 
@@ -39,10 +39,11 @@ Cloudflare Workers is the only platform in the candidate pool that scores Pass o
 - **Fly.io Partial on MCP:** `fly mcp server` is bundled into the CLI but flagged **experimental** as of 2026-05-27.
 
 **Interview weights applied:**
-- *Minimize cost* → Cloudflare ($0) strongly preferred; Railway/Render/Fly.io penalized (mandatory spend); Vercel penalized ($20/mo on commercial use).
-- *Single region* → No material differentiation.
-- *No platform familiarity* → No tie-breaker applied.
-- *Co-location preferred* → Cloudflare wins: KV, R2, Queues, and D1 are available as Supabase complements on the same vendor account.
+
+- _Minimize cost_ → Cloudflare ($0) strongly preferred; Railway/Render/Fly.io penalized (mandatory spend); Vercel penalized ($20/mo on commercial use).
+- _Single region_ → No material differentiation.
+- _No platform familiarity_ → No tie-breaker applied.
+- _Co-location preferred_ → Cloudflare wins: KV, R2, Queues, and D1 are available as Supabase complements on the same vendor account.
 
 ### Shortlisted Platforms
 
@@ -74,7 +75,7 @@ Free at this traffic level (20 of 300 monthly credits consumed). Official MCP se
 
 ### Pre-mortem — How This Could Fail
 
-*Six months in, Pholio is struggling on Cloudflare Workers.* The initial deploy worked — `wrangler deploy` completed in under two minutes. But within the first two weeks, users started reporting occasional `Worker exceeded CPU time limit` errors on the portfolio view. The Supabase JWT verification + table query + React SSR was tipping over the 10ms free-tier CPU cap on anything above a trivial page. The upgrade to Workers Standard ($5/mo) fixed it, but it was a surprise. Then the external stock-price API the team chose shipped a CJS-only SDK. Three days were lost debugging a Vite externalize error that only appeared in Wrangler's build pipeline, not in local Node.js dev. The Supabase client had been instantiated at module scope — a common Node.js pattern that silently leaks auth session state between requests in Workers' isolate model. Fixing it required refactoring every SSR endpoint. By month three, the `vite.config.ts` had accumulated a list of `ssr.external` overrides that no one fully understood. The `nodejs_compat` flag had been set with a compatibility date three months older than required, causing intermittent `crypto.randomUUID` failures that only appeared under production load. Total developer time lost to platform-specific friction: ~60 hours — roughly half the entire MVP budget.
+_Six months in, Pholio is struggling on Cloudflare Workers._ The initial deploy worked — `wrangler deploy` completed in under two minutes. But within the first two weeks, users started reporting occasional `Worker exceeded CPU time limit` errors on the portfolio view. The Supabase JWT verification + table query + React SSR was tipping over the 10ms free-tier CPU cap on anything above a trivial page. The upgrade to Workers Standard ($5/mo) fixed it, but it was a surprise. Then the external stock-price API the team chose shipped a CJS-only SDK. Three days were lost debugging a Vite externalize error that only appeared in Wrangler's build pipeline, not in local Node.js dev. The Supabase client had been instantiated at module scope — a common Node.js pattern that silently leaks auth session state between requests in Workers' isolate model. Fixing it required refactoring every SSR endpoint. By month three, the `vite.config.ts` had accumulated a list of `ssr.external` overrides that no one fully understood. The `nodejs_compat` flag had been set with a compatibility date three months older than required, causing intermittent `crypto.randomUUID` failures that only appeared under production load. Total developer time lost to platform-specific friction: ~60 hours — roughly half the entire MVP budget.
 
 ### Unknown Unknowns
 
@@ -96,28 +97,30 @@ Free at this traffic level (20 of 300 monthly credits consumed). Official MCP se
 
 ## Risk Register
 
-| Risk | Source | Likelihood | Impact | Mitigation |
-|---|---|---|---|---|
-| `deployment_target: cloudflare-pages` in tech-stack.md causes deploy failure | Research finding | High | High | Update `tech-stack.md` to `cloudflare-workers` before first deploy; use `wrangler deploy`, not the Pages dashboard |
-| Free-tier 10ms CPU cap triggers on portfolio SSR page | Devil's advocate | High | Medium | Upgrade to Workers Standard ($5/mo) at first CPU error; budget this from day one |
-| CJS-only npm dependency breaks Wrangler build | Devil's advocate | Medium | Medium | Audit new dependencies for ESM support before adding; add `ssr.external` override in `vite.config.ts` as fallback |
-| `nodejs_compat` flag misconfigured — `node:crypto` fails silently | Devil's advocate | Medium | High | Pin exact `compatibility_flags = ["nodejs_compat"]` and `compatibility_date = "2024-09-23"` in `wrangler.toml`; validate locally with `wrangler dev` before first production deploy |
-| Supabase client at module scope leaks auth session across requests | Unknown unknowns | High | High | Instantiate `createClient()` inside the request handler using cookies from the incoming request; enforce via code review or linting rule |
-| Secret committed to repo via `wrangler.toml` `[vars]` | Unknown unknowns | Medium | High | All credentials go through `wrangler secret put` only; `[vars]` is for non-secret config; add a pre-commit hook to scan for known secret patterns |
-| Runtime log retention window too short for security review | Research finding | Low | Medium | Enable Cloudflare Logpush to R2 for persistent log archive if compliance or forensics become a requirement |
-| Static asset / Worker version mismatch during rollback | Devil's advocate | Low | Low | Time rollbacks to off-peak; validate with a smoke test URL immediately after rollback completes |
-| `workerd` runtime behavior differs from local Node.js dev | Unknown unknowns | Medium | Medium | Always run `wrangler dev` (not `node`) for local SSR development; CI must run `wrangler deploy --dry-run` before merging to catch runtime incompatibilities |
-| Supabase anon key exposed in client bundle via `import.meta.env` | Pre-mortem | Low | High | Use `process.env` for all Supabase credentials in server-side code; audit with `grep -r "import.meta.env" src/` before deploy |
+| Risk                                                                         | Source           | Likelihood | Impact | Mitigation                                                                                                                                                                          |
+| ---------------------------------------------------------------------------- | ---------------- | ---------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `deployment_target: cloudflare-pages` in tech-stack.md causes deploy failure | Research finding | High       | High   | Update `tech-stack.md` to `cloudflare-workers` before first deploy; use `wrangler deploy`, not the Pages dashboard                                                                  |
+| Free-tier 10ms CPU cap triggers on portfolio SSR page                        | Devil's advocate | High       | Medium | Upgrade to Workers Standard ($5/mo) at first CPU error; budget this from day one                                                                                                    |
+| CJS-only npm dependency breaks Wrangler build                                | Devil's advocate | Medium     | Medium | Audit new dependencies for ESM support before adding; add `ssr.external` override in `vite.config.ts` as fallback                                                                   |
+| `nodejs_compat` flag misconfigured — `node:crypto` fails silently            | Devil's advocate | Medium     | High   | Pin exact `compatibility_flags = ["nodejs_compat"]` and `compatibility_date = "2024-09-23"` in `wrangler.toml`; validate locally with `wrangler dev` before first production deploy |
+| Supabase client at module scope leaks auth session across requests           | Unknown unknowns | High       | High   | Instantiate `createClient()` inside the request handler using cookies from the incoming request; enforce via code review or linting rule                                            |
+| Secret committed to repo via `wrangler.toml` `[vars]`                        | Unknown unknowns | Medium     | High   | All credentials go through `wrangler secret put` only; `[vars]` is for non-secret config; add a pre-commit hook to scan for known secret patterns                                   |
+| Runtime log retention window too short for security review                   | Research finding | Low        | Medium | Enable Cloudflare Logpush to R2 for persistent log archive if compliance or forensics become a requirement                                                                          |
+| Static asset / Worker version mismatch during rollback                       | Devil's advocate | Low        | Low    | Time rollbacks to off-peak; validate with a smoke test URL immediately after rollback completes                                                                                     |
+| `workerd` runtime behavior differs from local Node.js dev                    | Unknown unknowns | Medium     | Medium | Always run `wrangler dev` (not `node`) for local SSR development; CI must run `wrangler deploy --dry-run` before merging to catch runtime incompatibilities                         |
+| Supabase anon key exposed in client bundle via `import.meta.env`             | Pre-mortem       | Low        | High   | Use `process.env` for all Supabase credentials in server-side code; audit with `grep -r "import.meta.env" src/` before deploy                                                       |
 
 ## Getting Started
 
 1. **Install and authenticate Wrangler:**
+
    ```bash
    npm install -g wrangler
    wrangler login
    ```
 
 2. **Verify `wrangler.toml` targets Workers (not Pages) with correct compat flags:**
+
    ```toml
    name = "pholio"
    compatibility_date = "2024-09-23"
@@ -128,6 +131,7 @@ Free at this traffic level (20 of 300 monthly credits consumed). Official MCP se
    ```
 
 3. **Set production secrets (never in `wrangler.toml`):**
+
    ```bash
    wrangler secret put SUPABASE_URL
    wrangler secret put SUPABASE_ANON_KEY
@@ -135,6 +139,7 @@ Free at this traffic level (20 of 300 monthly credits consumed). Official MCP se
    ```
 
 4. **Build and deploy:**
+
    ```bash
    npm run build
    wrangler deploy
@@ -149,6 +154,7 @@ Free at this traffic level (20 of 300 monthly credits consumed). Official MCP se
 ## Out of Scope
 
 The following were not evaluated in this research:
+
 - Docker image configuration
 - CI/CD pipeline setup (GitHub Actions deploy workflow)
 - Production-scale architecture (multi-region, HA, DR)

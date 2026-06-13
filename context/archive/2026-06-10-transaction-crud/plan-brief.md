@@ -16,22 +16,24 @@ Clicking a ticker row in the portfolio table expands it to show all individual t
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-| --- | --- | --- | --- |
-| Where individual transactions are accessible | Expandable ticker rows | Compact, shows grouping naturally, no page structure change | Plan |
-| Edit form reuse | Extend AddTransactionForm with optional `transaction` prop | One component to maintain; follows existing pattern | Plan |
-| Ticker editable in edit mode? | Locked (disabled) | Prevents silent ticker reassignment; wrong ticker requires delete + re-add | Plan |
-| State update strategy | Update on API success (no page refetch) | Consistent with how Add works; no rollback complexity needed | Plan |
-| Delete confirmation pattern | shadcn AlertDialog | More deliberate than inline confirm; harder to misclick | Plan |
+| Decision                                     | Choice                                                     | Why (1 sentence)                                                           | Source |
+| -------------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------- | ------ |
+| Where individual transactions are accessible | Expandable ticker rows                                     | Compact, shows grouping naturally, no page structure change                | Plan   |
+| Edit form reuse                              | Extend AddTransactionForm with optional `transaction` prop | One component to maintain; follows existing pattern                        | Plan   |
+| Ticker editable in edit mode?                | Locked (disabled)                                          | Prevents silent ticker reassignment; wrong ticker requires delete + re-add | Plan   |
+| State update strategy                        | Update on API success (no page refetch)                    | Consistent with how Add works; no rollback complexity needed               | Plan   |
+| Delete confirmation pattern                  | shadcn AlertDialog                                         | More deliberate than inline confirm; harder to misclick                    | Plan   |
 
 ## Scope
 
 **In scope:**
+
 - `GET`-less `[id].ts` route: `PUT` (edit) + `DELETE`
 - `AddTransactionForm` edit mode: pre-fill, locked ticker, PUT submit
 - `DashboardView`: expandable rows, edit dialog, delete AlertDialog, state updates
 
 **Out of scope:**
+
 - Ticker editing in edit mode (delete + re-add required)
 - Soft delete / undo
 - Batch delete
@@ -43,12 +45,12 @@ New API file `src/pages/api/transactions/[id].ts` handles PUT and DELETE. RLS (a
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-| --- | --- | --- |
-| 1. AlertDialog component | Missing shadcn primitive installed | None — pure install |
-| 2. PUT + DELETE API | Server-side edit and delete with auth + RLS | 404 vs RLS error distinction |
-| 3. AddTransactionForm edit mode | Pre-fill + locked ticker + PUT submit | RHF disabled-field behaviour |
-| 4. DashboardView expandable rows | Full edit/delete UX wired to state | Set state immutability; ColSpan alignment |
+| Phase                            | What it delivers                            | Key risk                                  |
+| -------------------------------- | ------------------------------------------- | ----------------------------------------- |
+| 1. AlertDialog component         | Missing shadcn primitive installed          | None — pure install                       |
+| 2. PUT + DELETE API              | Server-side edit and delete with auth + RLS | 404 vs RLS error distinction              |
+| 3. AddTransactionForm edit mode  | Pre-fill + locked ticker + PUT submit       | RHF disabled-field behaviour              |
+| 4. DashboardView expandable rows | Full edit/delete UX wired to state          | Set state immutability; ColSpan alignment |
 
 **Prerequisites:** S-02 complete (done); shadcn Dialog already installed.
 **Estimated effort:** ~1 session across 4 phases.

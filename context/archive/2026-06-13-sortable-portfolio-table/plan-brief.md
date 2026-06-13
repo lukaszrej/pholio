@@ -17,25 +17,27 @@ The table opens sorted by `% of net liq` descending. Clicking any of the 7 sorta
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| Non-sortable columns | Ticker, % of net liq, Price Date | User requirement; % of net liq is the default but not user-interactive | Plan |
-| Default sort | `weightPct` descending | Largest positions first is the natural financial view | Plan |
-| Null position | Always at the bottom | "Unknown" data should never jump to the top on ascending sort | Plan |
-| First-click direction | Descending | Matches the default sort direction and standard financial table convention | Plan |
-| Inactive column indicator | `ArrowUpDown` neutral icon | Makes sortability discoverable without requiring a hover | Plan |
-| Sort location | New `sortedPositions` useMemo on top of `positions` | Keeps `computePositions` untouched; sort is a UI concern | Research |
-| File scope | `DashboardView.tsx` only | No schema, API, or type changes needed | Research |
+| Decision                  | Choice                                              | Why (1 sentence)                                                           | Source   |
+| ------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------- | -------- |
+| Non-sortable columns      | Ticker, % of net liq, Price Date                    | User requirement; % of net liq is the default but not user-interactive     | Plan     |
+| Default sort              | `weightPct` descending                              | Largest positions first is the natural financial view                      | Plan     |
+| Null position             | Always at the bottom                                | "Unknown" data should never jump to the top on ascending sort              | Plan     |
+| First-click direction     | Descending                                          | Matches the default sort direction and standard financial table convention | Plan     |
+| Inactive column indicator | `ArrowUpDown` neutral icon                          | Makes sortability discoverable without requiring a hover                   | Plan     |
+| Sort location             | New `sortedPositions` useMemo on top of `positions` | Keeps `computePositions` untouched; sort is a UI concern                   | Research |
+| File scope                | `DashboardView.tsx` only                            | No schema, API, or type changes needed                                     | Research |
 
 ## Scope
 
 **In scope:**
+
 - Sort state (`sortKey`, `sortDir`) with `useState` in `DashboardView`
 - `sortedPositions` useMemo with null-safe comparator
 - Click handlers + `ArrowUpDown` / `ChevronUp` / `ChevronDown` icons on 7 `<th>` elements
 - `<tbody>` switched from `positions.map` to `sortedPositions.map`
 
 **Out of scope:**
+
 - Sort persistence (localStorage, URL params)
 - Sorting by Ticker (alphabetical)
 - Column-config refactoring
@@ -48,8 +50,8 @@ All changes land in a single component file. The existing `positions` useMemo (w
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
+| Phase             | What it delivers                                                               | Key risk                                                                       |
+| ----------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
 | 1. Sortable table | Sort state, null-safe comparator, 7 clickable headers with icons, tbody switch | Null comparator ordering wrong — verify with a position that has no price data |
 
 **Prerequisites:** None — the `PortfolioPosition` type already has all the fields needed.  

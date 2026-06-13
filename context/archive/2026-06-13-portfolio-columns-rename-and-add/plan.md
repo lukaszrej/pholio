@@ -14,19 +14,19 @@ Four targeted UI changes: rename two existing value labels and add two new colum
 
 Portfolio table has two new columns and two renamed headers:
 
-| Index | Header | Status |
-|-------|--------|--------|
-| 0 | Ticker (sticky) | unchanged |
-| 1 | **% of net liq** | **NEW** |
-| 2 | Shares | shifted |
-| 3 | Avg. Price | shifted |
-| 4 | Current Price | shifted |
-| 5 | Price Date | shifted |
-| 6 | **Cost basis** | **NEW** |
-| 7 | **Market value** | renamed from "Value" |
-| 8 | Unrealized P&L | shifted |
-| 9 | Unrealized P&L % | shifted |
-| 10 | (action) | shifted |
+| Index | Header           | Status               |
+| ----- | ---------------- | -------------------- |
+| 0     | Ticker (sticky)  | unchanged            |
+| 1     | **% of net liq** | **NEW**              |
+| 2     | Shares           | shifted              |
+| 3     | Avg. Price       | shifted              |
+| 4     | Current Price    | shifted              |
+| 5     | Price Date       | shifted              |
+| 6     | **Cost basis**   | **NEW**              |
+| 7     | **Market value** | renamed from "Value" |
+| 8     | Unrealized P&L   | shifted              |
+| 9     | Unrealized P&L % | shifted              |
+| 10    | (action)         | shifted              |
 
 Portfolio summary card shows "Market value" instead of "Current Value". No cell values change — only labels and new columns appear.
 

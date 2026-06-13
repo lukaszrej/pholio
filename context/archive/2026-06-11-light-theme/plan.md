@@ -13,6 +13,7 @@ The dark appearance comes from two independent layers. The CSS-variable layer (`
 Every page renders on a light slate gradient background (`#f8fafc → #f1f5f9 → #f8fafc`). Cards are white with a light border and drop shadow. Text is dark gray. Gradient headings use `from-blue-600 via-purple-600 to-pink-600` (visible on light bg). ROI colors and error states meet contrast requirements. The Welcome page has no cosmic decorative elements.
 
 ### Verify:
+
 1. `npx astro check` passes with zero errors
 2. `npm run lint` passes
 3. `npm run build` succeeds
@@ -47,35 +48,35 @@ Two sequential phases. Phase 1 updates the global CSS utility and all Astro file
 
 **Replacement map (reference for both phases):**
 
-| Old (dark) | New (light) |
-|---|---|
-| `bg-cosmic` utility body | `linear-gradient(to bottom, #f8fafc, #f1f5f9, #f8fafc)` |
-| `bg-white/5` | `bg-white` |
-| `bg-white/10` | `bg-white` (auth cards), `bg-gray-50` (nested surfaces) |
-| `bg-white/20` | `bg-gray-100` |
-| `bg-white/[0.03]` | `bg-gray-50` |
-| `border-white/5` | `border-gray-100` |
-| `border-white/10` | `border-gray-200` |
-| `border-white/20` | `border-gray-300` |
-| `backdrop-blur-xl` on cards | remove |
-| `text-white` | `text-gray-900` |
-| `text-white/80` | `text-gray-700` |
-| `text-blue-100/40` (null ROI / expand icon) | `text-gray-400` |
-| `text-blue-100/50` | `text-gray-500` |
-| `text-blue-100/60` | `text-gray-500` |
-| `text-blue-100/70` | `text-gray-600` |
-| `text-blue-100/80` | `text-gray-700` |
-| `text-purple-300 hover:text-purple-100` | `text-purple-600 hover:text-purple-800` |
-| gradient `from-blue-200 via-purple-200 to-pink-200` | `from-blue-600 via-purple-600 to-pink-600` |
-| gradient `from-blue-200 to-purple-200` | `from-blue-600 to-purple-600` |
-| `text-emerald-400` | `text-emerald-600` |
-| `text-red-400` | `text-red-600` |
-| `bg-red-900/30 border-red-500/30 text-red-300` | `bg-red-50 border-red-300 text-red-700` |
-| `bg-red-500/10 border-red-500/30 text-red-400` | `bg-red-50 border-red-300 text-red-700` |
-| `hover:bg-white/5` | `hover:bg-gray-50` |
-| `hover:bg-white/10` | `hover:bg-gray-100` |
-| `hover:bg-white/20` | `hover:bg-gray-200` |
-| chart legend `rgba(219, 234, 254, 0.8)` | `rgb(55, 65, 81)` |
+| Old (dark)                                          | New (light)                                             |
+| --------------------------------------------------- | ------------------------------------------------------- |
+| `bg-cosmic` utility body                            | `linear-gradient(to bottom, #f8fafc, #f1f5f9, #f8fafc)` |
+| `bg-white/5`                                        | `bg-white`                                              |
+| `bg-white/10`                                       | `bg-white` (auth cards), `bg-gray-50` (nested surfaces) |
+| `bg-white/20`                                       | `bg-gray-100`                                           |
+| `bg-white/[0.03]`                                   | `bg-gray-50`                                            |
+| `border-white/5`                                    | `border-gray-100`                                       |
+| `border-white/10`                                   | `border-gray-200`                                       |
+| `border-white/20`                                   | `border-gray-300`                                       |
+| `backdrop-blur-xl` on cards                         | remove                                                  |
+| `text-white`                                        | `text-gray-900`                                         |
+| `text-white/80`                                     | `text-gray-700`                                         |
+| `text-blue-100/40` (null ROI / expand icon)         | `text-gray-400`                                         |
+| `text-blue-100/50`                                  | `text-gray-500`                                         |
+| `text-blue-100/60`                                  | `text-gray-500`                                         |
+| `text-blue-100/70`                                  | `text-gray-600`                                         |
+| `text-blue-100/80`                                  | `text-gray-700`                                         |
+| `text-purple-300 hover:text-purple-100`             | `text-purple-600 hover:text-purple-800`                 |
+| gradient `from-blue-200 via-purple-200 to-pink-200` | `from-blue-600 via-purple-600 to-pink-600`              |
+| gradient `from-blue-200 to-purple-200`              | `from-blue-600 to-purple-600`                           |
+| `text-emerald-400`                                  | `text-emerald-600`                                      |
+| `text-red-400`                                      | `text-red-600`                                          |
+| `bg-red-900/30 border-red-500/30 text-red-300`      | `bg-red-50 border-red-300 text-red-700`                 |
+| `bg-red-500/10 border-red-500/30 text-red-400`      | `bg-red-50 border-red-300 text-red-700`                 |
+| `hover:bg-white/5`                                  | `hover:bg-gray-50`                                      |
+| `hover:bg-white/10`                                 | `hover:bg-gray-100`                                     |
+| `hover:bg-white/20`                                 | `hover:bg-gray-200`                                     |
+| chart legend `rgba(219, 234, 254, 0.8)`             | `rgb(55, 65, 81)`                                       |
 
 ---
 
@@ -102,6 +103,7 @@ Redefine the `bg-cosmic` utility, remove the unused `.dark` CSS variable block, 
 **Intent**: Remove dark-specific decorative elements (orbs, star field) and replace all dark utility classes with light equivalents so the landing page renders cleanly on the new light background.
 
 **Contract**:
+
 - Delete the three orb `<div>` elements (the `pointer-events-none absolute` blurred circles with `bg-purple-500/20`, `bg-blue-500/15`, `bg-indigo-400/10`)
 - Delete the star-field `<div>` (the `pointer-events-none absolute inset-0` with the `radial-gradient` inline style)
 - Hero `<h1>`: `from-blue-200 via-purple-200 to-pink-200` → `from-blue-600 via-purple-600 to-pink-600`
@@ -202,6 +204,7 @@ Replace dark utility classes in the five React/TSX components: `FormField.tsx`, 
 **Intent**: Replace all dark utility classes in the dashboard: root wrapper, toolbar, table container, table rows, sub-table, sector chart card, and error banner. Also darken ROI semantic colors for contrast.
 
 **Contract** (by section):
+
 - Root `<div>`: `bg-cosmic min-h-screen p-6 text-white` → `bg-cosmic min-h-screen p-6 text-gray-900`
 - Portfolio heading `<h1>` gradient: `from-blue-200 to-purple-200` → `from-blue-600 to-purple-600`
 - User email `<span>`: `text-blue-100/60` → `text-gray-500`

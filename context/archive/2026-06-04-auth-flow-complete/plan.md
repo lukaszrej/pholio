@@ -13,6 +13,7 @@ The auth scaffold is ~90% complete. Three gaps prevent the S-01 outcome ("regist
 3. **No auth-page protection**: authenticated users can visit `/auth/signin` and `/auth/signup` and see the forms
 
 **Existing assets (no changes needed):**
+
 - `src/middleware.ts:4-25` — protects `/dashboard`, sets `context.locals.user`
 - `src/lib/supabase.ts` — SSR client, returns `null` if env vars are missing
 - All pages: `src/pages/auth/signin.astro`, `signup.astro`, `confirm-email.astro`, `dashboard.astro`
@@ -92,7 +93,7 @@ const { error } = await supabase.auth.signUp({
 
 #### 3. Create email confirmation callback route
 
-**File**: `src/pages/api/auth/callback.ts` *(new file)*
+**File**: `src/pages/api/auth/callback.ts` _(new file)_
 
 **Intent**: Handle the Supabase PKCE email confirmation link. Supabase appends `?code=<PKCE code>` to the redirect URL; this GET handler exchanges the code for a session and sets auth cookies, then redirects to `/dashboard`.
 
@@ -164,11 +165,12 @@ Add the callback URL to Supabase's Allowed Redirect URLs (required for email con
 
 #### 1. Configure callback URL in Supabase dashboard
 
-**File**: Supabase Dashboard → Authentication → URL Configuration *(manual configuration step)*
+**File**: Supabase Dashboard → Authentication → URL Configuration _(manual configuration step)_
 
 **Intent**: Supabase rejects confirmation link redirects to URLs not on the allowlist. Adding both local dev and production callback URLs makes the full flow work across environments.
 
 **Contract**: Add to Allowed Redirect URLs:
+
 - `http://localhost:4321/api/auth/callback`
 - `https://<production-domain>/api/auth/callback`
 
@@ -178,7 +180,7 @@ Add the callback URL to Supabase's Allowed Redirect URLs (required for email con
 
 #### Automated Verification:
 
-*(no automated steps — this phase is configuration and end-to-end manual testing)*
+_(no automated steps — this phase is configuration and end-to-end manual testing)_
 
 #### Manual Verification:
 

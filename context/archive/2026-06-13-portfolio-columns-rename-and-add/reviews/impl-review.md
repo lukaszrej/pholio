@@ -1,22 +1,23 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: Portfolio Table — Add Cost Basis & % of Net Liq Columns, Rename Value Labels
 
 - **Plan**: context/changes/portfolio-columns-rename-and-add/plan.md
 - **Scope**: Phase 1 + Phase 2 of 2 (full plan)
 - **Date**: 2026-06-13
 - **Verdict**: APPROVED (after triage fixes)
-- **Findings**: 0 critical  1 warning  3 observations
+- **Findings**: 0 critical 1 warning 3 observations
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| Plan Adherence | PASS |
-| Scope Discipline | PASS |
-| Safety & Quality | PASS (fixed) |
-| Architecture | PASS |
+| Dimension           | Verdict      |
+| ------------------- | ------------ |
+| Plan Adherence      | PASS         |
+| Scope Discipline    | PASS         |
+| Safety & Quality    | PASS (fixed) |
+| Architecture        | PASS         |
 | Pattern Consistency | PASS (fixed) |
-| Success Criteria | PASS |
+| Success Criteria    | PASS         |
 
 ## Findings
 

@@ -34,12 +34,15 @@ Sięga po Pholio wtedy, gdy otwiera komputer wieczorem i chce rzutem oka ocenić
 ## Success Criteria
 
 ### Primary
+
 - Zalogowany użytkownik dodaje transakcję (spółka, cena zakupu, data, waluta) i widzi w tabeli portfela aktualną cenę tej pozycji oraz jej ROI (zysk/strata od zakupu w % i wartości bezwzględnej).
 
 ### Secondary
+
 - Wykres alokacji sektorowej działa i pokazuje procentowy udział każdego sektora w portfelu w czytelnej formie wizualnej.
 
 ### Guardrails
+
 - Dane portfela jednego użytkownika są absolutnie niedostępne dla innego użytkownika ani dla niezalogowanego gościa.
 - ROI jest obliczany poprawnie — błąd matematyczny jest gorszy niż brak funkcji; formula musi być weryfikowalna.
 - Niedostępność zewnętrznego źródła cen nie powoduje błędu krytycznego — aplikacja wyświetla ostatnią zapisaną cenę lub czytelny komunikat o braku danych, bez crasha.
@@ -53,6 +56,7 @@ Sięga po Pholio wtedy, gdy otwiera komputer wieczorem i chce rzutem oka ocenić
 - **Then** widzi tabelę ze wszystkimi pozycjami, gdzie każda zawiera: nazwę/ticker spółki, liczbę akcji, cenę zakupu, aktualną cenę pobieraną z zewnętrznego źródła danych, wartość pozycji oraz ROI (zysk/strata w % i wartości bezwzględnej)
 
 #### Acceptance Criteria
+
 - Tabela ładuje aktualne ceny z zewnętrznego źródła danych; jeśli źródło nie odpowiada, wyświetla ostatnią zapisaną cenę lub komunikat "brak danych"
 - ROI jest obliczany jako: `(cena_aktualna - cena_zakupu) / cena_zakupu × 100%` z uwzględnieniem liczby akcji
 - Portfel bez żadnej pozycji pokazuje empty state z CTA do dodania pierwszej transakcji

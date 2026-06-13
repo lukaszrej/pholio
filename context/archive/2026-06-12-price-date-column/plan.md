@@ -29,6 +29,7 @@ The portfolio table has a "Price Date" column immediately to the right of "Curre
 ## Implementation Approach
 
 Single-phase edit confined to `DashboardView.tsx`:
+
 1. Simplify `formatCurrentPrice` to return a plain price string.
 2. Add a `formatPriceDate` helper.
 3. Insert the new `<th>` and `<td>` in the correct position.

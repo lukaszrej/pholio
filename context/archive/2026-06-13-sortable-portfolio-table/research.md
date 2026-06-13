@@ -39,19 +39,19 @@ The portfolio table lives entirely in `src/components/transactions/DashboardView
 - The table is a plain semantic `<table>` — no column-config array; headers and cells are paired manually and must be kept in sync.
 - Columns (in order):
 
-| # | Header label | `PortfolioPosition` field | TypeScript type | User-sortable? |
-|---|---|---|---|---|
-| 1 | Ticker | `ticker` | `string` | **No** |
-| 2 | % of net liq | `weightPct` | `number \| null` | **No** |
-| 3 | Shares | `totalShares` | `number` | Yes |
-| 4 | Avg. Price | `avgCost` | `number` | Yes |
-| 5 | Current Price | `currentPrice` | `number \| null` | Yes |
-| 6 | Price Date | `priceDate` | `string \| null` | **No** |
-| 7 | Cost basis | `costBasis` | `number` | Yes |
-| 8 | Market value | `positionValue` | `number \| null` | Yes |
-| 9 | Unrealized P&L | `roiAbs` | `number \| null` | Yes |
-| 10 | Unrealized P&L % | `roiPct` | `number \| null` | Yes |
-| 11 | *(action icon)* | — | — | No |
+| #   | Header label     | `PortfolioPosition` field | TypeScript type  | User-sortable? |
+| --- | ---------------- | ------------------------- | ---------------- | -------------- |
+| 1   | Ticker           | `ticker`                  | `string`         | **No**         |
+| 2   | % of net liq     | `weightPct`               | `number \| null` | **No**         |
+| 3   | Shares           | `totalShares`             | `number`         | Yes            |
+| 4   | Avg. Price       | `avgCost`                 | `number`         | Yes            |
+| 5   | Current Price    | `currentPrice`            | `number \| null` | Yes            |
+| 6   | Price Date       | `priceDate`               | `string \| null` | **No**         |
+| 7   | Cost basis       | `costBasis`               | `number`         | Yes            |
+| 8   | Market value     | `positionValue`           | `number \| null` | Yes            |
+| 9   | Unrealized P&L   | `roiAbs`                  | `number \| null` | Yes            |
+| 10  | Unrealized P&L % | `roiPct`                  | `number \| null` | Yes            |
+| 11  | _(action icon)_  | —                         | —                | No             |
 
 - The Ticker `<th>` is sticky: `className="sticky left-0 z-20 bg-white px-4 py-3 font-medium"` (line 137).
 - Row click handler (lines 154–157) opens `LotsModal` for the clicked ticker — this must be preserved.
@@ -79,10 +79,12 @@ export interface PortfolioPosition {
 ```
 
 **Nullable fields** (require null-safe comparators, push nulls to end of sorted list):
+
 - `currentPrice`, `positionValue`, `weightPct`, `roiPct`, `roiAbs` — all `number | null`
 - `priceDate` — `string | null` (non-sortable per spec, but noted for completeness)
 
 **Non-nullable numeric fields** (simple subtraction comparators work):
+
 - `totalShares`, `avgCost`, `costBasis`
 
 ### Data flow into the table
@@ -117,6 +119,7 @@ The project uses plain `useState` + `useMemo`; no custom hooks for sort exist. A
 The only sort patterns in the codebase are:
 
 1. `src/lib/portfolio.ts:86` — sector slices sorted by value descending:
+
    ```typescript
    slices.sort((a, b) => b.value - a.value);
    ```

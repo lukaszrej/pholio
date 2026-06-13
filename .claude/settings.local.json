@@ -21,14 +21,7 @@
       "Read(//tmp/**)",
       "mcp__exa__web_search_exa"
     ],
-    "deny": [
-      "Bash(rm -rf *)"
-    ],
-    "ask": [
-      "Bash(curl *)",
-      "Bash(wget *)",
-      "Bash(git push *)",
-      "Bash(git push)"
-    ]
+    "deny": ["Bash(rm -rf *)"],
+    "ask": ["Bash(curl *)", "Bash(wget *)", "Bash(git push *)", "Bash(git push)"]
   }
 }

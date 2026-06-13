@@ -9,6 +9,7 @@ Replace the inline `expandedTickers` row-expansion pattern with a `LotsModal` co
 `DashboardView.tsx` (~343 lines) manages all portfolio UI and owns six `useState` variables. Clicking a ticker row calls `toggleExpanded(ticker)` which toggles a `Set<string>` (`expandedTickers`). When a ticker is in the set, a sibling `<tr colSpan={9}>` containing an inner table renders inline below it (lines 195–249). The Edit and Delete buttons in that inner table already open Dialog/AlertDialog modals.
 
 All the infrastructure we need is already present:
+
 - `Dialog` / `DialogContent` / `DialogHeader` / `DialogTitle` in `src/components/ui/dialog.tsx`
 - `AddTransactionForm` (used for add and edit) in `src/components/transactions/AddTransactionForm.tsx`
 - `AlertDialog` (used for delete confirmation) in `src/components/ui/alert-dialog.tsx`
@@ -40,13 +41,11 @@ Two-phase additive-then-swap approach: Phase 1 creates the new `LotsModal` compo
 
 ## Critical Implementation Details
 
-**State update ordering for auto-close on last-lot delete**: In `handleDeleteConfirm`, the check for "is this the last lot for this ticker?" must read from the *current* `transactions` state (not from a React updater function) before calling `setTransactions`. Compute `hasRemainingLots` from the current `transactions` array in scope before the `setTransactions` call, then call `setSelectedTicker(null)` as a separate `setState` after:
+**State update ordering for auto-close on last-lot delete**: In `handleDeleteConfirm`, the check for "is this the last lot for this ticker?" must read from the _current_ `transactions` state (not from a React updater function) before calling `setTransactions`. Compute `hasRemainingLots` from the current `transactions` array in scope before the `setTransactions` call, then call `setSelectedTicker(null)` as a separate `setState` after:
 
 ```tsx
 const ticker = deletingTransaction.ticker.toUpperCase();
-const hasRemainingLots = transactions.some(
-  (t) => t.id !== deletingTransaction.id && t.ticker.toUpperCase() === ticker
-);
+const hasRemainingLots = transactions.some((t) => t.id !== deletingTransaction.id && t.ticker.toUpperCase() === ticker);
 setTransactions((prev) => prev.filter((t) => t.id !== deletingTransaction.id));
 setDeletingTransaction(null);
 if (!hasRemainingLots) setSelectedTicker(null);
@@ -171,15 +170,22 @@ Import `LotsModal` from `"@/components/transactions/LotsModal"`.
 Add after the existing "Edit transaction dialog" block (after line 310):
 
 ```tsx
-{/* Lots modal */}
+{
+  /* Lots modal */
+}
 <LotsModal
   ticker={selectedTicker ?? ""}
   open={selectedTicker !== null}
-  onOpenChange={(open) => { if (!open) setSelectedTicker(null); }}
+  onOpenChange={(open) => {
+    if (!open) setSelectedTicker(null);
+  }}
   transactions={transactions}
   onEditRequest={setEditingTransaction}
-  onDeleteRequest={(t) => { setDeleteError(null); setDeletingTransaction(t); }}
-/>
+  onDeleteRequest={(t) => {
+    setDeleteError(null);
+    setDeletingTransaction(t);
+  }}
+/>;
 ```
 
 In `handleDeleteConfirm` (line 91), add the auto-close logic after the `response.ok` check, before the existing `setTransactions` call. See "Critical Implementation Details" above for the exact state-read-before-update pattern to use.

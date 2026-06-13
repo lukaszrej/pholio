@@ -19,6 +19,7 @@ Implement S-03: the portfolio table showing each position's current EOD price (F
 Logged-in user opens the dashboard and sees a 7-column portfolio table — one row per ticker — showing: total shares, weighted average purchase price, current EOD price, total position value, ROI % and ROI absolute value. When Finnhub is unavailable or slow, the last cached price is shown with a ⚠ indicator and its date. New transactions added via the existing modal are immediately reflected in the aggregated view using the server-fetched prices.
 
 ### Verify:
+
 1. `npx astro check` passes with zero type errors
 2. `npm run lint` passes
 3. Logged-in user with transactions sees the 7-column portfolio table with prices and ROI
@@ -51,6 +52,7 @@ Logged-in user opens the dashboard and sees a 7-column portfolio table — one r
 Four sequential phases. Phase 1 is the DB migration (prerequisite for caching). Phase 2 wires Finnhub (no UI change). Phase 3 updates the data flow in `dashboard.astro` (no UI change visible yet). Phase 4 delivers the UI. Each phase is independently verifiable before the next begins.
 
 Data flow after this change:
+
 ```
 dashboard.astro (server):
   1. fetch transactions (existing)
@@ -89,11 +91,12 @@ Create the `prices` Supabase table that caches the last known EOD price per tick
 
 #### 1. Create prices migration
 
-**File**: `supabase/migrations/20260609000000_create_prices.sql` *(new file)*
+**File**: `supabase/migrations/20260609000000_create_prices.sql` _(new file)_
 
 **Intent**: Define the `prices` table and its RLS policies. The table is a simple key-value cache: ticker → last known price + fetch timestamp. No user_id — prices are public market data shared across all users.
 
 **Contract**: The migration must:
+
 - Create `public.prices` with columns: `ticker TEXT PRIMARY KEY`, `price NUMERIC(15,4) NOT NULL CHECK (price > 0)`, `fetched_at TIMESTAMPTZ NOT NULL DEFAULT now()`
 - Enable RLS: `ALTER TABLE public.prices ENABLE ROW LEVEL SECURITY`
 - Add three policies: SELECT (USING `auth.role() = 'authenticated'`), INSERT (WITH CHECK `auth.role() = 'authenticated'`), UPDATE (USING `auth.role() = 'authenticated'`)
@@ -130,17 +133,19 @@ Declare the `FINNHUB_API_KEY` environment variable in Astro's env schema and cre
 **Intent**: Register `FINNHUB_API_KEY` in Astro's typed env schema so it can be imported via `astro:env/server`. Declare it `optional: true` so the build doesn't fail when the key is absent (local dev without a key should degrade gracefully, not crash).
 
 **Contract**: Add to the existing `env.schema` object:
+
 ```typescript
 FINNHUB_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
 ```
 
 #### 2. Create Finnhub client
 
-**File**: `src/lib/finnhub.ts` *(new file)*
+**File**: `src/lib/finnhub.ts` _(new file)_
 
 **Intent**: Provide a single `fetchQuote(ticker)` function that calls the Finnhub quote endpoint with a hard 2.5-second timeout. Returns `null` on any failure — missing API key, network error, timeout, non-200 response, or `c === 0` (no market data). Callers treat `null` as "unavailable" and fall back to cache.
 
 **Contract**: Export one function `fetchQuote(ticker: string): Promise<number | null>`. Implementation:
+
 1. Guard: `if (!FINNHUB_API_KEY) return null`
 2. Create `AbortController`; `setTimeout(() => controller.abort(), 2500)`
 3. `fetch(\`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_API_KEY}\`, { signal: controller.signal })`
@@ -179,28 +184,30 @@ Introduce the `PriceData` and `PortfolioPosition` types and the `computePosition
 
 #### 1. Create portfolio types and pure function
 
-**File**: `src/lib/portfolio.ts` *(new file)*
+**File**: `src/lib/portfolio.ts` _(new file)_
 
 **Intent**: Define the `PriceData` and `PortfolioPosition` TypeScript types, and provide `computePositions` — a pure function that aggregates raw transactions with fetched prices into portfolio rows ready for display. Lives in `src/lib/` (not a component) because the same function will be called both in `DashboardView` (client) and potentially in tests.
 
 **Contract**:
 
 Export `PriceData`:
+
 ```typescript
 export interface PriceData {
   price: number;
   fetched_at: string; // ISO timestamp
-  is_fresh: boolean;  // true = fetched today, false = stale cache
+  is_fresh: boolean; // true = fetched today, false = stale cache
 }
 ```
 
 Export `PortfolioPosition`:
+
 ```typescript
 export interface PortfolioPosition {
   ticker: string;
   totalShares: number;
   avgCost: number;
-  currency: string;         // transaction currency (or "MULTI" if mixed)
+  currency: string; // transaction currency (or "MULTI" if mixed)
   hasMultipleCurrencies: boolean;
   currentPrice: number | null;
   isFresh: boolean;
@@ -212,6 +219,7 @@ export interface PortfolioPosition {
 ```
 
 Export `computePositions(transactions: Transaction[], prices: Record<string, PriceData>): PortfolioPosition[]`:
+
 - Group transactions by `ticker.toUpperCase()`
 - For each group:
   - `totalShares = sum(t.shares)`
@@ -233,6 +241,7 @@ Export `computePositions(transactions: Transaction[], prices: Record<string, Pri
 **Intent**: After fetching transactions (existing), extract unique tickers, read today's cached prices from the `prices` table, fetch fresh prices from Finnhub for tickers missing today's cache (parallel, 2.5s timeout each), upsert successful results back to the `prices` table, then pass the assembled `prices` record to `DashboardView` alongside `initialTransactions`.
 
 **Contract**: New frontmatter additions after the existing `transactions` fetch:
+
 1. Derive today's date string: `new Date().toISOString().split("T")[0]`
 2. Extract unique tickers: `[...new Set(transactions.map(t => t.ticker.toUpperCase()))]`
 3. If `supabase && uniqueTickers.length > 0`: query `supabase.from("prices").select("*").in("ticker", uniqueTickers)` → build a `Map<string, { price, fetched_at }>` from result
@@ -280,9 +289,11 @@ Update `DashboardView` to accept `initialPrices` alongside `initialTransactions`
 **Contract**:
 
 Props change:
+
 - Add `initialPrices: Record<string, PriceData>` — import `PriceData` from `@/lib/portfolio`
 
 New state/derived data:
+
 - `const [prices] = useState(initialPrices)` — prices are static after mount (server-fetched once)
 - `const positions = useMemo(() => computePositions(transactions, prices), [transactions, prices])` — import `computePositions`, `PortfolioPosition` from `@/lib/portfolio`
 
@@ -298,16 +309,19 @@ Table columns (replace the existing `<table>`):
 | 7 | ROI | formatted with sign + currency; green/red; `—` if null |
 
 Current Price cell rendering:
+
 - If `currentPrice === null` → show `—`
-- If `currentPrice !== null && !isFresh` → show price + ` ⚠ ` + formatted date from `priceDate` (e.g. `"09 Jun"` using `new Date(priceDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })`)
+- If `currentPrice !== null && !isFresh` → show price + `⚠` + formatted date from `priceDate` (e.g. `"09 Jun"` using `new Date(priceDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })`)
 - If `currentPrice !== null && isFresh` → show price only
 
 ROI colouring:
+
 - Positive (≥ 0): `text-emerald-400`
 - Negative (< 0): `text-red-400`
 - Null: `text-blue-100/40`
 
 Currency badge for Avg. Cost / ROI columns:
+
 - When `!hasMultipleCurrencies`: append the currency string after the value (e.g. `"1234.56 USD"`)
 - When `hasMultipleCurrencies`: show `—` for ROI cells; append no currency badge to Avg. Cost
 

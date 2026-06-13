@@ -13,15 +13,16 @@ affects: portfolio-roi-view (S-03), sector-allocation-chart (S-05)
 
 ## Rationale
 
-| API | Free tier | EOD data | Sector data | Reliability |
-|---|---|---|---|---|
-| Yahoo Finance (yfinance) | Unlimited (unofficial) | Yes | No | Poor — breaks without warning, rate limits change silently |
-| Alpha Vantage | 25 req/day, 5/min | Yes (20+ yrs) | Yes (company overview) | Good |
-| Polygon.io | 5 req/min, limited history | Yes | Yes | Good — but free tier too restrictive |
-| **Finnhub** | **60 req/min** | **Yes** | **Yes (company profile)** | **Good — official, documented** |
-| Financial Modeling Prep (FMP) | Free tier available | Yes | Yes (dedicated sectors API) | Good |
+| API                           | Free tier                  | EOD data      | Sector data                 | Reliability                                                |
+| ----------------------------- | -------------------------- | ------------- | --------------------------- | ---------------------------------------------------------- |
+| Yahoo Finance (yfinance)      | Unlimited (unofficial)     | Yes           | No                          | Poor — breaks without warning, rate limits change silently |
+| Alpha Vantage                 | 25 req/day, 5/min          | Yes (20+ yrs) | Yes (company overview)      | Good                                                       |
+| Polygon.io                    | 5 req/min, limited history | Yes           | Yes                         | Good — but free tier too restrictive                       |
+| **Finnhub**                   | **60 req/min**             | **Yes**       | **Yes (company profile)**   | **Good — official, documented**                            |
+| Financial Modeling Prep (FMP) | Free tier available        | Yes           | Yes (dedicated sectors API) | Good                                                       |
 
 Finnhub wins on:
+
 - **Rate limits**: 60 req/min on free — sufficient for a small personal portfolio without aggressive caching
 - **Sector data**: company profile endpoint includes sector and industry → unblocks S-05 at no extra cost
 - **Stability**: official REST API with documentation; will not silently break like Yahoo Finance

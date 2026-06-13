@@ -22,6 +22,7 @@ last_updated_by: Claude Sonnet 4.6
 ## Research Question
 
 Four changes to the portfolio table and summary:
+
 1. Rename the "Value" column → "Market value"
 2. Add a "Cost basis" column (before "Market value") — total cost of all shares for the ticker
 3. Add a "% of net liq" column (after Ticker) — percentage of ticker's cost basis / market value relative to the whole portfolio's current market value
@@ -41,36 +42,38 @@ The table is a plain HTML `<table>` with hardcoded `<th>` and `<td>` elements. T
 
 **Current column order (thead, lines 137–145):**
 
-| Index | Header | Line (th) | Cell line |
-|-------|--------|-----------|-----------|
-| 0 | Ticker | 137 | 157–158 |
-| 1 | Shares | 138 | 160 |
-| 2 | Avg. Price | 139 | 161–164 |
-| 3 | Current Price | 140 | 165–167 |
-| 4 | Price Date | 141 | 168 |
-| 5 | **Value** | **142** | **169** |
-| 6 | Unrealized P&L | 143 | 170–172 |
-| 7 | Unrealized P&L % | 144 | 173–176 |
-| 8 | (action icon) | 145 | 177–179 |
+| Index | Header           | Line (th) | Cell line |
+| ----- | ---------------- | --------- | --------- |
+| 0     | Ticker           | 137       | 157–158   |
+| 1     | Shares           | 138       | 160       |
+| 2     | Avg. Price       | 139       | 161–164   |
+| 3     | Current Price    | 140       | 165–167   |
+| 4     | Price Date       | 141       | 168       |
+| 5     | **Value**        | **142**   | **169**   |
+| 6     | Unrealized P&L   | 143       | 170–172   |
+| 7     | Unrealized P&L % | 144       | 173–176   |
+| 8     | (action icon)    | 145       | 177–179   |
 
 **"Value" header** (`DashboardView.tsx:142`):
+
 ```tsx
 <th className="px-4 py-3 font-medium">Value</th>
 ```
 
 **"Value" cell** (`DashboardView.tsx:169`):
+
 ```tsx
 <td className="px-4 py-3">{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
 ```
 
 **"Ticker" cell** (`DashboardView.tsx:157–158`) — sticky-positioned:
+
 ```tsx
-<td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
-  {pos.ticker}
-</td>
+<td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">{pos.ticker}</td>
 ```
 
 **Data source** (`DashboardView.tsx:61–63`):
+
 ```tsx
 const positions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
 const sectorSlices = useMemo(() => computeSectorAllocation(positions, sectors), [positions, sectors]);
@@ -88,11 +91,13 @@ Both `positions` (array) and `portfolioSummary` are already in scope where the t
 Displays three summary stats in a 3-column grid. The "Current Value" label is at:
 
 **Label** (`PortfolioSummaryCard.tsx:29`):
+
 ```tsx
 <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Current Value</p>
 ```
 
 **Value display** (`PortfolioSummaryCard.tsx:30–32`):
+
 ```tsx
 <p className="text-xl font-semibold text-gray-800">
   {currentValue !== null ? `${currentValue.toFixed(2)}${currencyLabel}` : "—"}
@@ -106,11 +111,12 @@ Displays three summary stats in a 3-column grid. The "Current Value" label is at
 ### 3. Data model — `src/lib/portfolio.ts`
 
 **`PortfolioPosition` interface** (`portfolio.ts:9–21`) — one row in the table:
+
 ```typescript
 export interface PortfolioPosition {
   ticker: string;
   totalShares: number;
-  avgCost: number;              // weighted-average purchase price per share
+  avgCost: number; // weighted-average purchase price per share
   currency: string;
   hasMultipleCurrencies: boolean;
   currentPrice: number | null;
@@ -123,10 +129,11 @@ export interface PortfolioPosition {
 ```
 
 **`PortfolioSummary` interface** (`portfolio.ts:29–37`):
+
 ```typescript
 export interface PortfolioSummary {
   positionCount: number;
-  totalInvested: number;       // sum(avgCost × totalShares) — portfolio-level cost basis
+  totalInvested: number; // sum(avgCost × totalShares) — portfolio-level cost basis
   currentValue: number | null; // sum(positionValue) for all priced positions
   totalPnL: number | null;
   totalPnLPct: number | null;
@@ -136,6 +143,7 @@ export interface PortfolioSummary {
 ```
 
 **`computePositions`** (`portfolio.ts:95–137`):
+
 - Groups `Transaction[]` by ticker, then per ticker computes:
   - `totalShares = sum(t.shares)` (line 109)
   - `weightedSum = sum(t.shares × t.purchase_price)` (line 110) — this is the cost basis numerator
@@ -144,6 +152,7 @@ export interface PortfolioSummary {
   - `roiAbs = (currentPrice - avgCost) × totalShares` (line 120)
 
 **`computePortfolioSummary`** (`portfolio.ts:39–61`):
+
 - `totalInvested = sum(p.avgCost × p.totalShares)` (line 42) — exact equivalent of cost basis
 - `currentValue = sum(p.positionValue)` for positions with non-null `positionValue` (lines 44–47)
 
@@ -195,29 +204,31 @@ Since `portfolioSummary` is already in scope at `DashboardView.tsx:63`, no chang
 
 ### 6. Target column order after the change
 
-| Index | Header | Notes |
-|-------|--------|-------|
-| 0 | Ticker | sticky — unchanged |
-| **1** | **% of net liq** | NEW — inserted after Ticker |
-| 2 | Shares | shifted |
-| 3 | Avg. Price | shifted |
-| 4 | Current Price | shifted |
-| 5 | Price Date | shifted |
-| **6** | **Cost basis** | NEW — inserted before Market value |
-| **7** | **Market value** | renamed from "Value" |
-| 8 | Unrealized P&L | shifted |
-| 9 | Unrealized P&L % | shifted |
-| 10 | (action icon) | shifted |
+| Index | Header           | Notes                              |
+| ----- | ---------------- | ---------------------------------- |
+| 0     | Ticker           | sticky — unchanged                 |
+| **1** | **% of net liq** | NEW — inserted after Ticker        |
+| 2     | Shares           | shifted                            |
+| 3     | Avg. Price       | shifted                            |
+| 4     | Current Price    | shifted                            |
+| 5     | Price Date       | shifted                            |
+| **6** | **Cost basis**   | NEW — inserted before Market value |
+| **7** | **Market value** | renamed from "Value"               |
+| 8     | Unrealized P&L   | shifted                            |
+| 9     | Unrealized P&L % | shifted                            |
+| 10    | (action icon)    | shifted                            |
 
 ---
 
 ### 7. Database schema (no changes needed)
 
 **`transactions` table** (migration `20260604111725_create_transactions.sql`):
+
 - Relevant columns: `ticker TEXT`, `purchase_price NUMERIC(15,4)`, `shares NUMERIC(15,4)`
 - No `cost_basis` column exists; cost basis is computed in TypeScript from these two fields.
 
 **`prices` table** (migration `20260609000000_create_prices.sql`):
+
 - `ticker TEXT PK`, `price NUMERIC(15,4)`, `fetched_at TIMESTAMPTZ`
 - Drives `positionValue` and `currentValue`.
 

@@ -16,11 +16,11 @@ Content is centered in a 1280px column on wide screens. The gradient background 
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| Max-width value | `max-w-7xl` (1280px) | Standard for data-heavy dashboards per UX research; fits 8-column portfolio table comfortably | Plan |
-| Background handling | Full-bleed outer shell + centered inner div | Keeps the gradient edge-to-edge while constraining content | Plan |
-| Scope | DashboardView only | Auth and other pages are not wide enough to need this yet | Plan |
+| Decision            | Choice                                      | Why (1 sentence)                                                                              | Source |
+| ------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------- | ------ |
+| Max-width value     | `max-w-7xl` (1280px)                        | Standard for data-heavy dashboards per UX research; fits 8-column portfolio table comfortably | Plan   |
+| Background handling | Full-bleed outer shell + centered inner div | Keeps the gradient edge-to-edge while constraining content                                    | Plan   |
+| Scope               | DashboardView only                          | Auth and other pages are not wide enough to need this yet                                     | Plan   |
 
 ## Scope
 
@@ -34,8 +34,8 @@ Outer div = full-bleed background shell (`bg-cosmic min-h-screen`). Inner div = 
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
+| Phase                                | What it delivers                                 | Key risk                                                |
+| ------------------------------------ | ------------------------------------------------ | ------------------------------------------------------- |
 | 1. Constrain dashboard content width | Centered 1280px content column on wide viewports | Modal/dialog centering could break (verified: no issue) |
 
 **Prerequisites:** None  

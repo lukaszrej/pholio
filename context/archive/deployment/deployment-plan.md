@@ -5,6 +5,7 @@
 Pholio (Astro 6 + React 19 + Supabase + TypeScript) was bootstrapped with the 10x Astro Starter using `@astrojs/cloudflare` v13. Infrastructure research selected Cloudflare Workers as the deployment platform. This plan executes the first production deploy, wires Supabase credentials, and sets up GitHub Actions for auto-deploy on merge to `main`.
 
 **Already in place:**
+
 - `wrangler.jsonc` with `nodejs_compat` flag and `compatibility_date: 2026-05-08` ✅
 - `@astrojs/cloudflare` v13.5.0 installed ✅
 - Supabase `createServerClient` called per-request (not module scope) ✅
@@ -12,6 +13,7 @@ Pholio (Astro 6 + React 19 + Supabase + TypeScript) was bootstrapped with the 10
 - Supabase project exists with credentials ready
 
 **Bugs fixed before deploying:**
+
 1. `wrangler.jsonc` `name` updated `10x-astro-starter` → `pholio` ✅
 2. `wrangler.jsonc` `main` kept as `@astrojs/cloudflare/entrypoints/server` — the adapter generates `dist/server/wrangler.json` at build time which wrangler uses as the redirected config; the `main` field must NOT be changed to `dist/_worker.js/index.js` (breaks build-time validation) ✅
 3. `wrangler.jsonc` `assets.directory` corrected `./dist` → `./dist/client` — build outputs `dist/client/` for static assets; `./dist` would expose `dist/server/` chunks as public files ✅
@@ -28,9 +30,11 @@ Pholio (Astro 6 + React 19 + Supabase + TypeScript) was bootstrapped with the 10
 ### 0.1 System requirements
 
 - [x] **Node.js 22** — matches the CI workflow and `.nvmrc`. Verify:
+
   ```bash
   ! node -v   # should print v22.x.x
   ```
+
   Install via [nvm](https://github.com/nvm-sh/nvm): `nvm install 22 && nvm use 22`, or download from nodejs.org.
 
 - [x] **npm 10+** — bundled with Node 22. Verify: `npm -v`
@@ -46,13 +50,16 @@ Pholio (Astro 6 + React 19 + Supabase + TypeScript) was bootstrapped with the 10
 Wrangler needs a Cloudflare account to deploy. There are two paths:
 
 **Option A — Browser login (recommended for first-time setup):**
+
 ```bash
 ! wrangler login
 ```
+
 This opens a browser window, you authorise the CLI, and a token is stored in `~/.wrangler/config/default.toml`. Required once per machine.
 
 **Option B — API token (CI/CD and headless environments):**
-1. Create a scoped token at: Cloudflare dashboard → Profile → API Tokens → Create Token → *Edit Cloudflare Workers* template
+
+1. Create a scoped token at: Cloudflare dashboard → Profile → API Tokens → Create Token → _Edit Cloudflare Workers_ template
    - Permissions: `Workers Scripts:Edit`, `Workers Routes:Edit`
    - **Do not add DNS, Billing, or R2 scopes**
 2. Export for local use:
@@ -62,9 +69,11 @@ This opens a browser window, you authorise the CLI, and a token is stored in `~/
    Or add to your `.env.local` (not committed). This env var is picked up automatically by `wrangler deploy`.
 
 Confirm auth works:
+
 ```bash
 ! wrangler whoami
 ```
+
 Expected output: `You are logged in with an API Token` or your account email.
 
 - [x] Cloudflare account exists
@@ -75,15 +84,19 @@ Expected output: `You are logged in with an API Token` or your account email.
 The Supabase CLI is used for local migrations and schema management. It is already in `devDependencies` (`supabase ^2.23.4`).
 
 - [x] Log in to Supabase CLI:
+
   ```bash
   ! npx supabase login
   ```
+
   This opens a browser and stores an access token in `~/.supabase/access-token`.
 
 - [x] Verify access to your project:
+
   ```bash
   ! npx supabase projects list
   ```
+
   Find your project's **Reference ID** (format: `abcdefghijklmnop`) — you'll need it when linking the local repo.
 
 - [x] Link the local repo to your Supabase project:
@@ -101,10 +114,12 @@ The build requires `SUPABASE_URL` and `SUPABASE_KEY` at compile time (Astro's `e
   cp .env.example .env
   ```
 - [x] Fill in `.env` with values from Supabase dashboard → Project Settings → API:
+
   ```
   SUPABASE_URL=https://<ref>.supabase.co
   SUPABASE_KEY=<anon-key>
   ```
+
   `.env` is in `.gitignore` — never commit it.
 
 - [x] Verify local dev starts without errors:
@@ -193,7 +208,7 @@ The build requires `SUPABASE_URL` and `SUPABASE_KEY` at compile time (Astro's `e
 
 - [x] Log in at `dash.cloudflare.com`
 - [x] Find your **Account ID**: Workers & Pages → Overview → right-hand sidebar
-- [x] Create a **scoped API token**: Profile → API Tokens → Create Token → *Edit Cloudflare Workers* template
+- [x] Create a **scoped API token**: Profile → API Tokens → Create Token → _Edit Cloudflare Workers_ template
   - Permissions: `Workers Scripts:Edit`, `Workers Routes:Edit` — **do not add DNS or billing scope**
   - Zone resources: leave as default (All zones) unless restricting by domain
 - [x] Authenticate wrangler locally:
@@ -213,12 +228,12 @@ The build requires `SUPABASE_URL` and `SUPABASE_KEY` at compile time (Astro's `e
 
 Navigate to: GitHub repo → Settings → Secrets and variables → Actions → New repository secret
 
-| Secret name | Value |
-|---|---|
-| `CLOUDFLARE_API_TOKEN` | API token from 2.1 |
-| `CLOUDFLARE_ACCOUNT_ID` | Account ID from 2.1 |
-| `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_KEY` | Supabase anon key |
+| Secret name             | Value                |
+| ----------------------- | -------------------- |
+| `CLOUDFLARE_API_TOKEN`  | API token from 2.1   |
+| `CLOUDFLARE_ACCOUNT_ID` | Account ID from 2.1  |
+| `SUPABASE_URL`          | Supabase project URL |
+| `SUPABASE_KEY`          | Supabase anon key    |
 
 - [x] All four secrets added ✅
 
@@ -275,9 +290,11 @@ Navigate to: GitHub repo → Settings → Secrets and variables → Actions → 
 ### If: `dist/_worker.js/index.js` not found after build
 
 The build did not produce the expected entry. Check for Astro build errors. Verify the actual output:
+
 ```bash
 find dist -name "*.js" | head -20
 ```
+
 If the entry is at a different path, update `main` in `wrangler.jsonc` to match.
 
 ### If: `wrangler deploy` reports CPU time limit exceeded in production
@@ -285,6 +302,7 @@ If the entry is at a different path, update `main` in `wrangler.jsonc` to match.
 Error in `wrangler tail`: `Worker exceeded CPU time limit`
 
 The free tier caps CPU at 10ms per request. The Supabase JWT verify + SSR route can exceed this. Upgrade to Workers Standard:
+
 1. Cloudflare dashboard → Workers & Pages → current plan → Upgrade to Standard ($5/month)
 2. Redeploy — no code changes required
 
@@ -293,17 +311,20 @@ The free tier caps CPU at 10ms per request. The Supabase JWT verify + SSR route 
 Error: `Dynamic require of "X" is not supported` or `require is not defined`
 
 Add the offending package to `vite.ssr.noExternal` in `astro.config.mjs`:
+
 ```js
 vite: {
   plugins: [tailwindcss()],
   ssr: { noExternal: ['package-name'] },
 },
 ```
+
 Audit each new dependency for ESM support before adding: check its `package.json` for `"type": "module"` or dual exports.
 
 ### If: `wrangler login` cannot run interactively
 
 Use a token directly:
+
 ```bash
 CLOUDFLARE_API_TOKEN=<token> wrangler deploy
 ```
@@ -320,12 +341,12 @@ The production domain isn't whitelisted. Re-do Phase 4 with the correct Workers 
 
 ## Files modified by this plan
 
-| File | Change |
-|---|---|
-| `wrangler.jsonc` | `name: pholio`, `assets.directory: ./dist/client` (main unchanged) |
-| `context/foundation/tech-stack.md` | `deployment_target: cloudflare-workers` |
-| `.github/workflows/ci.yml` | Branch `master` → `main` |
-| `.github/workflows/deploy.yml` | New: CD workflow via `cloudflare/wrangler-action@v3` |
+| File                               | Change                                                             |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| `wrangler.jsonc`                   | `name: pholio`, `assets.directory: ./dist/client` (main unchanged) |
+| `context/foundation/tech-stack.md` | `deployment_target: cloudflare-workers`                            |
+| `.github/workflows/ci.yml`         | Branch `master` → `main`                                           |
+| `.github/workflows/deploy.yml`     | New: CD workflow via `cloudflare/wrangler-action@v3`               |
 
 ## Verification checklist (end state)
 

@@ -1,6 +1,6 @@
 # Frame Brief: Multi-Portfolio System
 
-> Framing step before /10x-plan. This document captures what is *actually*
+> Framing step before /10x-plan. This document captures what is _actually_
 > at issue, separated from what was initially assumed.
 
 ## Reported Observation
@@ -28,13 +28,13 @@ The observation could originate at any of these dimensions:
 
 ## Hypothesis Investigation
 
-| Hypothesis | Evidence | Verdict |
-| --- | --- | --- |
-| Schema must change: no portfolio concept at all | `supabase/migrations/20260604111725_create_transactions.sql`: transactions table has `user_id` only, no `portfolio_id`; no migrations for a `portfolios` table exist | STRONG |
-| Portfolio CRUD is entirely absent | No API route, component, or page handles portfolio creation/rename/delete | STRONG |
-| Transaction form needs a portfolio picker | `AddTransactionForm.tsx` l.75–174: five fields only (ticker, date, price, shares, currency); schema at `transaction-schema.ts` has no portfolio field | STRONG |
-| Dashboard must be restructured | `DashboardView.tsx` l.167–280: assembles one `PortfolioSummaryCard`, one sortable table, one `SectorAllocationChart`; no branching on portfolio | STRONG |
-| Analytics components need per-portfolio data | `computePositions()` and `computePortfolioSummary()` in `src/lib/portfolio.ts` operate on a flat `Transaction[]` with no portfolio filter | STRONG |
+| Hypothesis                                      | Evidence                                                                                                                                                             | Verdict |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| Schema must change: no portfolio concept at all | `supabase/migrations/20260604111725_create_transactions.sql`: transactions table has `user_id` only, no `portfolio_id`; no migrations for a `portfolios` table exist | STRONG  |
+| Portfolio CRUD is entirely absent               | No API route, component, or page handles portfolio creation/rename/delete                                                                                            | STRONG  |
+| Transaction form needs a portfolio picker       | `AddTransactionForm.tsx` l.75–174: five fields only (ticker, date, price, shares, currency); schema at `transaction-schema.ts` has no portfolio field                | STRONG  |
+| Dashboard must be restructured                  | `DashboardView.tsx` l.167–280: assembles one `PortfolioSummaryCard`, one sortable table, one `SectorAllocationChart`; no branching on portfolio                      | STRONG  |
+| Analytics components need per-portfolio data    | `computePositions()` and `computePortfolioSummary()` in `src/lib/portfolio.ts` operate on a flat `Transaction[]` with no portfolio filter                            | STRONG  |
 
 ## Narrowing Signals
 
@@ -59,6 +59,7 @@ The initial framing named only the last output layer (split charts and summary).
 ## What Changes for /10x-plan
 
 The plan must cover all five layers in dependency order:
+
 1. New `portfolios` migration + RLS; nullable `portfolio_id` on `transactions` with a backfill strategy for existing rows.
 2. Portfolio CRUD API routes + UI (create/rename/delete portfolio, with confirmation for delete).
 3. Transaction form: portfolio selector field; API routes updated to write/read `portfolio_id`.

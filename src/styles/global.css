@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -36,6 +37,18 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Pholio typography */
+  --font-numeric: "Geist Mono", ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+
+  /* Financial semantic colors */
+  --gain: #059669;
+  --loss: #dc2626;
+  --flat: #9ca3af;
+
+  /* Brand gradients */
+  --gradient-brand: linear-gradient(135deg, #2563eb, #7c3aed);
+  --gradient-wordmark: linear-gradient(90deg, #2563eb, #9333ea);
 }
 
 @theme inline {
@@ -74,10 +87,16 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 @utility bg-cosmic {
   background-image: linear-gradient(to bottom, #f8fafc, #f1f5f9, #f8fafc);
+}
+
+@utility font-numeric {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 @layer base {
@@ -86,5 +105,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 }

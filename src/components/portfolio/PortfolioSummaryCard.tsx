@@ -21,20 +21,20 @@ export default function PortfolioSummaryCard({ summary, title }: Props) {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         <div>
           <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Total Invested</p>
-          <p className="text-xl font-semibold text-gray-800">
+          <p className="font-numeric text-xl font-semibold text-gray-800">
             {totalInvested.toFixed(2)}
             {currencyLabel}
           </p>
         </div>
         <div>
           <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Market value</p>
-          <p className="text-xl font-semibold text-gray-800">
+          <p className="font-numeric text-xl font-semibold text-gray-800">
             {currentValue !== null ? `${currentValue.toFixed(2)}${currencyLabel}` : "—"}
           </p>
         </div>
         <div>
           <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Unrealized P&amp;L</p>
-          <p className={`text-xl font-semibold ${pnlClass(totalPnL)}`}>
+          <p className={`font-numeric text-xl font-semibold ${pnlClass(totalPnL)}`}>
             {totalPnL !== null ? `${formatSigned(totalPnL)}${currencyLabel}` : "—"}
             {totalPnLPct !== null && <span className="ml-2 text-sm font-normal">({formatSigned(totalPnLPct)}%)</span>}
           </p>

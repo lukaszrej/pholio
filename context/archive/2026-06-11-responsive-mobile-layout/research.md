@@ -21,6 +21,7 @@ last_updated_by: Claude Sonnet 4.6
 ## Research Question
 
 Two responsive tasks:
+
 1. Sticky ticker column on mobile with horizontal scroll on remaining columns in the portfolio table
 2. Sector allocation chart legend moves below the doughnut on mobile (currently on the right)
 
@@ -44,22 +45,24 @@ The project is on **Tailwind v4.2.4** with CSS-first config (`@theme inline` in 
 
 **File:** `src/components/transactions/DashboardView.tsx`
 
-| Element | Line | Current classes |
-|---------|------|-----------------|
-| Container `<div>` | 136 | `overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm` |
-| `<table>` | 137 | `w-full text-sm` |
-| `<thead><tr>` | 139 | `border-b border-gray-200 text-left text-gray-500` |
-| All `<th>` (8 cols) | 140–147 | `px-4 py-3 font-medium` |
-| **Ticker `<th>`** | **140** | **`px-4 py-3 font-medium`** |
-| **Ticker `<td>`** | **159** | **`px-4 py-3 font-semibold`** — plain text `{pos.ticker}`, not a link |
-| Last col `<th>` | 147 | `w-8 px-2 py-3` |
+| Element             | Line    | Current classes                                                         |
+| ------------------- | ------- | ----------------------------------------------------------------------- |
+| Container `<div>`   | 136     | `overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm` |
+| `<table>`           | 137     | `w-full text-sm`                                                        |
+| `<thead><tr>`       | 139     | `border-b border-gray-200 text-left text-gray-500`                      |
+| All `<th>` (8 cols) | 140–147 | `px-4 py-3 font-medium`                                                 |
+| **Ticker `<th>`**   | **140** | **`px-4 py-3 font-medium`**                                             |
+| **Ticker `<td>`**   | **159** | **`px-4 py-3 font-semibold`** — plain text `{pos.ticker}`, not a link   |
+| Last col `<th>`     | 147     | `w-8 px-2 py-3`                                                         |
 
 Key facts:
+
 - The container already has `overflow-x-auto` → horizontal scroll is already functional
 - No `sticky`, `position`, `z-*`, or responsive classes exist anywhere in the table
 - The ticker column is a plain `<td>` with text — no anchor or wrapper element to worry about
 
 **What to add for sticky ticker:**
+
 ```tsx
 // th (line 140): add sticky left-0 z-20 bg-white
 <th className="sticky left-0 z-20 bg-white px-4 py-3 font-medium">Ticker</th>
@@ -84,16 +87,16 @@ The `bg-white` background is mandatory — without it, scrolling columns bleed t
 
 **Library:** Chart.js `^4.5.1` + react-chartjs-2 `^5.3.1` (NOT Recharts — important distinction)
 
-| Element | Line | Current config |
-|---------|------|----------------|
-| Chart container `<div>` | 74 | `relative h-[300px]` |
-| `<Doughnut>` | 75 | `data={data} options={options}` |
-| `options.responsive` | 50 | `true` |
-| `options.maintainAspectRatio` | 51 | `false` |
-| **`options.plugins.legend.position`** | **54** | **`"right" as const`** |
-| `options.plugins.legend.labels.color` | 56 | `"rgb(55, 65, 81)"` (gray-700) |
-| `options.plugins.legend.labels.padding` | 57 | `12` |
-| `options.plugins.legend.labels.font.size` | 58 | `12` |
+| Element                                   | Line   | Current config                  |
+| ----------------------------------------- | ------ | ------------------------------- |
+| Chart container `<div>`                   | 74     | `relative h-[300px]`            |
+| `<Doughnut>`                              | 75     | `data={data} options={options}` |
+| `options.responsive`                      | 50     | `true`                          |
+| `options.maintainAspectRatio`             | 51     | `false`                         |
+| **`options.plugins.legend.position`**     | **54** | **`"right" as const`**          |
+| `options.plugins.legend.labels.color`     | 56     | `"rgb(55, 65, 81)"` (gray-700)  |
+| `options.plugins.legend.labels.padding`   | 57     | `12`                            |
+| `options.plugins.legend.labels.font.size` | 58     | `12`                            |
 
 Parent wrapper in DashboardView.tsx (line 258): `mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm`
 
@@ -104,9 +107,7 @@ Parent wrapper in DashboardView.tsx (line 258): `mt-6 rounded-2xl border border-
 ```tsx
 // Simple hook (no external deps):
 function useIsSmall() {
-  const [isSmall, setIsSmall] = useState(() =>
-    typeof window !== "undefined" ? window.innerWidth < 768 : false
-  );
+  const [isSmall, setIsSmall] = useState(() => (typeof window !== "undefined" ? window.innerWidth < 768 : false));
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
     const handler = (e: MediaQueryListEvent) => setIsSmall(e.matches);
@@ -118,6 +119,7 @@ function useIsSmall() {
 ```
 
 Then inside `SectorAllocationChart.tsx`:
+
 ```tsx
 const isSmall = useIsSmall();
 
@@ -169,12 +171,12 @@ This correctly uses `matchMedia` (event-driven, no `resize` polling) and handles
 No custom breakpoints defined → **Tailwind v4 defaults are active:**
 
 | Prefix | Min-width |
-|--------|-----------|
-| `sm` | 640px |
-| `md` | 768px |
-| `lg` | 1024px |
-| `xl` | 1280px |
-| `2xl` | 1536px |
+| ------ | --------- |
+| `sm`   | 640px     |
+| `md`   | 768px     |
+| `lg`   | 1024px    |
+| `xl`   | 1280px    |
+| `2xl`  | 1536px    |
 
 Max-width variants built-in: `max-sm:`, `max-md:`, `max-lg:`, etc.
 
@@ -189,6 +191,7 @@ Max-width variants built-in: `max-sm:`, `max-md:`, `max-lg:`, etc.
 ### 4. External Research (Exa AI) — Key Patterns
 
 #### Sticky column in scrollable table (Tailwind)
+
 - `sticky left-0` must be on individual `<th>`/`<td>` cells, NOT on `<tr>`, `<thead>`, or `<tbody>` — those elements do not support `position: sticky`
 - Background (`bg-white`) is mandatory on sticky cells — transparent cells let scroll content bleed through
 - Z-index: sticky header cell `z-20`, sticky body cells `z-10`
@@ -196,6 +199,7 @@ Max-width variants built-in: `max-sm:`, `max-md:`, `max-lg:`, etc.
 - If vertical sticky headers (`thead`) are also desired later, use `overflow: auto clip` (inline style) instead of `overflow-x-auto` — this is a CSS quirk where `overflow-x: auto` forces `overflow-y: auto` on the same element, trapping vertically-sticky elements inside the wrapper. For horizontal-only scroll + column stickiness, `overflow-x-auto` is fine.
 
 #### Chart.js legend positioning
+
 - For **Chart.js** (this project's library): legend position is JavaScript-only via `options.plugins.legend.position`
 - Options: `"right"` (default), `"bottom"`, `"top"`, `"left"`, `"chartArea"`
 - No native breakpoint support — requires JS media query for responsive switching
@@ -203,10 +207,13 @@ Max-width variants built-in: `max-sm:`, `max-md:`, `max-lg:`, etc.
 - Note: The Exa research covered Recharts; for Chart.js the equivalent of Recharts' `verticalAlign="bottom"` is `plugins.legend.position: "bottom"`
 
 #### Tailwind v4 max-width pattern for dashboard apps
+
 Most common pattern (matches shadcn/ui, Tailwind UI):
+
 ```html
-<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"></div>
 ```
+
 - `max-w-7xl` = 1280px — de facto standard for dashboards
 - Use `max-w-screen-2xl` (1536px) only for very wide data tables
 - For component-level responsiveness independent of viewport, use **container queries** (`@container` + `@sm:`, `@md:` prefixes) — supported natively in Tailwind v4

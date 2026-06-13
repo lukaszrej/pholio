@@ -17,19 +17,20 @@ The user opens the dashboard and sees a 7-column portfolio table — one row per
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| Table model | Aggregated per-ticker (not per-transaction) | "Portfolio view" means positions, not individual buy orders; US-01 says "pozycje" | Plan |
-| Price fallback | DB cache (`prices` table) | PRD explicitly requires "ostatnią zapisaną cenę" when API is down | Plan |
-| Fetch timing | Server-side blocking in Astro frontmatter | Aligns with existing transaction-fetch pattern; no client loading state needed | Plan |
-| Currency handling | ROI only when all transactions for a ticker share one currency | Avoids mathematically incorrect USD/PLN comparisons; FR-009 is parked | Plan |
-| Cache schema | Separate global `prices` table (ticker PK) | Public market data — no per-user isolation needed; one write per ticker, not per transaction | Plan |
-| Timeout | 2.5s per Finnhub call via AbortController | Keeps worst-case page time under the 3s NFR budget | Plan |
-| Today's cache optimization | Skip Finnhub if `fetched_at` date = today | Prevents redundant API calls on repeat visits within the same day | Plan |
+| Decision                   | Choice                                                         | Why (1 sentence)                                                                             | Source |
+| -------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------ |
+| Table model                | Aggregated per-ticker (not per-transaction)                    | "Portfolio view" means positions, not individual buy orders; US-01 says "pozycje"            | Plan   |
+| Price fallback             | DB cache (`prices` table)                                      | PRD explicitly requires "ostatnią zapisaną cenę" when API is down                            | Plan   |
+| Fetch timing               | Server-side blocking in Astro frontmatter                      | Aligns with existing transaction-fetch pattern; no client loading state needed               | Plan   |
+| Currency handling          | ROI only when all transactions for a ticker share one currency | Avoids mathematically incorrect USD/PLN comparisons; FR-009 is parked                        | Plan   |
+| Cache schema               | Separate global `prices` table (ticker PK)                     | Public market data — no per-user isolation needed; one write per ticker, not per transaction | Plan   |
+| Timeout                    | 2.5s per Finnhub call via AbortController                      | Keeps worst-case page time under the 3s NFR budget                                           | Plan   |
+| Today's cache optimization | Skip Finnhub if `fetched_at` date = today                      | Prevents redundant API calls on repeat visits within the same day                            | Plan   |
 
 ## Scope
 
 **In scope:**
+
 - `prices` Supabase table (new migration)
 - `FINNHUB_API_KEY` env var declaration in `astro.config.mjs`
 - `src/lib/finnhub.ts` — `fetchQuote` with 2.5s timeout
@@ -38,6 +39,7 @@ The user opens the dashboard and sees a 7-column portfolio table — one row per
 - `DashboardView.tsx` — new `initialPrices` prop, 7-column portfolio table, ROI colouring, stale indicator
 
 **Out of scope:**
+
 - Currency conversion (FR-009 parked)
 - Real-time prices (EOD only, per PRD)
 - Edit/delete portfolio rows (S-04)
@@ -63,12 +65,12 @@ DashboardView (React client)
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. DB migration | `prices` table in Supabase with RLS | Must be applied before any price caching code runs |
-| 2. Finnhub client + env | `fetchQuote` function + env key wired | Missing key silently degrades (returns null) — must verify key is set in prod |
+| Phase                       | What it delivers                       | Key risk                                                                           |
+| --------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------- |
+| 1. DB migration             | `prices` table in Supabase with RLS    | Must be applied before any price caching code runs                                 |
+| 2. Finnhub client + env     | `fetchQuote` function + env key wired  | Missing key silently degrades (returns null) — must verify key is set in prod      |
 | 3. Dashboard price fetching | Prices fetched, cached, passed to view | Timeout logic must not block render beyond 3s; TypeScript will error until Phase 4 |
-| 4. Portfolio table UI | 7-column table, ROI, stale indicator | Most complex phase — new table shape, ROI colouring, stale UX |
+| 4. Portfolio table UI       | 7-column table, ROI, stale indicator   | Most complex phase — new table shape, ROI colouring, stale UX                      |
 
 **Prerequisites:** Finnhub API key obtained; Supabase project accessible for migration; S-02 (add-transaction) complete — confirmed done.
 **Estimated effort:** ~2-3 sessions across 4 phases.

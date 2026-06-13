@@ -38,42 +38,52 @@ The codebase has a consistent, custom-built pattern across all four areas. Forms
 **Architecture**: No form library (no react-hook-form, zod, formik). Everything is manual `useState`.
 
 **State shape** (`SignInForm.tsx:13-16`, `SignUpForm.tsx:15-20`):
+
 ```typescript
 const [email, setEmail] = useState("");
 const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 ```
+
 - One `useState` per field
 - One `errors` object with optional keys per field
 
 **Validation** (`SignInForm.tsx:18-30`):
+
 - `validate()` function builds error object, returns `false` if any invalid
 - Client-side only — prevents submit, does not duplicate server logic
 - Pattern: `if (!email) newErrors.email = "Email is required"`
 
 **Error clearing on change** (`SignInForm.tsx:32-34`):
+
 ```typescript
 function clearError(field: keyof typeof errors) {
   if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
 }
 ```
+
 Called on every `onChange` handler.
 
 **Form submission** (`SignInForm.tsx:36-43`):
+
 - Native `<form method="POST" action="/api/auth/signin" onSubmit={handleSubmit} noValidate>`
 - `handleSubmit` calls `e.preventDefault()` + `validate()` — if invalid, stops; otherwise lets form submit natively
 - **No `fetch()` call in the component** — form posts natively, server redirects handle success/error
 
 **Loading state** (`SubmitButton.tsx:12`):
+
 ```typescript
 const { pending } = useFormStatus();
 ```
+
 React 19 `useFormStatus()` — no manual `isLoading` state needed. The `SubmitButton` is a separate component because `useFormStatus()` must be inside the `<form>`.
 
 **Error display**:
+
 - Field-level: `FormField.tsx:58-65` — red border + `CircleAlert` icon + red text below input
 - Server-level: `ServerError.tsx` — full-width red card above submit button, receives `?error=` query param from server redirect
 
 **Shared UI pieces**:
+
 - `FormField.tsx` — label + input + error/hint; no shadcn Input used
 - `SubmitButton.tsx` — wraps shadcn `Button` + `useFormStatus()` spinner
 - `ServerError.tsx` — server error banner, reads `?error=` from URL
@@ -87,6 +97,7 @@ React 19 `useFormStatus()` — no manual `isLoading` state needed. The `SubmitBu
 **Location**: `src/pages/api/auth/` — 4 files.
 
 **Canonical pattern** (all POST routes):
+
 ```typescript
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
@@ -110,6 +121,7 @@ export const POST: APIRoute = async (context) => {
 ```
 
 Key points:
+
 - **`formData()` not JSON** — matches native form submit from React component (`signin.ts:5`)
 - **`createClient(context.request.headers, context.cookies)`** — exact call signature (`signin.ts:9`)
 - **Null check on supabase** — if env vars missing, redirect with error (`signin.ts:10-12`)
@@ -118,12 +130,14 @@ Key points:
 - **No server-side validation beyond null checks** — client form validates; server trusts it
 
 **For the transaction route**, the same pattern applies. The key addition is reading `context.locals.user` for the `user_id`:
+
 ```typescript
 const user = context.locals.user;
 // user_id is user.id — RLS enforces isolation but we must supply it on INSERT
 ```
 
 **Middleware** (`src/middleware.ts`):
+
 - Resolves `context.locals.user` via `supabase.auth.getUser()` before any route handler runs
 - Protects `/dashboard` — unauthenticated users redirect to `/auth/signin`
 - `context.locals.user` is `import("@supabase/supabase-js").User | null` (`src/env.d.ts:3`)
@@ -133,44 +147,50 @@ const user = context.locals.user;
 ### 3. Data Layer
 
 **Transaction types** (`src/types/transaction.ts`):
-```typescript
-type Currency = "PLN" | "USD" | "EUR" | "GBP" | "CHF" | "CAD" | "AUD" | "JPY" | "DKK" | "NOK" | "SEK";  // line 1
 
-interface Transaction {  // lines 3-13
+```typescript
+type Currency = "PLN" | "USD" | "EUR" | "GBP" | "CHF" | "CAD" | "AUD" | "JPY" | "DKK" | "NOK" | "SEK"; // line 1
+
+interface Transaction {
+  // lines 3-13
   id: string;
   user_id: string;
   ticker: string;
   purchase_price: number;
-  purchase_date: string;   // ISO date string "YYYY-MM-DD"
+  purchase_date: string; // ISO date string "YYYY-MM-DD"
   currency: Currency;
   shares: number;
   created_at: string;
   updated_at: string;
 }
 
-type NewTransaction = Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">;  // line 15
-type UpdateTransaction = Partial<NewTransaction>;  // line 17
+type NewTransaction = Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">; // line 15
+type UpdateTransaction = Partial<NewTransaction>; // line 17
 ```
 
 **Supabase client** (`src/lib/supabase.ts:5`):
+
 ```typescript
 createClient(requestHeaders: Headers, cookies: AstroCookies): SupabaseClient | null
 ```
+
 Returns `null` if `SUPABASE_URL` or `SUPABASE_KEY` are missing — always null-check before use.
 
 **Insert pattern** (derived from auth routes + schema):
+
 ```typescript
-const { error } = await supabase
-  .from("transactions")
-  .insert([{
+const { error } = await supabase.from("transactions").insert([
+  {
     user_id: context.locals.user.id,
     ticker,
     purchase_price: parseFloat(purchase_price),
     purchase_date,
     currency,
     shares: parseFloat(shares),
-  }]);
+  },
+]);
 ```
+
 `purchase_price` and `shares` arrive as strings from formData — must be `parseFloat()` before insert (DB column is `NUMERIC(15,4)`).
 
 **SQL schema** (`supabase/migrations/20260604111725_create_transactions.sql`):
@@ -189,6 +209,7 @@ const { error } = await supabase
 RLS active — 4 policies (SELECT/INSERT/UPDATE/DELETE scoped to `auth.uid() = user_id`).
 
 **Dashboard page** (`src/pages/dashboard.astro`):
+
 - Currently renders: user email welcome, sign-out button, no transaction data
 - `const { user } = Astro.locals;` at line 4 — user available server-side
 - Ready to add: Supabase query in frontmatter + table/list component below sign-out
@@ -199,6 +220,7 @@ RLS active — 4 policies (SELECT/INSERT/UPDATE/DELETE scoped to `auth.uid() = u
 ### 4. UI Components and Layout
 
 **Layout system** (`src/layouts/Layout.astro`):
+
 - Single shared layout — all pages use `<Layout title="..."><content /></Layout>`
 - Renders `<slot />` for page content
 - Provides global CSS, error banners for missing config
@@ -206,6 +228,7 @@ RLS active — 4 policies (SELECT/INSERT/UPDATE/DELETE scoped to `auth.uid() = u
 **Import alias**: `@/` → `./src/` (configured in `tsconfig.json:8-11` and `components.json:13-18`)
 
 **Tailwind conventions** (consistent across all pages):
+
 - **Backgrounds**: `bg-white/5`, `bg-white/10` glass cards with `backdrop-blur-xl`
 - **Borders**: `border border-white/10`, `border-white/20`
 - **Text**: `text-blue-100`, `text-white/80`, gradient `from-blue-200 to-purple-200 bg-clip-text text-transparent`
@@ -218,6 +241,7 @@ RLS active — 4 policies (SELECT/INSERT/UPDATE/DELETE scoped to `auth.uid() = u
 **Topbar**: Lives in `Welcome.astro` (home page only), not on dashboard or auth pages.
 
 **Auth page structure** (`src/pages/auth/signin.astro`):
+
 ```astro
 <Layout title="Sign in">
   <div class="flex min-h-screen items-center justify-center ...">
@@ -228,6 +252,7 @@ RLS active — 4 policies (SELECT/INSERT/UPDATE/DELETE scoped to `auth.uid() = u
   </div>
 </Layout>
 ```
+
 Transaction form page should follow the same centering + glass card pattern.
 
 ---
@@ -235,6 +260,7 @@ Transaction form page should follow the same centering + glass card pattern.
 ## Architecture Insights
 
 **Form → API → DB flow (native, no fetch)**:
+
 1. React form component manages state + client-side validation
 2. On valid submit, native `<form method="POST" action="/api/transactions">` submits
 3. API route reads `formData()`, inserts to Supabase, redirects to `/dashboard?success=1` or `/transactions/add?error=...`

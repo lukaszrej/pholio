@@ -16,18 +16,19 @@ Signing in lands on `/dashboard`. New production users who click their confirmat
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-| --- | --- | --- | --- |
-| Post-signin redirect | `/dashboard` | Matches roadmap S-01 outcome: user sees the dashboard immediately after signing in | Plan |
-| Email callback route | Add `/api/auth/callback` | Without it, production email confirmation silently fails — users can never activate their accounts | Plan |
-| Already-authenticated on auth pages | Redirect to `/dashboard` | Showing the sign-in form to a signed-in user is confusing UX with no benefit | Plan |
-| Sign-out redirect | Keep `/` (landing) | Landing page is designed for unauthenticated visitors; no change needed | Plan |
-| Landing page branding | Out of scope | S-01 is about auth mechanics, not content — separate change | Plan |
-| Dashboard "empty" state | Current content sufficient | Email + sign-out confirms auth works; empty-state copy belongs in S-02 | Plan |
+| Decision                            | Choice                     | Why (1 sentence)                                                                                   | Source |
+| ----------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------- | ------ |
+| Post-signin redirect                | `/dashboard`               | Matches roadmap S-01 outcome: user sees the dashboard immediately after signing in                 | Plan   |
+| Email callback route                | Add `/api/auth/callback`   | Without it, production email confirmation silently fails — users can never activate their accounts | Plan   |
+| Already-authenticated on auth pages | Redirect to `/dashboard`   | Showing the sign-in form to a signed-in user is confusing UX with no benefit                       | Plan   |
+| Sign-out redirect                   | Keep `/` (landing)         | Landing page is designed for unauthenticated visitors; no change needed                            | Plan   |
+| Landing page branding               | Out of scope               | S-01 is about auth mechanics, not content — separate change                                        | Plan   |
+| Dashboard "empty" state             | Current content sufficient | Email + sign-out confirms auth works; empty-state copy belongs in S-02                             | Plan   |
 
 ## Scope
 
 **In scope:**
+
 - Fix post-signin redirect in `src/pages/api/auth/signin.ts`
 - Add `emailRedirectTo` to signup call in `src/pages/api/auth/signup.ts`
 - Create `src/pages/api/auth/callback.ts` (GET handler, PKCE code exchange)
@@ -35,6 +36,7 @@ Signing in lands on `/dashboard`. New production users who click their confirmat
 - Add callback URL to Supabase Allowed Redirect URLs (manual dashboard step)
 
 **Out of scope:**
+
 - Landing page content / Pholio branding
 - Dashboard empty-state with transaction prompt
 - Password reset / forgot-password flow
@@ -46,9 +48,9 @@ Four file-level changes to the existing API/middleware layer, plus one Supabase 
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-| --- | --- | --- |
-| 1. Code changes | All four targeted code gaps fixed | Double-quotes rule (lessons.md) — single quotes in new `.ts` files fail lint |
+| Phase              | What it delivers                                                       | Key risk                                                                               |
+| ------------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 1. Code changes    | All four targeted code gaps fixed                                      | Double-quotes rule (lessons.md) — single quotes in new `.ts` files fail lint           |
 | 2. Config + verify | Supabase callback URL configured; all 4 S-01 flows verified end-to-end | Production email test requires a real Supabase project with email confirmation enabled |
 
 **Prerequisites:** Supabase project connected and env vars set (`SUPABASE_URL`, `SUPABASE_KEY` as text vars in Cloudflare dashboard — not wrangler secrets, per L1 in lessons.md)

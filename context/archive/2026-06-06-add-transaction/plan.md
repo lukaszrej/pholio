@@ -23,6 +23,7 @@ Add the ability for authenticated users to record stock purchase transactions. A
 - Dashboard shows empty state with CTA when no transactions exist
 
 ### Verify:
+
 1. `npx astro check` passes with zero errors
 2. `npm run lint` passes
 3. Signed-in user can add a transaction and immediately see it in the table without a page reload
@@ -92,11 +93,12 @@ Install react-hook-form, zod, and four shadcn components (Input, Label, Select, 
 
 #### 3. Create shared zod schema
 
-**File**: `src/lib/transaction-schema.ts` *(new file)*
+**File**: `src/lib/transaction-schema.ts` _(new file)_
 
 **Intent**: Define the zod schema for a new transaction once, importable by both the React form (client-side validation) and the API route (server-side validation). This prevents validation logic duplication.
 
 **Contract**: Export `transactionSchema` (a `z.ZodObject`) and `TransactionFormValues` (inferred type). The schema must enforce:
+
 - `ticker` — non-empty string, trimmed and uppercased via `.transform()`
 - `purchase_price` — `z.coerce.number().positive()`
 - `purchase_date` — non-empty string (date inputs provide `"YYYY-MM-DD"` format)
@@ -133,11 +135,12 @@ Create the API endpoint that receives new transaction data, validates it server-
 
 #### 1. Create transactions API route
 
-**File**: `src/pages/api/transactions/index.ts` *(new file)*
+**File**: `src/pages/api/transactions/index.ts` _(new file)_
 
 **Intent**: Handle POST requests to `/api/transactions`. Validate the request body against the shared zod schema, check authentication, insert the transaction, and return the created row — or a descriptive error.
 
 **Contract**: POST handler. Steps in order:
+
 1. Check `context.locals.user` — if `null`, return `Response` with status 401 and JSON body `{ error: "Unauthorized" }`
 2. Parse body: `await context.request.json()`
 3. Validate with `transactionSchema.safeParse(body)` — if invalid, return status 400 with `{ error: result.error.issues[0].message }`
@@ -176,17 +179,18 @@ Build the form component using react-hook-form, the shared zod schema, and shadc
 
 #### 1. Create transactions components directory
 
-**Directory**: `src/components/transactions/` *(new directory)*
+**Directory**: `src/components/transactions/` _(new directory)_
 
 **Intent**: Group all transaction-related React components in one place, separate from auth components.
 
 #### 2. Create AddTransactionForm component
 
-**File**: `src/components/transactions/AddTransactionForm.tsx` *(new file)*
+**File**: `src/components/transactions/AddTransactionForm.tsx` _(new file)_
 
 **Intent**: Render a validated form with five fields (ticker, purchase date, purchase price, currency, shares). On successful submit, fetch POST to `/api/transactions` and invoke the `onSuccess` callback with the returned transaction. On server error, display an error message inside the form.
 
-**Contract**: 
+**Contract**:
+
 - Props: `onSuccess: (transaction: Transaction) => void`, `onCancel: () => void`
 - Uses `useForm<TransactionFormValues>` with `zodResolver(transactionSchema)`
 - Five `FormField` items from shadcn Form, each wrapping the appropriate shadcn primitive:
@@ -231,11 +235,12 @@ Create the `DashboardView` React component that orchestrates the transaction tab
 
 #### 1. Create DashboardView component
 
-**File**: `src/components/transactions/DashboardView.tsx` *(new file)*
+**File**: `src/components/transactions/DashboardView.tsx` _(new file)_
 
 **Intent**: Own the dashboard's interactive state — dialog open/close and the transaction list — so transactions can be appended after a successful add without a page reload.
 
 **Contract**:
+
 - Props: `initialTransactions: Transaction[]`
 - State: `transactions` (initialized from `initialTransactions`), `isDialogOpen` (boolean, starts `false`)
 - Renders a toolbar: page heading + "Add transaction" Button that sets `isDialogOpen(true)`
@@ -259,11 +264,12 @@ Create the `DashboardView` React component that orchestrates the transaction tab
 **Intent**: Fetch the authenticated user's transactions from Supabase in the page frontmatter and pass them to `DashboardView` as initial props, replacing the current placeholder content.
 
 **Contract**:
+
 - In frontmatter: after `const { user } = Astro.locals`, create a Supabase client and query:
   ```typescript
   const supabase = createClient(Astro.request.headers, Astro.cookies);
   const transactions = supabase
-    ? (await supabase.from("transactions").select("*").order("purchase_date", { ascending: false })).data ?? []
+    ? ((await supabase.from("transactions").select("*").order("purchase_date", { ascending: false })).data ?? [])
     : [];
   ```
 - Replace the current welcome/sign-out placeholder with `<DashboardView client:load initialTransactions={transactions} />`

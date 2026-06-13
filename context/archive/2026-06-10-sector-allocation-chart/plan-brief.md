@@ -16,19 +16,20 @@ A donut chart renders above the portfolio table on every page load. Each colored
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-| --- | --- | --- | --- |
-| Chart type | Donut | Matches how sector allocation is displayed in comparable tools; center space can show totals | Plan |
-| Chart placement | Above table, full-width card | Immediately visible on page load — matches PRD success criterion of "widzi wykres" | Plan |
-| Charting library | Chart.js + react-chartjs-2 | User preference | Plan |
-| Sector data caching | New `sectors` Supabase table, 7-day TTL | Mirrors the `prices` pattern; sectors are stable — daily refresh wastes Finnhub quota | Plan |
-| Allocation metric | Current market value (position value) | Most meaningful — tells the user where their money actually sits | Plan |
-| Unknown sector | Bucket into "Other" gray slice | Chart always sums to 100%; never hides exposure | Plan |
-| Empty state | Subtle card with CTA | Consistent with existing table empty state | Plan |
+| Decision            | Choice                                  | Why (1 sentence)                                                                             | Source |
+| ------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------- | ------ |
+| Chart type          | Donut                                   | Matches how sector allocation is displayed in comparable tools; center space can show totals | Plan   |
+| Chart placement     | Above table, full-width card            | Immediately visible on page load — matches PRD success criterion of "widzi wykres"           | Plan   |
+| Charting library    | Chart.js + react-chartjs-2              | User preference                                                                              | Plan   |
+| Sector data caching | New `sectors` Supabase table, 7-day TTL | Mirrors the `prices` pattern; sectors are stable — daily refresh wastes Finnhub quota        | Plan   |
+| Allocation metric   | Current market value (position value)   | Most meaningful — tells the user where their money actually sits                             | Plan   |
+| Unknown sector      | Bucket into "Other" gray slice          | Chart always sums to 100%; never hides exposure                                              | Plan   |
+| Empty state         | Subtle card with CTA                    | Consistent with existing table empty state                                                   | Plan   |
 
 ## Scope
 
 **In scope:**
+
 - New `sectors` Supabase table with RLS
 - `fetchSector(ticker)` function in `src/lib/finnhub.ts`
 - Sector data fetching and caching in `dashboard.astro`
@@ -37,6 +38,7 @@ A donut chart renders above the portfolio table on every page load. Each colored
 - `DashboardView` updated to show chart above the table
 
 **Out of scope:**
+
 - Sector column in `transactions` table
 - GICS sector mapping or sub-industry granularity
 - Chart legend click to filter the table
@@ -49,11 +51,11 @@ New sector data flows server-side (parallel to the existing price fetch in `dash
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-| --- | --- | --- |
-| 1. DB migration | `sectors` Supabase table with RLS | Must mirror `prices` policy structure exactly |
-| 2. Finnhub wiring | Sector data fetched and cached server-side; passed to DashboardView | Finnhub `finnhubIndustry` field may be empty for some tickers — null return must not be cached |
-| 3. Chart + DashboardView | Donut chart renders above table; real-time updates via useMemo | Chart.js canvas height must be explicitly set; Chart.register must be at module scope |
+| Phase                    | What it delivers                                                    | Key risk                                                                                       |
+| ------------------------ | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| 1. DB migration          | `sectors` Supabase table with RLS                                   | Must mirror `prices` policy structure exactly                                                  |
+| 2. Finnhub wiring        | Sector data fetched and cached server-side; passed to DashboardView | Finnhub `finnhubIndustry` field may be empty for some tickers — null return must not be cached |
+| 3. Chart + DashboardView | Donut chart renders above table; real-time updates via useMemo      | Chart.js canvas height must be explicitly set; Chart.register must be at module scope          |
 
 **Prerequisites:** All of S-03 (`portfolio-roi-view`) must be deployed — the `prices` table and `fetchQuote` are required foundations.  
 **Estimated effort:** ~2 sessions across 3 phases

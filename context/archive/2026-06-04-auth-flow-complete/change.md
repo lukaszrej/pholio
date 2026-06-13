@@ -10,6 +10,7 @@ archived_at: 2026-06-04T20:44:59Z
 ## Notes
 
 From roadmap S-01 (auth-flow-complete):
+
 - Outcome: użytkownik może zarejestrować nowe konto email/hasło, zalogować się, zobaczyć pusty dashboard i wylogować się.
 - PRD refs: FR-001, FR-002, FR-003
 - Prerequisites: — (scaffold autoryzacji istnieje w baseline: `src/middleware.ts`, `src/pages/api/auth/signin.ts`, `src/components/auth/SignInForm.tsx`)

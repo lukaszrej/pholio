@@ -2,7 +2,7 @@
 project: "Pholio"
 context_type: greenfield
 created: 2026-05-22
-updated: 2026-05-22  # finalized
+updated: 2026-05-22 # finalized
 product_type: web-app
 target_scale:
   users: small
@@ -59,17 +59,21 @@ Niezalogowany odwiedzający może zobaczyć jedynie stronę główną / landing.
 **v2 (poza MVP):** publiczny profil — użytkownik sam decyduje, które moduły (np. alokacja sektorowa, alokacja geograficzna) są widoczne publicznie, a które (konkretne spółki, kwoty) pozostają prywatne. Mechanizm konfiguracji widoczności per-moduł i obsługa niezalogowanych odwiedzających na publicznym URL — do zaprojektowania w następnej iteracji.
 
 **Open Questions (pre-capture):**
+
 - Czy publiczny profil ma dedykowany URL (np. `pholio.app/u/lukasz`)? — do decyzji w v2.
 
 ## Success Criteria
 
 ### Primary
+
 - Zalogowany użytkownik dodaje transakcję (spółka, cena zakupu, data, waluta) i widzi w tabeli portfela aktualną cenę tej pozycji oraz jej ROI (zysk/strata od zakupu w % i wartości bezwzględnej).
 
 ### Secondary
+
 - Wykres alokacji sektorowej działa i pokazuje procentowy udział każdego sektora w portfelu w czytelnej formie wizualnej.
 
 ### Guardrails
+
 - Dane portfela jednego użytkownika są absolutnie niedostępne dla innego użytkownika ani dla niezalogowanego gościa.
 - ROI jest obliczany poprawnie — błąd matematyczny jest gorszy niż brak funkcji; formula musi być weryfikowalna.
 - Niedostępność zewnętrznego API cenowego nie powoduje błędu krytycznego — aplikacja wyświetla ostatnią znaną cenę lub czytelny komunikat o braku danych, bez crasha.
@@ -83,6 +87,7 @@ Niezalogowany odwiedzający może zobaczyć jedynie stronę główną / landing.
 - **Then** widzi tabelę ze wszystkimi pozycjami, gdzie każda zawiera: nazwę/ticker spółki, liczbę akcji, cenę zakupu, aktualną cenę (pobrana z API), wartość pozycji oraz ROI (zysk/strata w % i wartości bezwzględnej)
 
 #### Acceptance Criteria
+
 - Tabela ładuje aktualne ceny z zewnętrznego API; jeśli API nie odpowiada, wyświetla ostatnią zapisaną cenę lub komunikat "brak danych"
 - ROI jest obliczany jako: `(cena_aktualna - cena_zakupu) / cena_zakupu × 100%` z uwzględnieniem liczby akcji
 - Portfel bez żadnej pozycji pokazuje empty state z CTA do dodania pierwszej transakcji

@@ -16,17 +16,18 @@ A `public.transactions` table exists in the remote Supabase project with 9 colum
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-| --- | --- | --- | --- |
-| Migration workflow | Supabase CLI (`migration new` + `db push`) | Local file in git + automated apply; CLI already in devDeps | Plan |
-| TypeScript types | Manual interface in `src/types/transaction.ts` | No tooling dependency; readable and editable without a generate step | Plan |
-| Numeric type | `NUMERIC(15,4)` for price and shares | Handles fractional shares and multi-decimal prices without floating-point drift | Plan |
-| Currency storage | `TEXT` with CHECK constraint | Blocks garbage data at DB level without the rigidity of a PostgreSQL ENUM | Plan |
-| user_id index | Yes | Every app query filters by `user_id`; index is O(log n) vs sequential scan | Plan |
+| Decision           | Choice                                         | Why (1 sentence)                                                                | Source |
+| ------------------ | ---------------------------------------------- | ------------------------------------------------------------------------------- | ------ |
+| Migration workflow | Supabase CLI (`migration new` + `db push`)     | Local file in git + automated apply; CLI already in devDeps                     | Plan   |
+| TypeScript types   | Manual interface in `src/types/transaction.ts` | No tooling dependency; readable and editable without a generate step            | Plan   |
+| Numeric type       | `NUMERIC(15,4)` for price and shares           | Handles fractional shares and multi-decimal prices without floating-point drift | Plan   |
+| Currency storage   | `TEXT` with CHECK constraint                   | Blocks garbage data at DB level without the rigidity of a PostgreSQL ENUM       | Plan   |
+| user_id index      | Yes                                            | Every app query filters by `user_id`; index is O(log n) vs sequential scan      | Plan   |
 
 ## Scope
 
 **In scope:**
+
 - `public.transactions` table with 9 columns
 - RLS enable + 4 policies (SELECT, INSERT, UPDATE, DELETE)
 - `updated_at` auto-update trigger
@@ -34,6 +35,7 @@ A `public.transactions` table exists in the remote Supabase project with 9 colum
 - `src/types/transaction.ts` with `Transaction`, `NewTransaction`, `UpdateTransaction`
 
 **Out of scope:**
+
 - API routes for transactions (S-02)
 - UI for adding or listing transactions (S-02, S-03)
 - Seed data or test fixtures
@@ -46,10 +48,10 @@ Single Supabase CLI migration handles the entire DB layer (table, constraints, R
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-| --- | --- | --- |
-| 1. SQL Migration | `transactions` table live in Supabase with RLS and index | `supabase link` may need project ref ID from Dashboard if not already linked |
-| 2. TypeScript Types | `src/types/transaction.ts` exportable by future slices | None — pure type file, no runtime behavior |
+| Phase               | What it delivers                                         | Key risk                                                                     |
+| ------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1. SQL Migration    | `transactions` table live in Supabase with RLS and index | `supabase link` may need project ref ID from Dashboard if not already linked |
+| 2. TypeScript Types | `src/types/transaction.ts` exportable by future slices   | None — pure type file, no runtime behavior                                   |
 
 **Prerequisites:** Supabase project exists and is accessible; `npx supabase link` run at least once (or project already linked via `.supabase/` config).
 **Estimated effort:** ~1 session across 2 phases
