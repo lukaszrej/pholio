@@ -53,3 +53,12 @@ If you connect a Cloudflare Worker to a GitHub repo via the Cloudflare dashboard
 - **Problem**: CI lint fails — Prettier enforces double quotes; single quotes cause eslint/prettier errors that break the CI pipeline. Happened in src/types/transaction.ts (Currency union and Omit<> keys used single quotes, caught by CI run #8).
 - **Rule**: Always use double quotes in TypeScript files — single quotes fail the Prettier lint check.
 - **Applies to**: implement, impl-review
+
+---
+
+## Always initialize husky before the first commit when wiring CI gates
+
+- **Context**: When adding husky as a devDependency alongside a CI lint/typecheck pipeline.
+- **Problem**: husky was listed in devDependencies and `.husky/` hook files existed, but `git config core.hooksPath` was never set — git silently skipped all hooks. Prettier and TypeScript-ESLint errors sailed through local commits undetected and broke the remote CI run.
+- **Rule**: After adding husky as a devDependency, always add `"prepare": "husky"` to `package.json` scripts AND verify `git config core.hooksPath` resolves to `.husky` before the first commit. Pair the pre-commit lint-staged hook with a pre-push full-lint hook as a second line of defence.
+- **Applies to**: all
