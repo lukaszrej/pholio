@@ -113,7 +113,7 @@ Add a 1024 px centred wrapper in `DashboardView.tsx`, fix `.holdings-table` disp
 
 #### Manual
 
-- [ ] 1.3 Gray gutters visible on wide screen; only TickerTape is full-bleed
-- [ ] 1.4 Holdings table fills full column width on individual portfolio tab at ≥768 px
-- [ ] 1.5 Ink underline centred under nav tab labels (with and without count badge)
-- [ ] 1.6 No mobile regressions at 375 px
+- [x] 1.3 Gray gutters visible on wide screen; only TickerTape is full-bleed — 10b6397
+- [x] 1.4 Holdings table fills full column width on individual portfolio tab at ≥768 px — 10b6397
+- [x] 1.5 Ink underline centred under nav tab labels (with and without count badge) — 10b6397
+- [x] 1.6 No mobile regressions at 375 px — 10b6397
