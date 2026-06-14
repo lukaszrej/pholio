@@ -116,8 +116,8 @@ Add a 1024 px centred wrapper in `DashboardView.tsx`, fix `.holdings-table` disp
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Type check passes: `npm run typecheck`
+- [x] 1.1 Lint passes: `npm run lint` — 10b6397
+- [x] 1.2 Type check passes: `npm run typecheck` — 10b6397
 
 #### Manual
 
