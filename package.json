@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepare": "husky"
   },
   "dependencies": {
@@ -61,6 +63,7 @@
     "supabase": "^2.102.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.59.2",
+    "vitest": "^4.1.8",
     "wrangler": "^4.90.0"
   },
   "overrides": {
