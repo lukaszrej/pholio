@@ -31,23 +31,38 @@ interface Props {
 
 /* ── Ticker Tape ── */
 function TickerTape({ positions }: { positions: PortfolioPosition[] }) {
-  const items = positions.filter((p) => p.currentPrice !== null && p.roiPct !== null);
+  const items = positions.filter(
+    (p): p is PortfolioPosition & { currentPrice: number; roiPct: number } =>
+      p.currentPrice !== null && p.roiPct !== null,
+  );
   if (items.length === 0) return null;
 
   const doubled = [...items, ...items];
   return (
-    <div style={{
-      display: "flex", alignItems: "center", height: 34, padding: "0 22px",
-      borderBottom: "1px solid #dde4ee", overflow: "hidden", whiteSpace: "nowrap",
-      background: "#fff", boxShadow: "0 1px 0 rgba(15,24,37,.03)",
-    }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        height: 34,
+        padding: "0 22px",
+        borderBottom: "1px solid #dde4ee",
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+        background: "#fff",
+        boxShadow: "0 1px 0 rgba(15,24,37,.03)",
+      }}
+    >
       <div style={{ display: "flex", gap: 34, animation: "ticker-slide 24s linear infinite" }}>
         {doubled.map((p, i) => (
-          <span key={i} className="font-numeric" style={{ fontSize: 12, color: "#5e6e85", display: "inline-flex", gap: 8, alignItems: "center" }}>
+          <span
+            key={i}
+            className="font-numeric"
+            style={{ fontSize: 12, color: "#5e6e85", display: "inline-flex", gap: 8, alignItems: "center" }}
+          >
             <b style={{ color: "#0f1825", fontWeight: 600 }}>{p.ticker}</b>
-            {p.currentPrice!.toFixed(2)}
-            <span style={{ color: p.roiPct! >= 0 ? "#0a9d6e" : "#e23950" }}>
-              {p.roiPct! >= 0 ? "▲" : "▼"} {Math.abs(p.roiPct!).toFixed(2)}%
+            {p.currentPrice.toFixed(2)}
+            <span style={{ color: p.roiPct >= 0 ? "#0a9d6e" : "#e23950" }}>
+              {p.roiPct >= 0 ? "▲" : "▼"} {Math.abs(p.roiPct).toFixed(2)}%
             </span>
           </span>
         ))}
@@ -103,32 +118,44 @@ function NavTabs({ portfolios, activeTab, positionCounts, onTabChange }: NavTabs
 
   useEffect(() => {
     window.addEventListener("resize", updateInk);
-    return () => window.removeEventListener("resize", updateInk);
+    return () => {
+      window.removeEventListener("resize", updateInk);
+    };
   }, [updateInk]);
 
-  const handleClick = useCallback((tabId: string, btn: HTMLButtonElement) => {
-    onTabChange(tabId);
-    const nav = navRef.current;
-    if (nav) {
-      const scrollLeft = Math.max(0, btn.offsetLeft - nav.clientWidth / 2 + btn.offsetWidth / 2);
-      nav.scrollTo({ left: scrollLeft, behavior: "smooth" });
-    }
-  }, [onTabChange]);
+  const handleClick = useCallback(
+    (tabId: string, btn: HTMLButtonElement) => {
+      onTabChange(tabId);
+      const nav = navRef.current;
+      if (nav) {
+        const scrollLeft = Math.max(0, btn.offsetLeft - nav.clientWidth / 2 + btn.offsetWidth / 2);
+        nav.scrollTo({ left: scrollLeft, behavior: "smooth" });
+      }
+    },
+    [onTabChange],
+  );
 
   return (
     <nav
       ref={navRef}
       className="pholio-tabs"
       style={{
-        position: "relative", display: "flex", gap: 4, padding: "0 22px",
-        borderBottom: "1px solid #dde4ee", overflowX: "auto", scrollbarWidth: "none",
+        position: "relative",
+        display: "flex",
+        gap: 4,
+        padding: "0 22px",
+        borderBottom: "1px solid #dde4ee",
+        overflowX: "auto",
+        scrollbarWidth: "none",
         background: "#fff",
       }}
     >
       <button
         data-active={String(activeTab === "all")}
         style={tabBtnStyle(activeTab === "all")}
-        onClick={(e) => handleClick("all", e.currentTarget)}
+        onClick={(e) => {
+          handleClick("all", e.currentTarget);
+        }}
       >
         All Portfolios
       </button>
@@ -141,16 +168,23 @@ function NavTabs({ portfolios, activeTab, positionCounts, onTabChange }: NavTabs
             key={p.id}
             data-active={String(isActive)}
             style={tabBtnStyle(isActive)}
-            onClick={(e) => handleClick(p.id, e.currentTarget)}
+            onClick={(e) => {
+              handleClick(p.id, e.currentTarget);
+            }}
           >
             {p.name}
             {count > 0 && (
-              <span className="font-numeric" style={{
-                fontSize: 11, padding: "1px 7px", borderRadius: 2,
-                color: isActive ? "#fff" : "#93a1b5",
-                background: isActive ? "#0a86d8" : "#f4f7fb",
-                border: `1px solid ${isActive ? "#0a86d8" : "#eaeff6"}`,
-              }}>
+              <span
+                className="font-numeric"
+                style={{
+                  fontSize: 11,
+                  padding: "1px 7px",
+                  borderRadius: 2,
+                  color: isActive ? "#fff" : "#93a1b5",
+                  background: isActive ? "#0a86d8" : "#f4f7fb",
+                  border: `1px solid ${isActive ? "#0a86d8" : "#eaeff6"}`,
+                }}
+              >
                 {count}
               </span>
             )}
@@ -158,15 +192,20 @@ function NavTabs({ portfolios, activeTab, positionCounts, onTabChange }: NavTabs
         );
       })}
 
-      <span style={{
-        position: "absolute", bottom: -1, height: 2,
-        background: "#0a86d8", borderRadius: 2,
-        boxShadow: "0 0 10px rgba(10,134,216,.7)",
-        width: inkStyle.width,
-        transform: `translateX(${inkStyle.x}px)`,
-        transition: "transform .34s cubic-bezier(.65,0,.35,1), width .34s cubic-bezier(.65,0,.35,1)",
-        pointerEvents: "none",
-      }} />
+      <span
+        style={{
+          position: "absolute",
+          bottom: -1,
+          height: 2,
+          background: "#0a86d8",
+          borderRadius: 2,
+          boxShadow: "0 0 10px rgba(10,134,216,.7)",
+          width: inkStyle.width,
+          transform: `translateX(${inkStyle.x}px)`,
+          transition: "transform .34s cubic-bezier(.65,0,.35,1), width .34s cubic-bezier(.65,0,.35,1)",
+          pointerEvents: "none",
+        }}
+      />
     </nav>
   );
 }
@@ -367,8 +406,7 @@ export default function DashboardView({
     setIsAddPortfolioDialogOpen(true);
   }, []);
 
-  const mobileCtaPortfolioId =
-    activePortfolio?.id ?? portfolios[0]?.id ?? null;
+  const mobileCtaPortfolioId = activePortfolio?.id ?? portfolios[0]?.id;
 
   return (
     <div style={{ background: "#eef1f6", minHeight: "100vh" }}>
@@ -376,18 +414,30 @@ export default function DashboardView({
       <TickerTape positions={allPositions} />
 
       {/* Header */}
-      <header style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "18px 22px 0", background: "#fff",
-      }}>
+      <header
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "18px 22px 0",
+          background: "#fff",
+        }}
+      >
         {/* Brand */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{
-            width: 30, height: 30, borderRadius: 3, flexShrink: 0,
-            background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 6px 16px -6px rgba(10,134,216,.6)",
-          }}>
+          <span
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 3,
+              flexShrink: 0,
+              background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 6px 16px -6px rgba(10,134,216,.6)",
+            }}
+          >
             <TrendingUp size={16} color="#fff" strokeWidth={2.4} />
           </span>
           <span style={{ fontWeight: 700, fontSize: 22, letterSpacing: "-.02em", color: "#0f1825" }}>
@@ -396,38 +446,69 @@ export default function DashboardView({
         </div>
 
         {/* Desktop: email + add portfolio + sign out */}
-        <div className="hidden sm:flex items-center gap-3" style={{ color: "#5e6e85", fontSize: 12 }}>
+        <div className="hidden items-center gap-3 sm:flex" style={{ color: "#5e6e85", fontSize: 12 }}>
           {userEmail && <span className="font-numeric">{userEmail}</span>}
           <button
             onClick={openAddPortfolio}
             style={{
-              border: "1px solid #dde4ee", padding: "6px 12px", borderRadius: 3,
-              color: "#0f1825", background: "#fff", fontFamily: "var(--font-numeric)",
-              cursor: "pointer", whiteSpace: "nowrap", fontSize: 12,
+              border: "1px solid #dde4ee",
+              padding: "6px 12px",
+              borderRadius: 3,
+              color: "#0f1825",
+              background: "#fff",
+              fontFamily: "var(--font-numeric)",
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              fontSize: 12,
               transition: "border-color .2s, color .2s, box-shadow .2s",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#0a86d8"; e.currentTarget.style.color = "#0a86d8"; e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(10,134,216,.5)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#dde4ee"; e.currentTarget.style.color = "#0f1825"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "#0a86d8";
+              e.currentTarget.style.color = "#0a86d8";
+              e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(10,134,216,.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "#dde4ee";
+              e.currentTarget.style.color = "#0f1825";
+              e.currentTarget.style.boxShadow = "none";
+            }}
           >
             + Add portfolio
           </button>
           <form method="POST" action="/api/auth/signout">
-            <button type="submit" style={{
-              border: "1px solid #dde4ee", padding: "6px 12px", borderRadius: 3,
-              color: "#5e6e85", background: "#fff", fontFamily: "var(--font-sans)",
-              cursor: "pointer", fontSize: 12,
-            }}>
+            <button
+              type="submit"
+              style={{
+                border: "1px solid #dde4ee",
+                padding: "6px 12px",
+                borderRadius: 3,
+                color: "#5e6e85",
+                background: "#fff",
+                fontFamily: "var(--font-sans)",
+                cursor: "pointer",
+                fontSize: 12,
+              }}
+            >
               Sign out
             </button>
           </form>
         </div>
 
         {/* Mobile: avatar icon */}
-        <button className="flex sm:hidden" style={{
-          width: 34, height: 34, border: "1px solid #dde4ee", borderRadius: 6,
-          background: "#fff", alignItems: "center", justifyContent: "center",
-          color: "#5e6e85", cursor: "pointer",
-        }}>
+        <button
+          className="flex sm:hidden"
+          style={{
+            width: 34,
+            height: 34,
+            border: "1px solid #dde4ee",
+            borderRadius: 6,
+            background: "#fff",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#5e6e85",
+            cursor: "pointer",
+          }}
+        >
           <User size={17} />
         </button>
       </header>
@@ -445,17 +526,33 @@ export default function DashboardView({
       {/* Main content */}
       <main style={{ padding: "22px", paddingBottom: portfolios.length > 0 ? 88 : 40 }}>
         {portfolios.length === 0 ? (
-          <div style={{
-            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            border: "1px solid #dde4ee", background: "#fff", padding: "80px 20px", textAlign: "center",
-          }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px solid #dde4ee",
+              background: "#fff",
+              padding: "80px 20px",
+              textAlign: "center",
+            }}
+          >
             <p style={{ color: "#5e6e85", marginBottom: 16 }}>No portfolios yet.</p>
             <button
               style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                background: "linear-gradient(135deg, #0a86d8, #4f46e5)", color: "#fff",
-                border: 0, borderRadius: 3, fontFamily: "var(--font-sans)", fontWeight: 600,
-                fontSize: 13, padding: "11px 18px", cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+                color: "#fff",
+                border: 0,
+                borderRadius: 3,
+                fontFamily: "var(--font-sans)",
+                fontWeight: 600,
+                fontSize: 13,
+                padding: "11px 18px",
+                cursor: "pointer",
                 boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
               }}
               onClick={openAddPortfolio}
@@ -469,49 +566,55 @@ export default function DashboardView({
             {/* Summary strip */}
             <PortfolioSummaryCard summary={activeSummary} />
 
-            {activeTab === "all" ? (
-              /* All portfolios — stacked compact sections */
-              portfolios.map((p) => (
-                <PortfolioSection
-                  key={p.id}
-                  compact
-                  portfolio={p}
-                  transactions={txByPortfolio.get(p.id) ?? []}
-                  prices={prices}
-                  sectors={sectors}
-                  onAddTransaction={(id) => setAddTransactionPortfolioId(id)}
-                  onEditPortfolio={(portfolio) => {
-                    setEditPortfolio(portfolio);
-                    setEditPortfolioName(portfolio.name);
-                    setEditPortfolioError(null);
-                  }}
-                  onDeletePortfolio={(id) => {
-                    setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
-                  }}
-                  onShowLots={(ticker, portfolioId) => setLotsContext({ ticker, portfolioId })}
-                />
-              ))
-            ) : (
-              /* Single portfolio — full sidebar layout */
-              activePortfolio && (
-                <PortfolioSection
-                  portfolio={activePortfolio}
-                  transactions={txByPortfolio.get(activePortfolio.id) ?? []}
-                  prices={prices}
-                  sectors={sectors}
-                  onAddTransaction={(id) => setAddTransactionPortfolioId(id)}
-                  onEditPortfolio={(portfolio) => {
-                    setEditPortfolio(portfolio);
-                    setEditPortfolioName(portfolio.name);
-                    setEditPortfolioError(null);
-                  }}
-                  onDeletePortfolio={(id) => {
-                    setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
-                  }}
-                  onShowLots={(ticker, portfolioId) => setLotsContext({ ticker, portfolioId })}
-                />
-              )
-            )}
+            {activeTab === "all"
+              ? /* All portfolios — stacked compact sections */
+                portfolios.map((p) => (
+                  <PortfolioSection
+                    key={p.id}
+                    compact
+                    portfolio={p}
+                    transactions={txByPortfolio.get(p.id) ?? []}
+                    prices={prices}
+                    sectors={sectors}
+                    onAddTransaction={(id) => {
+                      setAddTransactionPortfolioId(id);
+                    }}
+                    onEditPortfolio={(portfolio) => {
+                      setEditPortfolio(portfolio);
+                      setEditPortfolioName(portfolio.name);
+                      setEditPortfolioError(null);
+                    }}
+                    onDeletePortfolio={(id) => {
+                      setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
+                    }}
+                    onShowLots={(ticker, portfolioId) => {
+                      setLotsContext({ ticker, portfolioId });
+                    }}
+                  />
+                ))
+              : /* Single portfolio — full sidebar layout */
+                activePortfolio && (
+                  <PortfolioSection
+                    portfolio={activePortfolio}
+                    transactions={txByPortfolio.get(activePortfolio.id) ?? []}
+                    prices={prices}
+                    sectors={sectors}
+                    onAddTransaction={(id) => {
+                      setAddTransactionPortfolioId(id);
+                    }}
+                    onEditPortfolio={(portfolio) => {
+                      setEditPortfolio(portfolio);
+                      setEditPortfolioName(portfolio.name);
+                      setEditPortfolioError(null);
+                    }}
+                    onDeletePortfolio={(id) => {
+                      setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
+                    }}
+                    onShowLots={(ticker, portfolioId) => {
+                      setLotsContext({ ticker, portfolioId });
+                    }}
+                  />
+                )}
           </>
         )}
       </main>
@@ -521,13 +624,25 @@ export default function DashboardView({
         <div className="mobile-cta-bar">
           <button
             style={{
-              display: "flex", alignItems: "center", gap: 8, justifyContent: "center",
-              width: "100%", background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
-              color: "#fff", border: 0, borderRadius: 3, fontFamily: "var(--font-sans)",
-              fontWeight: 600, fontSize: 13, padding: 11, cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              justifyContent: "center",
+              width: "100%",
+              background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+              color: "#fff",
+              border: 0,
+              borderRadius: 3,
+              fontFamily: "var(--font-sans)",
+              fontWeight: 600,
+              fontSize: 13,
+              padding: 11,
+              cursor: "pointer",
               boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
             }}
-            onClick={() => setAddTransactionPortfolioId(mobileCtaPortfolioId)}
+            onClick={() => {
+              setAddTransactionPortfolioId(mobileCtaPortfolioId);
+            }}
           >
             <Plus size={16} color="#fff" strokeWidth={2.4} />
             Add transaction
@@ -539,22 +654,33 @@ export default function DashboardView({
       <LotsModal
         ticker={lotsContext?.ticker ?? ""}
         open={lotsContext !== null}
-        onOpenChange={(open) => { if (!open) setLotsContext(null); }}
+        onOpenChange={(open) => {
+          if (!open) setLotsContext(null);
+        }}
         transactions={lotsContext ? (txByPortfolio.get(lotsContext.portfolioId) ?? []) : []}
         onEditRequest={setEditingTransaction}
-        onDeleteRequest={(t) => { setDeleteError(null); setDeletingTransaction(t); }}
+        onDeleteRequest={(t) => {
+          setDeleteError(null);
+          setDeletingTransaction(t);
+        }}
       />
 
       {/* Add transaction dialog */}
       <Dialog
         open={addTransactionPortfolioId !== null}
-        onOpenChange={(open) => { if (!open) setAddTransactionPortfolioId(null); }}
+        onOpenChange={(open) => {
+          if (!open) setAddTransactionPortfolioId(null);
+        }}
       >
         <DialogContent>
-          <DialogHeader><DialogTitle>Add transaction</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Add transaction</DialogTitle>
+          </DialogHeader>
           <AddTransactionForm
             onSuccess={handleAddSuccess}
-            onCancel={() => setAddTransactionPortfolioId(null)}
+            onCancel={() => {
+              setAddTransactionPortfolioId(null);
+            }}
             portfolios={portfolios}
             defaultPortfolioId={addTransactionPortfolioId ?? undefined}
           />
@@ -564,14 +690,20 @@ export default function DashboardView({
       {/* Edit transaction dialog */}
       <Dialog
         open={editingTransaction !== null}
-        onOpenChange={(open) => { if (!open) setEditingTransaction(null); }}
+        onOpenChange={(open) => {
+          if (!open) setEditingTransaction(null);
+        }}
       >
         <DialogContent>
-          <DialogHeader><DialogTitle>Edit transaction</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Edit transaction</DialogTitle>
+          </DialogHeader>
           <AddTransactionForm
             transaction={editingTransaction ?? undefined}
             onSuccess={handleEditSuccess}
-            onCancel={() => setEditingTransaction(null)}
+            onCancel={() => {
+              setEditingTransaction(null);
+            }}
             portfolios={portfolios}
           />
         </DialogContent>
@@ -580,7 +712,12 @@ export default function DashboardView({
       {/* Delete transaction dialog */}
       <AlertDialog
         open={deletingTransaction !== null}
-        onOpenChange={(open) => { if (!open && !isDeleteLoading) { setDeletingTransaction(null); setDeleteError(null); } }}
+        onOpenChange={(open) => {
+          if (!open && !isDeleteLoading) {
+            setDeletingTransaction(null);
+            setDeleteError(null);
+          }
+        }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -608,10 +745,17 @@ export default function DashboardView({
       {/* Add portfolio dialog */}
       <Dialog
         open={isAddPortfolioDialogOpen}
-        onOpenChange={(open) => { if (!open) { setIsAddPortfolioDialogOpen(false); setAddPortfolioError(null); } }}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsAddPortfolioDialogOpen(false);
+            setAddPortfolioError(null);
+          }
+        }}
       >
         <DialogContent>
-          <DialogHeader><DialogTitle>Add portfolio</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Add portfolio</DialogTitle>
+          </DialogHeader>
           <form onSubmit={handleAddPortfolioSubmit} className="space-y-4">
             <div className="space-y-1">
               <Label htmlFor="portfolio-name">Name</Label>
@@ -620,7 +764,9 @@ export default function DashboardView({
                 type="text"
                 placeholder="e.g. Regular Investing"
                 value={addPortfolioName}
-                onChange={(e) => setAddPortfolioName(e.target.value)}
+                onChange={(e) => {
+                  setAddPortfolioName(e.target.value);
+                }}
                 maxLength={100}
                 required
               />
@@ -631,7 +777,14 @@ export default function DashboardView({
               </p>
             )}
             <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => setIsAddPortfolioDialogOpen(false)} disabled={isAddPortfolioLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsAddPortfolioDialogOpen(false);
+                }}
+                disabled={isAddPortfolioLoading}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isAddPortfolioLoading}>
@@ -646,10 +799,17 @@ export default function DashboardView({
       {/* Rename portfolio dialog */}
       <Dialog
         open={editPortfolio !== null}
-        onOpenChange={(open) => { if (!open) { setEditPortfolio(null); setEditPortfolioName(""); } }}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditPortfolio(null);
+            setEditPortfolioName("");
+          }
+        }}
       >
         <DialogContent>
-          <DialogHeader><DialogTitle>Rename portfolio</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Rename portfolio</DialogTitle>
+          </DialogHeader>
           <form onSubmit={handleEditPortfolioSubmit} className="space-y-4">
             <div className="space-y-1">
               <Label htmlFor="edit-portfolio-name">Name</Label>
@@ -657,7 +817,9 @@ export default function DashboardView({
                 id="edit-portfolio-name"
                 type="text"
                 value={editPortfolioName}
-                onChange={(e) => setEditPortfolioName(e.target.value)}
+                onChange={(e) => {
+                  setEditPortfolioName(e.target.value);
+                }}
                 maxLength={100}
                 required
               />
@@ -668,7 +830,14 @@ export default function DashboardView({
               </p>
             )}
             <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => setEditPortfolio(null)} disabled={isEditPortfolioLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setEditPortfolio(null);
+                }}
+                disabled={isEditPortfolioLoading}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isEditPortfolioLoading}>
@@ -683,7 +852,12 @@ export default function DashboardView({
       {/* Delete portfolio dialog */}
       <AlertDialog
         open={deletingPortfolio !== null}
-        onOpenChange={(open) => { if (!open && !isDeletePortfolioLoading) { setDeletingPortfolio(null); setDeletePortfolioError(null); } }}
+        onOpenChange={(open) => {
+          if (!open && !isDeletePortfolioLoading) {
+            setDeletingPortfolio(null);
+            setDeletePortfolioError(null);
+          }
+        }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>

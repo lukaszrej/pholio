@@ -25,7 +25,7 @@ type SortKey =
   | "roiPct"
   | "weightPct";
 
-const SECTOR_COLORS: Record<string, string> = {
+const SECTOR_COLORS: Partial<Record<string, string>> = {
   Technology: "#0a86d8",
   Financials: "#7c3aed",
   Healthcare: "#0a9d6e",
@@ -38,10 +38,21 @@ const SECTOR_COLORS: Record<string, string> = {
   "Real Estate": "#84CC16",
   Other: "#93a1b5",
 };
-const FALLBACK_PALETTE = ["#0a86d8", "#7c3aed", "#0a9d6e", "#d9890b", "#e23950", "#3B82F6", "#8B5CF6", "#EC4899", "#14B8A6", "#84CC16"];
+const FALLBACK_PALETTE = [
+  "#0a86d8",
+  "#7c3aed",
+  "#0a9d6e",
+  "#d9890b",
+  "#e23950",
+  "#3B82F6",
+  "#8B5CF6",
+  "#EC4899",
+  "#14B8A6",
+  "#84CC16",
+];
 
 function getSectorColor(sector: string, index: number): string {
-  return SECTOR_COLORS[sector] ?? FALLBACK_PALETTE[index % FALLBACK_PALETTE.length] ?? "#93a1b5";
+  return SECTOR_COLORS[sector] ?? FALLBACK_PALETTE[index % FALLBACK_PALETTE.length];
 }
 
 function SectorAllocationBar({ slices }: { slices: SectorSlice[] }) {
@@ -50,16 +61,39 @@ function SectorAllocationBar({ slices }: { slices: SectorSlice[] }) {
   }
   return (
     <>
-      <div style={{ display: "flex", height: 12, borderRadius: 2, overflow: "hidden", marginBottom: 18, boxShadow: "inset 0 0 0 1px #eaeff6" }}>
+      <div
+        style={{
+          display: "flex",
+          height: 12,
+          borderRadius: 2,
+          overflow: "hidden",
+          marginBottom: 18,
+          boxShadow: "inset 0 0 0 1px #eaeff6",
+        }}
+      >
         {slices.map((s, i) => (
-          <div key={s.sector} style={{ width: `${s.percentage}%`, background: getSectorColor(s.sector, i), flexShrink: 0 }} />
+          <div
+            key={s.sector}
+            style={{ width: `${s.percentage}%`, background: getSectorColor(s.sector, i), flexShrink: 0 }}
+          />
         ))}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
         {slices.map((s, i) => (
-          <div key={s.sector} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12 }}>
+          <div
+            key={s.sector}
+            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12 }}
+          >
             <span style={{ display: "flex", alignItems: "center", gap: 9, color: "#33414f" }}>
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: getSectorColor(s.sector, i), flexShrink: 0 }} />
+              <span
+                style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: "50%",
+                  background: getSectorColor(s.sector, i),
+                  flexShrink: 0,
+                }}
+              />
               {s.sector}
             </span>
             <span className="font-numeric" style={{ color: "#5e6e85" }}>
@@ -85,7 +119,6 @@ function formatCurrentPrice(pos: PortfolioPosition): string {
   if (pos.currentPrice === null) return "—";
   return pos.currentPrice.toFixed(2);
 }
-
 
 interface Props {
   portfolio: Portfolio;
@@ -145,21 +178,51 @@ export default function PortfolioSection({
       <h2 style={{ fontSize: compact ? 16 : 18, fontWeight: 600, color: "#0f1825", margin: 0 }}>{portfolio.name}</h2>
       <button
         type="button"
-        style={{ background: "none", border: "none", padding: "4px", borderRadius: 4, color: "#93a1b5", cursor: "pointer" }}
-        onClick={() => onEditPortfolio(portfolio)}
+        style={{
+          background: "none",
+          border: "none",
+          padding: "4px",
+          borderRadius: 4,
+          color: "#93a1b5",
+          cursor: "pointer",
+        }}
+        onClick={() => {
+          onEditPortfolio(portfolio);
+        }}
         aria-label={`Rename ${portfolio.name}`}
-        onMouseEnter={(e) => { e.currentTarget.style.background = "#f4f7fb"; e.currentTarget.style.color = "#5e6e85"; }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#93a1b5"; }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "#f4f7fb";
+          e.currentTarget.style.color = "#5e6e85";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "none";
+          e.currentTarget.style.color = "#93a1b5";
+        }}
       >
         <Pencil size={14} />
       </button>
       <button
         type="button"
-        style={{ background: "none", border: "none", padding: "4px", borderRadius: 4, color: "#93a1b5", cursor: "pointer" }}
-        onClick={() => onDeletePortfolio(portfolio.id)}
+        style={{
+          background: "none",
+          border: "none",
+          padding: "4px",
+          borderRadius: 4,
+          color: "#93a1b5",
+          cursor: "pointer",
+        }}
+        onClick={() => {
+          onDeletePortfolio(portfolio.id);
+        }}
         aria-label={`Delete ${portfolio.name}`}
-        onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(226,57,80,.08)"; e.currentTarget.style.color = "#e23950"; }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#93a1b5"; }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "rgba(226,57,80,.08)";
+          e.currentTarget.style.color = "#e23950";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "none";
+          e.currentTarget.style.color = "#93a1b5";
+        }}
       >
         <Trash2 size={14} />
       </button>
@@ -174,13 +237,23 @@ export default function PortfolioSection({
           <p style={{ color: "#5e6e85", marginBottom: 16 }}>No positions yet</p>
           <button
             style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              background: "linear-gradient(135deg, #0a86d8, #4f46e5)", color: "#fff",
-              border: 0, borderRadius: 3, fontFamily: "var(--font-sans)", fontWeight: 600,
-              fontSize: 13, padding: "11px 18px", cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+              color: "#fff",
+              border: 0,
+              borderRadius: 3,
+              fontFamily: "var(--font-sans)",
+              fontWeight: 600,
+              fontSize: 13,
+              padding: "11px 18px",
+              cursor: "pointer",
               boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
             }}
-            onClick={() => onAddTransaction(portfolio.id)}
+            onClick={() => {
+              onAddTransaction(portfolio.id);
+            }}
           >
             <Plus size={15} color="#fff" />
             Add transaction
@@ -202,11 +275,66 @@ export default function PortfolioSection({
             <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #dde4ee", textAlign: "left" }}>
-                  <th style={{ padding: "11px 14px", fontWeight: 500, fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "#5e6e85", background: "#f4f7fb", position: "sticky", left: 0, zIndex: 10, whiteSpace: "nowrap" }}>Ticker</th>
-                  {(["totalShares", "avgCost", "currentPrice", "costBasis", "positionValue", "roiAbs", "roiPct"] as const).map((k) => (
-                    <th key={k} style={{ padding: "11px 14px", fontWeight: 500, fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "#5e6e85", background: "#f4f7fb", textAlign: "right", cursor: "pointer", whiteSpace: "nowrap", userSelect: "none" }}
-                      onClick={() => handleSortClick(k)}>
-                      {k === "totalShares" ? "Shares" : k === "avgCost" ? "Avg" : k === "currentPrice" ? "Last" : k === "costBasis" ? "Cost basis" : k === "positionValue" ? "Mkt value" : k === "roiAbs" ? "P&L" : "P&L %"}
+                  <th
+                    style={{
+                      padding: "11px 14px",
+                      fontWeight: 500,
+                      fontSize: 10,
+                      letterSpacing: ".1em",
+                      textTransform: "uppercase",
+                      color: "#5e6e85",
+                      background: "#f4f7fb",
+                      position: "sticky",
+                      left: 0,
+                      zIndex: 10,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    Ticker
+                  </th>
+                  {(
+                    [
+                      "totalShares",
+                      "avgCost",
+                      "currentPrice",
+                      "costBasis",
+                      "positionValue",
+                      "roiAbs",
+                      "roiPct",
+                    ] as const
+                  ).map((k) => (
+                    <th
+                      key={k}
+                      style={{
+                        padding: "11px 14px",
+                        fontWeight: 500,
+                        fontSize: 10,
+                        letterSpacing: ".1em",
+                        textTransform: "uppercase",
+                        color: "#5e6e85",
+                        background: "#f4f7fb",
+                        textAlign: "right",
+                        cursor: "pointer",
+                        whiteSpace: "nowrap",
+                        userSelect: "none",
+                      }}
+                      onClick={() => {
+                        handleSortClick(k);
+                      }}
+                    >
+                      {k === "totalShares"
+                        ? "Shares"
+                        : k === "avgCost"
+                          ? "Avg"
+                          : k === "currentPrice"
+                            ? "Last"
+                            : k === "costBasis"
+                              ? "Cost basis"
+                              : k === "positionValue"
+                                ? "Mkt value"
+                                : k === "roiAbs"
+                                  ? "P&L"
+                                  : "P&L %"}
                       {sortIcon(k, sortKey, sortDir)}
                     </th>
                   ))}
@@ -214,24 +342,85 @@ export default function PortfolioSection({
               </thead>
               <tbody>
                 {sortedPositions.map((pos) => {
-                  const sIdx = sectorSlices.findIndex((s) => sectors[pos.ticker] === s.sector || (!sectors[pos.ticker] && s.sector === "Other"));
+                  const sIdx = sectorSlices.findIndex(
+                    (s) => sectors[pos.ticker] === s.sector || (!sectors[pos.ticker] && s.sector === "Other"),
+                  );
                   const dotColor = getSectorColor(sectors[pos.ticker] ?? "Other", sIdx >= 0 ? sIdx : 0);
                   return (
-                    <tr key={pos.ticker} style={{ borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
-                      onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = "#f3f8fd"; }}
-                      onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = "transparent"; }}
-                      onClick={() => onShowLots(pos.ticker, portfolio.id)}>
-                      <td style={{ padding: "10px 14px", fontWeight: 600, color: "#0f1825", letterSpacing: ".02em", position: "sticky", left: 0, background: "#fff", zIndex: 10 }}>
-                        <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: dotColor, marginRight: 7, verticalAlign: "middle" }} />
+                    <tr
+                      key={pos.ticker}
+                      style={{ borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "#f3f8fd";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                      }}
+                      onClick={() => {
+                        onShowLots(pos.ticker, portfolio.id);
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: "10px 14px",
+                          fontWeight: 600,
+                          color: "#0f1825",
+                          letterSpacing: ".02em",
+                          position: "sticky",
+                          left: 0,
+                          background: "#fff",
+                          zIndex: 10,
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: 7,
+                            height: 7,
+                            borderRadius: "50%",
+                            background: dotColor,
+                            marginRight: 7,
+                            verticalAlign: "middle",
+                          }}
+                        />
                         {pos.ticker}
                       </td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{formatShares(pos.totalShares)}</td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.avgCost.toFixed(2)}</td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5, color: !pos.isFresh ? "#93a1b5" : undefined }}>{formatCurrentPrice(pos)}</td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.costBasis.toFixed(2)}</td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
-                      <td className={`font-numeric ${pnlClass(pos.roiAbs)}`} style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.roiAbs !== null ? formatSigned(pos.roiAbs) : "—"}</td>
-                      <td className={`font-numeric ${pnlClass(pos.roiPct)}`} style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{formatSigned(pos.roiPct)}{pos.roiPct !== null && "%"}</td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {formatShares(pos.totalShares)}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {pos.avgCost.toFixed(2)}
+                      </td>
+                      <td
+                        className="font-numeric"
+                        style={{
+                          padding: "10px 14px",
+                          textAlign: "right",
+                          fontSize: 12.5,
+                          color: !pos.isFresh ? "#93a1b5" : undefined,
+                        }}
+                      >
+                        {formatCurrentPrice(pos)}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {pos.costBasis.toFixed(2)}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}
+                      </td>
+                      <td
+                        className={`font-numeric ${pnlClass(pos.roiAbs)}`}
+                        style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}
+                      >
+                        {pos.roiAbs !== null ? formatSigned(pos.roiAbs) : "—"}
+                      </td>
+                      <td
+                        className={`font-numeric ${pnlClass(pos.roiPct)}`}
+                        style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}
+                      >
+                        {formatSigned(pos.roiPct)}
+                        {pos.roiPct !== null && "%"}
+                      </td>
                     </tr>
                   );
                 })}
@@ -241,14 +430,27 @@ export default function PortfolioSection({
           <div style={{ padding: "10px 14px 16px" }}>
             <Button
               className="bg-gradient-to-r from-blue-600 to-violet-600 font-medium text-white shadow-sm transition-all duration-200 hover:from-blue-500 hover:to-violet-500 hover:shadow-md"
-              onClick={() => onAddTransaction(portfolio.id)}
+              onClick={() => {
+                onAddTransaction(portfolio.id);
+              }}
             >
               <Plus className="mr-2 size-4" />
               Add transaction
             </Button>
           </div>
           <div style={{ padding: "0 18px 24px" }}>
-            <h3 style={{ fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "#5e6e85", margin: "0 0 16px", fontWeight: 600 }}>Sector Allocation</h3>
+            <h3
+              style={{
+                fontSize: 10,
+                letterSpacing: ".14em",
+                textTransform: "uppercase",
+                color: "#5e6e85",
+                margin: "0 0 16px",
+                fontWeight: 600,
+              }}
+            >
+              Sector Allocation
+            </h3>
             <SectorAllocationChart slices={sectorSlices} />
           </div>
         </div>
@@ -269,11 +471,62 @@ export default function PortfolioSection({
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#f4f7fb", borderBottom: "1px solid #dde4ee" }}>
-                  <th style={{ padding: "11px 14px", textAlign: "left", fontWeight: 500, fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "#5e6e85", cursor: "default" }}>Ticker</th>
-                  {(["totalShares", "avgCost", "currentPrice", "costBasis", "positionValue", "roiAbs", "roiPct"] as const).map((k) => (
-                    <th key={k} style={{ padding: "11px 14px", textAlign: "right", fontWeight: 500, fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "#5e6e85", cursor: "pointer", whiteSpace: "nowrap", userSelect: "none" }}
-                      onClick={() => handleSortClick(k)}>
-                      {k === "totalShares" ? "Shares" : k === "avgCost" ? "Avg" : k === "currentPrice" ? "Last" : k === "costBasis" ? "Cost basis" : k === "positionValue" ? "Mkt value" : k === "roiAbs" ? "P&L" : "P&L %"}
+                  <th
+                    style={{
+                      padding: "11px 14px",
+                      textAlign: "left",
+                      fontWeight: 500,
+                      fontSize: 10,
+                      letterSpacing: ".1em",
+                      textTransform: "uppercase",
+                      color: "#5e6e85",
+                      cursor: "default",
+                    }}
+                  >
+                    Ticker
+                  </th>
+                  {(
+                    [
+                      "totalShares",
+                      "avgCost",
+                      "currentPrice",
+                      "costBasis",
+                      "positionValue",
+                      "roiAbs",
+                      "roiPct",
+                    ] as const
+                  ).map((k) => (
+                    <th
+                      key={k}
+                      style={{
+                        padding: "11px 14px",
+                        textAlign: "right",
+                        fontWeight: 500,
+                        fontSize: 10,
+                        letterSpacing: ".1em",
+                        textTransform: "uppercase",
+                        color: "#5e6e85",
+                        cursor: "pointer",
+                        whiteSpace: "nowrap",
+                        userSelect: "none",
+                      }}
+                      onClick={() => {
+                        handleSortClick(k);
+                      }}
+                    >
+                      {k === "totalShares"
+                        ? "Shares"
+                        : k === "avgCost"
+                          ? "Avg"
+                          : k === "currentPrice"
+                            ? "Last"
+                            : k === "costBasis"
+                              ? "Cost basis"
+                              : k === "positionValue"
+                                ? "Mkt value"
+                                : k === "roiAbs"
+                                  ? "P&L"
+                                  : "P&L %"}
                       {sortIcon(k, sortKey, sortDir)}
                     </th>
                   ))}
@@ -282,25 +535,77 @@ export default function PortfolioSection({
               </thead>
               <tbody>
                 {sortedPositions.map((pos) => {
-                  const sIdx = sectorSlices.findIndex((s) => sectors[pos.ticker] === s.sector || (!sectors[pos.ticker] && s.sector === "Other"));
+                  const sIdx = sectorSlices.findIndex(
+                    (s) => sectors[pos.ticker] === s.sector || (!sectors[pos.ticker] && s.sector === "Other"),
+                  );
                   const dotColor = getSectorColor(sectors[pos.ticker] ?? "Other", sIdx >= 0 ? sIdx : 0);
                   return (
-                    <tr key={pos.ticker} style={{ borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
-                      onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = "#f3f8fd"; }}
-                      onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = "transparent"; }}
-                      onClick={() => onShowLots(pos.ticker, portfolio.id)}>
+                    <tr
+                      key={pos.ticker}
+                      style={{ borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "#f3f8fd";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                      }}
+                      onClick={() => {
+                        onShowLots(pos.ticker, portfolio.id);
+                      }}
+                    >
                       <td style={{ padding: "10px 14px", fontWeight: 600, color: "#0f1825", letterSpacing: ".02em" }}>
-                        <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: dotColor, marginRight: 7, verticalAlign: "middle" }} />
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: 7,
+                            height: 7,
+                            borderRadius: "50%",
+                            background: dotColor,
+                            marginRight: 7,
+                            verticalAlign: "middle",
+                          }}
+                        />
                         {pos.ticker}
                       </td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{formatShares(pos.totalShares)}</td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.avgCost.toFixed(2)}</td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5, color: !pos.isFresh ? "#93a1b5" : undefined }}>{formatCurrentPrice(pos)}</td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.costBasis.toFixed(2)}</td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
-                      <td className={`font-numeric ${pnlClass(pos.roiAbs)}`} style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}</td>
-                      <td className={`font-numeric ${pnlClass(pos.roiPct)}`} style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{formatSigned(pos.roiPct)}{pos.roiPct !== null && "%"}</td>
-                      <td style={{ padding: "10px 8px", color: "#93a1b5" }}><ChevronRight size={14} /></td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {formatShares(pos.totalShares)}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {pos.avgCost.toFixed(2)}
+                      </td>
+                      <td
+                        className="font-numeric"
+                        style={{
+                          padding: "10px 14px",
+                          textAlign: "right",
+                          fontSize: 12.5,
+                          color: !pos.isFresh ? "#93a1b5" : undefined,
+                        }}
+                      >
+                        {formatCurrentPrice(pos)}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {pos.costBasis.toFixed(2)}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}
+                      </td>
+                      <td
+                        className={`font-numeric ${pnlClass(pos.roiAbs)}`}
+                        style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}
+                      >
+                        {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
+                      </td>
+                      <td
+                        className={`font-numeric ${pnlClass(pos.roiPct)}`}
+                        style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}
+                      >
+                        {formatSigned(pos.roiPct)}
+                        {pos.roiPct !== null && "%"}
+                      </td>
+                      <td style={{ padding: "10px 8px", color: "#93a1b5" }}>
+                        <ChevronRight size={14} />
+                      </td>
                     </tr>
                   );
                 })}
@@ -310,24 +615,52 @@ export default function PortfolioSection({
 
           {/* Mobile list */}
           <div className="holdings-list">
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 14px", borderBottom: "1px solid #dde4ee" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "13px 14px",
+                borderBottom: "1px solid #dde4ee",
+              }}
+            >
               <h3 style={{ fontSize: 13, fontWeight: 600, margin: 0, color: "#0f1825" }}>{portfolio.name}</h3>
-              <span className="font-numeric" style={{ fontSize: 11, color: "#5e6e85" }}>{positions.length} positions</span>
+              <span className="font-numeric" style={{ fontSize: 11, color: "#5e6e85" }}>
+                {positions.length} positions
+              </span>
             </div>
             {sortedPositions.map((pos) => {
-              const sIdx = sectorSlices.findIndex((s) => sectors[pos.ticker] === s.sector || (!sectors[pos.ticker] && s.sector === "Other"));
+              const sIdx = sectorSlices.findIndex(
+                (s) => sectors[pos.ticker] === s.sector || (!sectors[pos.ticker] && s.sector === "Other"),
+              );
               const dotColor = getSectorColor(sectors[pos.ticker] ?? "Other", sIdx >= 0 ? sIdx : 0);
               return (
-                <div key={pos.ticker}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
-                  onClick={() => onShowLots(pos.ticker, portfolio.id)}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "#f3f8fd"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = "transparent"; }}
+                <div
+                  key={pos.ticker}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "12px 14px",
+                    borderBottom: "1px solid #eaeff6",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    onShowLots(pos.ticker, portfolio.id);
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "#f3f8fd";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                  }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
                     <span style={{ width: 8, height: 8, borderRadius: "50%", background: dotColor, flexShrink: 0 }} />
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: 14, letterSpacing: ".02em", color: "#0f1825" }}>{pos.ticker}</div>
+                      <div style={{ fontWeight: 700, fontSize: 14, letterSpacing: ".02em", color: "#0f1825" }}>
+                        {pos.ticker}
+                      </div>
                       <div className="font-numeric" style={{ fontSize: 11, color: "#5e6e85", marginTop: 2 }}>
                         {formatShares(pos.totalShares)} sh · avg {pos.avgCost.toFixed(2)}
                       </div>
@@ -338,11 +671,17 @@ export default function PortfolioSection({
                       {pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}
                     </div>
                     {pos.roiPct !== null && (
-                      <span className="font-numeric" style={{
-                        fontSize: 11, fontWeight: 600, padding: "1px 7px", borderRadius: 20,
-                        background: pos.roiPct >= 0 ? "rgba(10,157,110,.12)" : "rgba(226,57,80,.12)",
-                        color: pos.roiPct >= 0 ? "#0a9d6e" : "#e23950",
-                      }}>
+                      <span
+                        className="font-numeric"
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 600,
+                          padding: "1px 7px",
+                          borderRadius: 20,
+                          background: pos.roiPct >= 0 ? "rgba(10,157,110,.12)" : "rgba(226,57,80,.12)",
+                          color: pos.roiPct >= 0 ? "#0a9d6e" : "#e23950",
+                        }}
+                      >
                         {formatSigned(pos.roiPct)}%
                       </span>
                     )}
@@ -355,7 +694,16 @@ export default function PortfolioSection({
 
         {/* Sidebar */}
         <div style={{ background: "#fff", border: "1px solid #dde4ee", padding: "16px 18px" }}>
-          <h3 style={{ fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "#5e6e85", margin: "0 0 16px", fontWeight: 600 }}>
+          <h3
+            style={{
+              fontSize: 10,
+              letterSpacing: ".14em",
+              textTransform: "uppercase",
+              color: "#5e6e85",
+              margin: "0 0 16px",
+              fontWeight: 600,
+            }}
+          >
             Sector Allocation
           </h3>
           <SectorAllocationBar slices={sectorSlices} />
@@ -363,18 +711,39 @@ export default function PortfolioSection({
           {/* Desktop CTA */}
           <button
             style={{
-              display: "flex", alignItems: "center", gap: 8, justifyContent: "center",
-              width: "100%", background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
-              color: "#fff", border: 0, borderRadius: 3, fontFamily: "var(--font-sans)",
-              fontWeight: 600, fontSize: 13, padding: 11, cursor: "pointer", marginTop: 18,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              justifyContent: "center",
+              width: "100%",
+              background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+              color: "#fff",
+              border: 0,
+              borderRadius: 3,
+              fontFamily: "var(--font-sans)",
+              fontWeight: 600,
+              fontSize: 13,
+              padding: 11,
+              cursor: "pointer",
+              marginTop: 18,
               boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
               transition: "filter .2s, transform .1s, box-shadow .2s",
             }}
-            onClick={() => onAddTransaction(portfolio.id)}
-            onMouseEnter={(e) => { e.currentTarget.style.filter = "brightness(1.05)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.filter = "none"; }}
-            onMouseDown={(e) => { e.currentTarget.style.transform = "translateY(1px)"; }}
-            onMouseUp={(e) => { e.currentTarget.style.transform = "none"; }}
+            onClick={() => {
+              onAddTransaction(portfolio.id);
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.filter = "brightness(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.filter = "none";
+            }}
+            onMouseDown={(e) => {
+              e.currentTarget.style.transform = "translateY(1px)";
+            }}
+            onMouseUp={(e) => {
+              e.currentTarget.style.transform = "none";
+            }}
           >
             <Plus size={15} color="#fff" strokeWidth={2.4} />
             Add transaction
