@@ -8,6 +8,7 @@ import {
   computeSectorAllocation,
   type PriceData,
   type PortfolioPosition,
+  type SectorSlice,
 } from "@/lib/portfolio";
 import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
 import SectorAllocationChart from "@/components/portfolio/SectorAllocationChart";
@@ -24,6 +25,53 @@ type SortKey =
   | "roiPct"
   | "weightPct";
 
+const SECTOR_COLORS: Record<string, string> = {
+  Technology: "#0a86d8",
+  Financials: "#7c3aed",
+  Healthcare: "#0a9d6e",
+  Energy: "#d9890b",
+  "Consumer Discretionary": "#e23950",
+  Industrials: "#3B82F6",
+  "Communication Services": "#8B5CF6",
+  Materials: "#EC4899",
+  Utilities: "#14B8A6",
+  "Real Estate": "#84CC16",
+  Other: "#93a1b5",
+};
+const FALLBACK_PALETTE = ["#0a86d8", "#7c3aed", "#0a9d6e", "#d9890b", "#e23950", "#3B82F6", "#8B5CF6", "#EC4899", "#14B8A6", "#84CC16"];
+
+function getSectorColor(sector: string, index: number): string {
+  return SECTOR_COLORS[sector] ?? FALLBACK_PALETTE[index % FALLBACK_PALETTE.length] ?? "#93a1b5";
+}
+
+function SectorAllocationBar({ slices }: { slices: SectorSlice[] }) {
+  if (slices.length === 0) {
+    return <p style={{ fontSize: 12, color: "#93a1b5" }}>No data</p>;
+  }
+  return (
+    <>
+      <div style={{ display: "flex", height: 12, borderRadius: 2, overflow: "hidden", marginBottom: 18, boxShadow: "inset 0 0 0 1px #eaeff6" }}>
+        {slices.map((s, i) => (
+          <div key={s.sector} style={{ width: `${s.percentage}%`, background: getSectorColor(s.sector, i), flexShrink: 0 }} />
+        ))}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+        {slices.map((s, i) => (
+          <div key={s.sector} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12 }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 9, color: "#33414f" }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: getSectorColor(s.sector, i), flexShrink: 0 }} />
+              {s.sector}
+            </span>
+            <span className="font-numeric" style={{ color: "#5e6e85" }}>
+              {s.percentage.toFixed(1)}%
+            </span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function sortIcon(key: Exclude<SortKey, "weightPct">, sortKey: SortKey, sortDir: "asc" | "desc") {
   if (sortKey !== key) return <ArrowUpDown className="ml-1 inline size-3 text-gray-400" />;
   return sortDir === "desc" ? (
@@ -38,15 +86,6 @@ function formatCurrentPrice(pos: PortfolioPosition): string {
   return pos.currentPrice.toFixed(2);
 }
 
-function formatPriceDate(pos: PortfolioPosition): string {
-  if (pos.priceDate === null) return "—";
-  const date = new Date(pos.priceDate);
-  if (isNaN(date.getTime())) return "—";
-  return date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-  });
-}
 
 interface Props {
   portfolio: Portfolio;
@@ -57,6 +96,7 @@ interface Props {
   onEditPortfolio: (portfolio: Portfolio) => void;
   onDeletePortfolio: (portfolioId: string) => void;
   onShowLots: (ticker: string, portfolioId: string) => void;
+  compact?: boolean;
 }
 
 export default function PortfolioSection({
@@ -68,6 +108,7 @@ export default function PortfolioSection({
   onEditPortfolio,
   onDeletePortfolio,
   onShowLots,
+  compact = false,
 }: Props) {
   const [sortKey, setSortKey] = useState<SortKey>("weightPct");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
@@ -99,186 +140,247 @@ export default function PortfolioSection({
     [sortKey, sortDir],
   );
 
-  return (
-    <div className="mb-8">
-      {/* Section header */}
-      <div className="mb-4 flex items-center gap-2">
-        <h2 className="text-xl font-semibold text-gray-800">{portfolio.name}</h2>
-        <button
-          type="button"
-          className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          onClick={() => {
-            onEditPortfolio(portfolio);
-          }}
-          aria-label={`Rename ${portfolio.name}`}
-        >
-          <Pencil className="size-4" />
-        </button>
-        <button
-          type="button"
-          className="rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
-          onClick={() => {
-            onDeletePortfolio(portfolio.id);
-          }}
-          aria-label={`Delete ${portfolio.name}`}
-        >
-          <Trash2 className="size-4" />
-        </button>
-      </div>
+  const sectionHeader = (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, paddingTop: compact ? 20 : 0 }}>
+      <h2 style={{ fontSize: compact ? 16 : 18, fontWeight: 600, color: "#0f1825", margin: 0 }}>{portfolio.name}</h2>
+      <button
+        type="button"
+        style={{ background: "none", border: "none", padding: "4px", borderRadius: 4, color: "#93a1b5", cursor: "pointer" }}
+        onClick={() => onEditPortfolio(portfolio)}
+        aria-label={`Rename ${portfolio.name}`}
+        onMouseEnter={(e) => { e.currentTarget.style.background = "#f4f7fb"; e.currentTarget.style.color = "#5e6e85"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#93a1b5"; }}
+      >
+        <Pencil size={14} />
+      </button>
+      <button
+        type="button"
+        style={{ background: "none", border: "none", padding: "4px", borderRadius: 4, color: "#93a1b5", cursor: "pointer" }}
+        onClick={() => onDeletePortfolio(portfolio.id)}
+        aria-label={`Delete ${portfolio.name}`}
+        onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(226,57,80,.08)"; e.currentTarget.style.color = "#e23950"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#93a1b5"; }}
+      >
+        <Trash2 size={14} />
+      </button>
+    </div>
+  );
 
-      {transactions.length === 0 ? (
-        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-gray-500">No positions yet</p>
+  if (transactions.length === 0) {
+    return (
+      <div style={{ marginBottom: compact ? 24 : 0 }}>
+        {compact && sectionHeader}
+        <div style={{ border: "1px solid #dde4ee", background: "#fff", padding: "48px 20px", textAlign: "center" }}>
+          <p style={{ color: "#5e6e85", marginBottom: 16 }}>No positions yet</p>
+          <button
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "linear-gradient(135deg, #0a86d8, #4f46e5)", color: "#fff",
+              border: 0, borderRadius: 3, fontFamily: "var(--font-sans)", fontWeight: 600,
+              fontSize: 13, padding: "11px 18px", cursor: "pointer",
+              boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
+            }}
+            onClick={() => onAddTransaction(portfolio.id)}
+          >
+            <Plus size={15} color="#fff" />
+            Add transaction
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── COMPACT MODE: existing stacked layout with summary card ── */
+  if (compact) {
+    return (
+      <div style={{ marginBottom: 32 }}>
+        {sectionHeader}
+        <PortfolioSummaryCard summary={summary} />
+
+        <div style={{ border: "1px solid #dde4ee", background: "#fff", boxShadow: "0 1px 2px rgba(15,24,37,.04)" }}>
+          <div style={{ overflowX: "auto" }}>
+            <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid #dde4ee", textAlign: "left" }}>
+                  <th style={{ padding: "11px 14px", fontWeight: 500, fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "#5e6e85", background: "#f4f7fb", position: "sticky", left: 0, zIndex: 10, whiteSpace: "nowrap" }}>Ticker</th>
+                  {(["totalShares", "avgCost", "currentPrice", "costBasis", "positionValue", "roiAbs", "roiPct"] as const).map((k) => (
+                    <th key={k} style={{ padding: "11px 14px", fontWeight: 500, fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "#5e6e85", background: "#f4f7fb", textAlign: "right", cursor: "pointer", whiteSpace: "nowrap", userSelect: "none" }}
+                      onClick={() => handleSortClick(k)}>
+                      {k === "totalShares" ? "Shares" : k === "avgCost" ? "Avg" : k === "currentPrice" ? "Last" : k === "costBasis" ? "Cost basis" : k === "positionValue" ? "Mkt value" : k === "roiAbs" ? "P&L" : "P&L %"}
+                      {sortIcon(k, sortKey, sortDir)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sortedPositions.map((pos) => {
+                  const sIdx = sectorSlices.findIndex((s) => sectors[pos.ticker] === s.sector || (!sectors[pos.ticker] && s.sector === "Other"));
+                  const dotColor = getSectorColor(sectors[pos.ticker] ?? "Other", sIdx >= 0 ? sIdx : 0);
+                  return (
+                    <tr key={pos.ticker} style={{ borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = "#f3f8fd"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = "transparent"; }}
+                      onClick={() => onShowLots(pos.ticker, portfolio.id)}>
+                      <td style={{ padding: "10px 14px", fontWeight: 600, color: "#0f1825", letterSpacing: ".02em", position: "sticky", left: 0, background: "#fff", zIndex: 10 }}>
+                        <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: dotColor, marginRight: 7, verticalAlign: "middle" }} />
+                        {pos.ticker}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{formatShares(pos.totalShares)}</td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.avgCost.toFixed(2)}</td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5, color: !pos.isFresh ? "#93a1b5" : undefined }}>{formatCurrentPrice(pos)}</td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.costBasis.toFixed(2)}</td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
+                      <td className={`font-numeric ${pnlClass(pos.roiAbs)}`} style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.roiAbs !== null ? formatSigned(pos.roiAbs) : "—"}</td>
+                      <td className={`font-numeric ${pnlClass(pos.roiPct)}`} style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{formatSigned(pos.roiPct)}{pos.roiPct !== null && "%"}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-          <div className="border-t border-gray-100 px-5 py-4">
+          <div style={{ padding: "10px 14px 16px" }}>
             <Button
-              className="bg-emerald-500 text-white hover:bg-emerald-600"
-              onClick={() => {
-                onAddTransaction(portfolio.id);
-              }}
+              className="bg-gradient-to-r from-blue-600 to-violet-600 font-medium text-white shadow-sm transition-all duration-200 hover:from-blue-500 hover:to-violet-500 hover:shadow-md"
+              onClick={() => onAddTransaction(portfolio.id)}
             >
+              <Plus className="mr-2 size-4" />
               Add transaction
             </Button>
           </div>
+          <div style={{ padding: "0 18px 24px" }}>
+            <h3 style={{ fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "#5e6e85", margin: "0 0 16px", fontWeight: 600 }}>Sector Allocation</h3>
+            <SectorAllocationChart slices={sectorSlices} />
+          </div>
         </div>
-      ) : (
-        <>
-          <PortfolioSummaryCard summary={summary} />
+      </div>
+    );
+  }
 
-          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-            {/* Positions table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200 text-left text-gray-500">
-                    <th className="sticky left-0 z-20 bg-white px-4 py-3 font-medium">Ticker</th>
-                    <th className="px-4 py-3 font-medium">% of net liq</th>
-                    <th
-                      className="cursor-pointer px-4 py-3 font-medium select-none"
-                      onClick={() => {
-                        handleSortClick("totalShares");
-                      }}
-                    >
-                      Shares{sortIcon("totalShares", sortKey, sortDir)}
+  /* ── FULL MODE: [holdings | sidebar] layout, no internal summary card ── */
+  return (
+    <div>
+      {sectionHeader}
+
+      <div className="portfolio-content">
+        {/* Holdings panel */}
+        <div style={{ background: "#fff", border: "1px solid #dde4ee", overflow: "hidden" }}>
+          {/* Desktop table */}
+          <div className="holdings-table" style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ background: "#f4f7fb", borderBottom: "1px solid #dde4ee" }}>
+                  <th style={{ padding: "11px 14px", textAlign: "left", fontWeight: 500, fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "#5e6e85", cursor: "default" }}>Ticker</th>
+                  {(["totalShares", "avgCost", "currentPrice", "costBasis", "positionValue", "roiAbs", "roiPct"] as const).map((k) => (
+                    <th key={k} style={{ padding: "11px 14px", textAlign: "right", fontWeight: 500, fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "#5e6e85", cursor: "pointer", whiteSpace: "nowrap", userSelect: "none" }}
+                      onClick={() => handleSortClick(k)}>
+                      {k === "totalShares" ? "Shares" : k === "avgCost" ? "Avg" : k === "currentPrice" ? "Last" : k === "costBasis" ? "Cost basis" : k === "positionValue" ? "Mkt value" : k === "roiAbs" ? "P&L" : "P&L %"}
+                      {sortIcon(k, sortKey, sortDir)}
                     </th>
-                    <th
-                      className="cursor-pointer px-4 py-3 font-medium select-none"
-                      onClick={() => {
-                        handleSortClick("avgCost");
-                      }}
-                    >
-                      Avg. Price{sortIcon("avgCost", sortKey, sortDir)}
-                    </th>
-                    <th
-                      className="cursor-pointer px-4 py-3 font-medium select-none"
-                      onClick={() => {
-                        handleSortClick("currentPrice");
-                      }}
-                    >
-                      Current Price{sortIcon("currentPrice", sortKey, sortDir)}
-                    </th>
-                    <th className="px-4 py-3 font-medium">Price Date</th>
-                    <th
-                      className="cursor-pointer px-4 py-3 font-medium select-none"
-                      onClick={() => {
-                        handleSortClick("costBasis");
-                      }}
-                    >
-                      Cost basis{sortIcon("costBasis", sortKey, sortDir)}
-                    </th>
-                    <th
-                      className="cursor-pointer px-4 py-3 font-medium select-none"
-                      onClick={() => {
-                        handleSortClick("positionValue");
-                      }}
-                    >
-                      Market value{sortIcon("positionValue", sortKey, sortDir)}
-                    </th>
-                    <th
-                      className="cursor-pointer px-4 py-3 font-medium select-none"
-                      onClick={() => {
-                        handleSortClick("roiAbs");
-                      }}
-                    >
-                      Unrealized P&amp;L{sortIcon("roiAbs", sortKey, sortDir)}
-                    </th>
-                    <th
-                      className="cursor-pointer px-4 py-3 font-medium select-none"
-                      onClick={() => {
-                        handleSortClick("roiPct");
-                      }}
-                    >
-                      Unrealized P&amp;L %{sortIcon("roiPct", sortKey, sortDir)}
-                    </th>
-                    <th className="w-8 px-2 py-3"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedPositions.map((pos) => (
-                    <tr
-                      key={pos.ticker}
-                      className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
-                      onClick={() => {
-                        onShowLots(pos.ticker, portfolio.id);
-                      }}
-                    >
-                      <td className="sticky left-0 z-10 bg-white px-4 py-3 font-semibold group-hover:bg-gray-50">
+                  ))}
+                  <th style={{ width: 32, padding: "11px 8px", background: "#f4f7fb" }} />
+                </tr>
+              </thead>
+              <tbody>
+                {sortedPositions.map((pos) => {
+                  const sIdx = sectorSlices.findIndex((s) => sectors[pos.ticker] === s.sector || (!sectors[pos.ticker] && s.sector === "Other"));
+                  const dotColor = getSectorColor(sectors[pos.ticker] ?? "Other", sIdx >= 0 ? sIdx : 0);
+                  return (
+                    <tr key={pos.ticker} style={{ borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = "#f3f8fd"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = "transparent"; }}
+                      onClick={() => onShowLots(pos.ticker, portfolio.id)}>
+                      <td style={{ padding: "10px 14px", fontWeight: 600, color: "#0f1825", letterSpacing: ".02em" }}>
+                        <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: dotColor, marginRight: 7, verticalAlign: "middle" }} />
                         {pos.ticker}
                       </td>
-                      <td className="font-numeric px-4 py-3">
-                        {pos.weightPct !== null ? `${pos.weightPct.toFixed(2)}%` : "—"}
-                      </td>
-                      <td className="font-numeric px-4 py-3">{formatShares(pos.totalShares)}</td>
-                      <td className="font-numeric px-4 py-3">
-                        {pos.avgCost.toFixed(2)}
-                        {!pos.hasMultipleCurrencies && <span className="ml-1 text-gray-500">{pos.currency}</span>}
-                      </td>
-                      <td className={!pos.isFresh ? "font-numeric px-4 py-3 text-gray-400" : "font-numeric px-4 py-3"}>
-                        {formatCurrentPrice(pos)}
-                      </td>
-                      <td className={!pos.isFresh ? "px-4 py-3 text-gray-400" : "px-4 py-3"}>{formatPriceDate(pos)}</td>
-                      <td className="font-numeric px-4 py-3">{pos.costBasis.toFixed(2)}</td>
-                      <td className="font-numeric px-4 py-3">
-                        {pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}
-                      </td>
-                      <td className={`font-numeric px-4 py-3 ${pnlClass(pos.roiAbs)}`}>
-                        {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
-                      </td>
-                      <td className={`font-numeric px-4 py-3 ${pnlClass(pos.roiPct)}`}>
-                        {formatSigned(pos.roiPct)}
-                        {pos.roiPct !== null && "%"}
-                      </td>
-                      <td className="px-2 py-3 text-gray-400">
-                        <ChevronRight className="size-4" />
-                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{formatShares(pos.totalShares)}</td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.avgCost.toFixed(2)}</td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5, color: !pos.isFresh ? "#93a1b5" : undefined }}>{formatCurrentPrice(pos)}</td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.costBasis.toFixed(2)}</td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}</td>
+                      <td className={`font-numeric ${pnlClass(pos.roiAbs)}`} style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}</td>
+                      <td className={`font-numeric ${pnlClass(pos.roiPct)}`} style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>{formatSigned(pos.roiPct)}{pos.roiPct !== null && "%"}</td>
+                      <td style={{ padding: "10px 8px", color: "#93a1b5" }}><ChevronRight size={14} /></td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Add transaction */}
-            <div className="px-4 pt-2 pb-5">
-              <Button
-                className="bg-gradient-to-r from-blue-600 to-violet-600 font-medium text-white shadow-sm transition-all duration-200 hover:from-blue-500 hover:to-violet-500 hover:shadow-md"
-                onClick={() => {
-                  onAddTransaction(portfolio.id);
-                }}
-              >
-                <Plus className="mr-2 size-4" />
-                Add transaction
-              </Button>
-            </div>
-
-            {/* Sector chart */}
-            <div className="p-5 pb-8">
-              <h3 className="mb-4 text-base font-semibold text-gray-700">Sector Allocation</h3>
-              <SectorAllocationChart slices={sectorSlices} />
-            </div>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-        </>
-      )}
+
+          {/* Mobile list */}
+          <div className="holdings-list">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 14px", borderBottom: "1px solid #dde4ee" }}>
+              <h3 style={{ fontSize: 13, fontWeight: 600, margin: 0, color: "#0f1825" }}>{portfolio.name}</h3>
+              <span className="font-numeric" style={{ fontSize: 11, color: "#5e6e85" }}>{positions.length} positions</span>
+            </div>
+            {sortedPositions.map((pos) => {
+              const sIdx = sectorSlices.findIndex((s) => sectors[pos.ticker] === s.sector || (!sectors[pos.ticker] && s.sector === "Other"));
+              const dotColor = getSectorColor(sectors[pos.ticker] ?? "Other", sIdx >= 0 ? sIdx : 0);
+              return (
+                <div key={pos.ticker}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
+                  onClick={() => onShowLots(pos.ticker, portfolio.id)}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "#f3f8fd"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = "transparent"; }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: dotColor, flexShrink: 0 }} />
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 14, letterSpacing: ".02em", color: "#0f1825" }}>{pos.ticker}</div>
+                      <div className="font-numeric" style={{ fontSize: 11, color: "#5e6e85", marginTop: 2 }}>
+                        {formatShares(pos.totalShares)} sh · avg {pos.avgCost.toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3 }}>
+                    <div className="font-numeric" style={{ fontSize: 13.5, fontWeight: 600, color: "#0f1825" }}>
+                      {pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}
+                    </div>
+                    {pos.roiPct !== null && (
+                      <span className="font-numeric" style={{
+                        fontSize: 11, fontWeight: 600, padding: "1px 7px", borderRadius: 20,
+                        background: pos.roiPct >= 0 ? "rgba(10,157,110,.12)" : "rgba(226,57,80,.12)",
+                        color: pos.roiPct >= 0 ? "#0a9d6e" : "#e23950",
+                      }}>
+                        {formatSigned(pos.roiPct)}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div style={{ background: "#fff", border: "1px solid #dde4ee", padding: "16px 18px" }}>
+          <h3 style={{ fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "#5e6e85", margin: "0 0 16px", fontWeight: 600 }}>
+            Sector Allocation
+          </h3>
+          <SectorAllocationBar slices={sectorSlices} />
+
+          {/* Desktop CTA */}
+          <button
+            style={{
+              display: "flex", alignItems: "center", gap: 8, justifyContent: "center",
+              width: "100%", background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+              color: "#fff", border: 0, borderRadius: 3, fontFamily: "var(--font-sans)",
+              fontWeight: 600, fontSize: 13, padding: 11, cursor: "pointer", marginTop: 18,
+              boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
+              transition: "filter .2s, transform .1s, box-shadow .2s",
+            }}
+            onClick={() => onAddTransaction(portfolio.id)}
+            onMouseEnter={(e) => { e.currentTarget.style.filter = "brightness(1.05)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.filter = "none"; }}
+            onMouseDown={(e) => { e.currentTarget.style.transform = "translateY(1px)"; }}
+            onMouseUp={(e) => { e.currentTarget.style.transform = "none"; }}
+          >
+            <Plus size={15} color="#fff" strokeWidth={2.4} />
+            Add transaction
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

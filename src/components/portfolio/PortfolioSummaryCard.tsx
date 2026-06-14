@@ -1,48 +1,67 @@
 import type { PortfolioSummary } from "@/lib/portfolio";
-import { formatSigned, pnlClass } from "@/lib/format";
+import { formatSigned } from "@/lib/format";
 
 interface Props {
   summary: PortfolioSummary;
   title?: string;
 }
 
-export default function PortfolioSummaryCard({ summary, title }: Props) {
-  const { positionCount, totalInvested, currentValue, totalPnL, totalPnLPct, currency, excludedCount } = summary;
-  const currencyLabel = currency ? ` ${currency}` : "";
+function pnlColor(value: number | null): string {
+  if (value === null) return "#5e6e85";
+  return value >= 0 ? "#0a9d6e" : "#e23950";
+}
+
+export default function PortfolioSummaryCard({ summary }: Props) {
+  const { totalInvested, currentValue, totalPnL, totalPnLPct, currency, excludedCount } = summary;
+  const cur = currency ?? "";
 
   return (
-    <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-700">{title ?? "Portfolio Summary"}</h2>
-        <span className="text-sm text-gray-400">
-          {positionCount} {positionCount === 1 ? "position" : "positions"}
-        </span>
+    <div className="summary-grid">
+      <div className="summary-cell">
+        <div style={{ fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "#5e6e85", marginBottom: 9 }}>
+          Total Invested
+        </div>
+        <div className="font-numeric" style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: "#0f1825" }}>
+          {totalInvested.toFixed(2)}
+          {cur && <small style={{ fontSize: 12, color: "#5e6e85", fontWeight: 400, marginLeft: 6 }}>{cur}</small>}
+        </div>
       </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <div>
-          <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Total Invested</p>
-          <p className="font-numeric text-xl font-semibold text-gray-800">
-            {totalInvested.toFixed(2)}
-            {currencyLabel}
-          </p>
+
+      <div className="summary-cell">
+        <div style={{ fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "#5e6e85", marginBottom: 9 }}>
+          Market Value
         </div>
-        <div>
-          <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Market value</p>
-          <p className="font-numeric text-xl font-semibold text-gray-800">
-            {currentValue !== null ? `${currentValue.toFixed(2)}${currencyLabel}` : "—"}
-          </p>
-        </div>
-        <div>
-          <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">Unrealized P&amp;L</p>
-          <p className={`font-numeric text-xl font-semibold ${pnlClass(totalPnL)}`}>
-            {totalPnL !== null ? `${formatSigned(totalPnL)}${currencyLabel}` : "—"}
-            {totalPnLPct !== null && <span className="ml-2 text-sm font-normal">({formatSigned(totalPnLPct)}%)</span>}
-          </p>
-          {excludedCount > 0 && (
-            <p className="mt-1 text-xs text-gray-400">
-              Excludes {excludedCount} multi-currency {excludedCount === 1 ? "position" : "positions"}.
-            </p>
+        <div className="font-numeric" style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: "#0f1825" }}>
+          {currentValue !== null ? currentValue.toFixed(2) : "—"}
+          {cur && currentValue !== null && (
+            <small style={{ fontSize: 12, color: "#5e6e85", fontWeight: 400, marginLeft: 6 }}>{cur}</small>
           )}
+        </div>
+      </div>
+
+      <div className="summary-cell">
+        <div style={{ fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "#5e6e85", marginBottom: 9 }}>
+          Unrealized P&amp;L
+        </div>
+        <div className="font-numeric" style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: pnlColor(totalPnL) }}>
+          {totalPnL !== null ? formatSigned(totalPnL) : "—"}
+          {cur && totalPnL !== null && (
+            <small style={{ fontSize: 12, fontWeight: 400, marginLeft: 6 }}>{cur}</small>
+          )}
+        </div>
+        {excludedCount > 0 && (
+          <p style={{ marginTop: 4, fontSize: 11, color: "#93a1b5" }}>
+            Excludes {excludedCount} multi-currency {excludedCount === 1 ? "position" : "positions"}.
+          </p>
+        )}
+      </div>
+
+      <div className="summary-cell">
+        <div style={{ fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "#5e6e85", marginBottom: 9 }}>
+          P&amp;L %
+        </div>
+        <div className="font-numeric" style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: pnlColor(totalPnLPct) }}>
+          {totalPnLPct !== null ? `${formatSigned(totalPnLPct)}%` : "—"}
         </div>
       </div>
     </div>

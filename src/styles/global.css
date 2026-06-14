@@ -6,49 +6,64 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+
+  /* Terminal-Light ground palette */
+  --background: #eef1f6;
+  --foreground: #0f1825;
+  --card: #ffffff;
+  --card-foreground: #0f1825;
+  --popover: #ffffff;
+  --popover-foreground: #0f1825;
+  --primary: #0f1825;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f7fb;
+  --secondary-foreground: #0f1825;
+  --muted: #f4f7fb;
+  --muted-foreground: #5e6e85;
+  --accent: #f4f7fb;
+  --accent-foreground: #0f1825;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #dde4ee;
+  --input: #dde4ee;
+  --ring: rgba(10, 134, 216, 0.25);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #f4f7fb;
+  --sidebar-foreground: #0f1825;
+  --sidebar-primary: #0f1825;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f4f7fb;
+  --sidebar-accent-foreground: #0f1825;
+  --sidebar-border: #dde4ee;
+  --sidebar-ring: rgba(10, 134, 216, 0.25);
 
   /* Pholio typography */
   --font-numeric: "Geist Mono", ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
 
-  /* Financial semantic colors */
-  --gain: #059669;
-  --loss: #dc2626;
-  --flat: #9ca3af;
+  /* Financial semantic colors — Terminal-Light */
+  --gain: #0a9d6e;
+  --loss: #e23950;
+  --flat: #93a1b5;
+
+  /* Terminal-Light design tokens */
+  --tl-bg: #eef1f6;
+  --tl-panel: #ffffff;
+  --tl-panel-2: #f4f7fb;
+  --tl-line: #dde4ee;
+  --tl-line-soft: #eaeff6;
+  --tl-tx: #0f1825;
+  --tl-mut: #5e6e85;
+  --tl-dim: #93a1b5;
+  --tl-cy: #0a86d8;
+  --tl-cy-ink: #0762a6;
+  --tl-amber: #d9890b;
 
   /* Brand gradients */
-  --gradient-brand: linear-gradient(135deg, #2563eb, #7c3aed);
-  --gradient-wordmark: linear-gradient(90deg, #2563eb, #9333ea);
+  --gradient-brand: linear-gradient(135deg, #0a86d8, #4f46e5);
+  --gradient-wordmark: linear-gradient(90deg, #0a86d8, #7c3aed);
 }
 
 @theme inline {
@@ -88,10 +103,103 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Terminal-Light color tokens usable as Tailwind utilities */
+  --color-tl-bg: var(--tl-bg);
+  --color-tl-panel: var(--tl-panel);
+  --color-tl-panel-2: var(--tl-panel-2);
+  --color-tl-line: var(--tl-line);
+  --color-tl-line-soft: var(--tl-line-soft);
+  --color-tl-tx: var(--tl-tx);
+  --color-tl-mut: var(--tl-mut);
+  --color-tl-dim: var(--tl-dim);
+  --color-tl-cy: var(--tl-cy);
+  --color-tl-cy-ink: var(--tl-cy-ink);
+  --color-gain: var(--gain);
+  --color-loss: var(--loss);
+  --color-flat: var(--flat);
 }
 
+/* Ticker tape scroll animation */
+@keyframes ticker-slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Summary strip — 2×2 on mobile, 4-col on md+ */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--tl-line);
+  background: var(--tl-panel);
+  box-shadow: 0 1px 2px rgba(15, 24, 37, 0.04);
+  margin-bottom: 1px;
+}
+.summary-cell {
+  padding: 16px 18px;
+  border-right: 1px solid var(--tl-line-soft);
+  border-bottom: 1px solid var(--tl-line-soft);
+}
+.summary-cell:nth-child(2n)   { border-right: 0; }
+.summary-cell:nth-child(n+3)  { border-bottom: 0; }
+
+@media (min-width: 768px) {
+  .summary-grid { grid-template-columns: repeat(4, 1fr); }
+  .summary-cell {
+    border-right: 1px solid var(--tl-line-soft);
+    border-bottom: 0;
+  }
+  .summary-cell:last-child { border-right: 0; }
+}
+
+/* Portfolio content: [holdings | 320 px sidebar] on md+, stacked on mobile */
+.portfolio-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--tl-line);
+}
+@media (min-width: 768px) {
+  .portfolio-content {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+  }
+}
+
+/* Holdings table vs list */
+.holdings-table { display: none; }
+.holdings-list  { display: block; }
+@media (min-width: 768px) {
+  .holdings-table { display: table; }
+  .holdings-list  { display: none; }
+}
+
+/* Mobile sticky CTA bar */
+.mobile-cta-bar {
+  display: none;
+}
+@media (max-width: 767px) {
+  .mobile-cta-bar {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, rgba(238, 241, 246, 0), var(--tl-bg) 38%);
+    pointer-events: none;
+  }
+  .mobile-cta-bar > * {
+    pointer-events: auto;
+  }
+}
+
+/* Nav tabs scrollbar hiding */
+.pholio-tabs::-webkit-scrollbar { display: none; }
+
 @utility bg-cosmic {
-  background-image: linear-gradient(to bottom, #f8fafc, #f1f5f9, #f8fafc);
+  background-color: var(--tl-bg);
 }
 
 @utility font-numeric {
@@ -106,5 +214,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    font-size: 13px;
   }
 }

@@ -1,7 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useLayoutEffect, useEffect, useCallback } from "react";
 import type { Transaction } from "@/types/transaction";
 import type { Portfolio } from "@/types/portfolio";
-import { computePositions, computePortfolioSummary, type PriceData } from "@/lib/portfolio";
+import { computePositions, computePortfolioSummary, type PriceData, type PortfolioPosition } from "@/lib/portfolio";
 import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
 import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import AddTransactionForm from "@/components/transactions/AddTransactionForm";
@@ -19,7 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Plus, Wallet } from "lucide-react";
+import { Loader2, Plus, TrendingUp, User } from "lucide-react";
 
 interface Props {
   initialTransactions: Transaction[];
@@ -29,6 +29,149 @@ interface Props {
   userEmail?: string;
 }
 
+/* ── Ticker Tape ── */
+function TickerTape({ positions }: { positions: PortfolioPosition[] }) {
+  const items = positions.filter((p) => p.currentPrice !== null && p.roiPct !== null);
+  if (items.length === 0) return null;
+
+  const doubled = [...items, ...items];
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", height: 34, padding: "0 22px",
+      borderBottom: "1px solid #dde4ee", overflow: "hidden", whiteSpace: "nowrap",
+      background: "#fff", boxShadow: "0 1px 0 rgba(15,24,37,.03)",
+    }}>
+      <div style={{ display: "flex", gap: 34, animation: "ticker-slide 24s linear infinite" }}>
+        {doubled.map((p, i) => (
+          <span key={i} className="font-numeric" style={{ fontSize: 12, color: "#5e6e85", display: "inline-flex", gap: 8, alignItems: "center" }}>
+            <b style={{ color: "#0f1825", fontWeight: 600 }}>{p.ticker}</b>
+            {p.currentPrice!.toFixed(2)}
+            <span style={{ color: p.roiPct! >= 0 ? "#0a9d6e" : "#e23950" }}>
+              {p.roiPct! >= 0 ? "▲" : "▼"} {Math.abs(p.roiPct!).toFixed(2)}%
+            </span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Nav Tabs ── */
+interface NavTabsProps {
+  portfolios: Portfolio[];
+  activeTab: string;
+  positionCounts: Record<string, number>;
+  onTabChange: (tab: string) => void;
+}
+
+function tabBtnStyle(isActive: boolean): React.CSSProperties {
+  return {
+    appearance: "none" as const,
+    background: "none",
+    border: 0,
+    color: isActive ? "#0f1825" : "#5e6e85",
+    cursor: "pointer",
+    fontFamily: "var(--font-sans)",
+    fontSize: 13,
+    fontWeight: 500,
+    padding: "11px 16px",
+    letterSpacing: ".01em",
+    display: "inline-flex",
+    gap: 8,
+    alignItems: "center",
+    whiteSpace: "nowrap" as const,
+    transition: "color .22s",
+    flexShrink: 0,
+  };
+}
+
+function NavTabs({ portfolios, activeTab, positionCounts, onTabChange }: NavTabsProps) {
+  const navRef = useRef<HTMLElement>(null);
+  const [inkStyle, setInkStyle] = useState({ width: 0, x: 0 });
+
+  const updateInk = useCallback(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const activeBtn = nav.querySelector<HTMLButtonElement>('[data-active="true"]');
+    if (!activeBtn) return;
+    setInkStyle({ width: activeBtn.offsetWidth, x: activeBtn.offsetLeft });
+  }, []);
+
+  useLayoutEffect(() => {
+    requestAnimationFrame(updateInk);
+  }, [activeTab, portfolios.length, updateInk]);
+
+  useEffect(() => {
+    window.addEventListener("resize", updateInk);
+    return () => window.removeEventListener("resize", updateInk);
+  }, [updateInk]);
+
+  const handleClick = useCallback((tabId: string, btn: HTMLButtonElement) => {
+    onTabChange(tabId);
+    const nav = navRef.current;
+    if (nav) {
+      const scrollLeft = Math.max(0, btn.offsetLeft - nav.clientWidth / 2 + btn.offsetWidth / 2);
+      nav.scrollTo({ left: scrollLeft, behavior: "smooth" });
+    }
+  }, [onTabChange]);
+
+  return (
+    <nav
+      ref={navRef}
+      className="pholio-tabs"
+      style={{
+        position: "relative", display: "flex", gap: 4, padding: "0 22px",
+        borderBottom: "1px solid #dde4ee", overflowX: "auto", scrollbarWidth: "none",
+        background: "#fff",
+      }}
+    >
+      <button
+        data-active={String(activeTab === "all")}
+        style={tabBtnStyle(activeTab === "all")}
+        onClick={(e) => handleClick("all", e.currentTarget)}
+      >
+        All Portfolios
+      </button>
+
+      {portfolios.map((p) => {
+        const isActive = activeTab === p.id;
+        const count = positionCounts[p.id] ?? 0;
+        return (
+          <button
+            key={p.id}
+            data-active={String(isActive)}
+            style={tabBtnStyle(isActive)}
+            onClick={(e) => handleClick(p.id, e.currentTarget)}
+          >
+            {p.name}
+            {count > 0 && (
+              <span className="font-numeric" style={{
+                fontSize: 11, padding: "1px 7px", borderRadius: 2,
+                color: isActive ? "#fff" : "#93a1b5",
+                background: isActive ? "#0a86d8" : "#f4f7fb",
+                border: `1px solid ${isActive ? "#0a86d8" : "#eaeff6"}`,
+              }}>
+                {count}
+              </span>
+            )}
+          </button>
+        );
+      })}
+
+      <span style={{
+        position: "absolute", bottom: -1, height: 2,
+        background: "#0a86d8", borderRadius: 2,
+        boxShadow: "0 0 10px rgba(10,134,216,.7)",
+        width: inkStyle.width,
+        transform: `translateX(${inkStyle.x}px)`,
+        transition: "transform .34s cubic-bezier(.65,0,.35,1), width .34s cubic-bezier(.65,0,.35,1)",
+        pointerEvents: "none",
+      }} />
+    </nav>
+  );
+}
+
+/* ── Dashboard View ── */
 export default function DashboardView({
   initialTransactions,
   initialPrices,
@@ -40,6 +183,7 @@ export default function DashboardView({
   const [prices] = useState(initialPrices);
   const [sectors] = useState(initialSectors);
   const [portfolios, setPortfolios] = useState<Portfolio[]>(initialPortfolios);
+  const [activeTab, setActiveTab] = useState<string>("all");
 
   // Transaction dialogs
   const [addTransactionPortfolioId, setAddTransactionPortfolioId] = useState<string | null>(null);
@@ -68,6 +212,7 @@ export default function DashboardView({
 
   const allPositions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
   const combinedSummary = useMemo(() => computePortfolioSummary(allPositions), [allPositions]);
+
   const txByPortfolio = useMemo(() => {
     const map = new Map<string, Transaction[]>();
     for (const t of transactions) {
@@ -77,6 +222,24 @@ export default function DashboardView({
     }
     return map;
   }, [transactions]);
+
+  const portfolioPositionCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of portfolios) {
+      const txns = txByPortfolio.get(p.id) ?? [];
+      counts[p.id] = computePositions(txns, prices).length;
+    }
+    return counts;
+  }, [portfolios, txByPortfolio, prices]);
+
+  const activePortfolio = portfolios.find((p) => p.id === activeTab);
+
+  const activeSummary = useMemo(() => {
+    if (activeTab === "all") return combinedSummary;
+    const txns = txByPortfolio.get(activeTab) ?? [];
+    const pos = computePositions(txns, prices);
+    return computePortfolioSummary(pos);
+  }, [activeTab, combinedSummary, txByPortfolio, prices]);
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
@@ -140,6 +303,7 @@ export default function DashboardView({
       setPortfolios((prev) => [...prev, json.data]);
       setIsAddPortfolioDialogOpen(false);
       setAddPortfolioName("");
+      setActiveTab(json.data.id);
     } catch {
       setAddPortfolioError("Network error. Please check your connection and try again.");
     } finally {
@@ -185,6 +349,7 @@ export default function DashboardView({
         setDeletePortfolioError(json.error ?? "Unexpected error");
         return;
       }
+      if (activeTab === deletingPortfolio.id) setActiveTab("all");
       setPortfolios((prev) => prev.filter((p) => p.id !== deletingPortfolio.id));
       setTransactions((prev) => prev.filter((t) => t.portfolio_id !== deletingPortfolio.id));
       if (lotsContext?.portfolioId === deletingPortfolio.id) setLotsContext(null);
@@ -196,321 +361,351 @@ export default function DashboardView({
     }
   }
 
+  const openAddPortfolio = useCallback(() => {
+    setAddPortfolioName("");
+    setAddPortfolioError(null);
+    setIsAddPortfolioDialogOpen(true);
+  }, []);
+
+  const mobileCtaPortfolioId =
+    activePortfolio?.id ?? portfolios[0]?.id ?? null;
+
   return (
-    <div className="bg-cosmic min-h-screen text-gray-900">
-      <div className="mx-auto max-w-6xl px-6 py-6">
-        {/* Toolbar */}
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[9px] bg-gradient-to-br from-blue-600 to-violet-600 text-white">
-              <Wallet className="size-[18px]" />
-            </span>
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-3xl font-bold tracking-tight text-transparent">
-              Pholio
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            {userEmail && <span className="text-sm text-gray-500">{userEmail}</span>}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setAddPortfolioName("");
-                setAddPortfolioError(null);
-                setIsAddPortfolioDialogOpen(true);
-              }}
-            >
-              <Plus className="mr-1 size-4" />
-              Add portfolio
-            </Button>
-            <form method="POST" action="/api/auth/signout">
-              <button
-                type="submit"
-                className="rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-200"
-              >
-                Sign out
-              </button>
-            </form>
-          </div>
+    <div style={{ background: "#eef1f6", minHeight: "100vh" }}>
+      {/* Ticker tape */}
+      <TickerTape positions={allPositions} />
+
+      {/* Header */}
+      <header style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "18px 22px 0", background: "#fff",
+      }}>
+        {/* Brand */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{
+            width: 30, height: 30, borderRadius: 3, flexShrink: 0,
+            background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 6px 16px -6px rgba(10,134,216,.6)",
+          }}>
+            <TrendingUp size={16} color="#fff" strokeWidth={2.4} />
+          </span>
+          <span style={{ fontWeight: 700, fontSize: 22, letterSpacing: "-.02em", color: "#0f1825" }}>
+            Phol<span style={{ color: "#0a86d8" }}>io</span>
+          </span>
         </div>
 
+        {/* Desktop: email + add portfolio + sign out */}
+        <div className="hidden sm:flex items-center gap-3" style={{ color: "#5e6e85", fontSize: 12 }}>
+          {userEmail && <span className="font-numeric">{userEmail}</span>}
+          <button
+            onClick={openAddPortfolio}
+            style={{
+              border: "1px solid #dde4ee", padding: "6px 12px", borderRadius: 3,
+              color: "#0f1825", background: "#fff", fontFamily: "var(--font-numeric)",
+              cursor: "pointer", whiteSpace: "nowrap", fontSize: 12,
+              transition: "border-color .2s, color .2s, box-shadow .2s",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#0a86d8"; e.currentTarget.style.color = "#0a86d8"; e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(10,134,216,.5)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#dde4ee"; e.currentTarget.style.color = "#0f1825"; e.currentTarget.style.boxShadow = "none"; }}
+          >
+            + Add portfolio
+          </button>
+          <form method="POST" action="/api/auth/signout">
+            <button type="submit" style={{
+              border: "1px solid #dde4ee", padding: "6px 12px", borderRadius: 3,
+              color: "#5e6e85", background: "#fff", fontFamily: "var(--font-sans)",
+              cursor: "pointer", fontSize: 12,
+            }}>
+              Sign out
+            </button>
+          </form>
+        </div>
+
+        {/* Mobile: avatar icon */}
+        <button className="flex sm:hidden" style={{
+          width: 34, height: 34, border: "1px solid #dde4ee", borderRadius: 6,
+          background: "#fff", alignItems: "center", justifyContent: "center",
+          color: "#5e6e85", cursor: "pointer",
+        }}>
+          <User size={17} />
+        </button>
+      </header>
+
+      {/* Nav tabs */}
+      <div style={{ background: "#fff" }}>
+        <NavTabs
+          portfolios={portfolios}
+          activeTab={activeTab}
+          positionCounts={portfolioPositionCounts}
+          onTabChange={setActiveTab}
+        />
+      </div>
+
+      {/* Main content */}
+      <main style={{ padding: "22px", paddingBottom: portfolios.length > 0 ? 88 : 40 }}>
         {portfolios.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-20 text-center">
-            <p className="mb-4 text-gray-500">No portfolios yet.</p>
-            <Button
-              className="bg-emerald-500 text-white hover:bg-emerald-600"
-              onClick={() => {
-                setAddPortfolioName("");
-                setAddPortfolioError(null);
-                setIsAddPortfolioDialogOpen(true);
+          <div style={{
+            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            border: "1px solid #dde4ee", background: "#fff", padding: "80px 20px", textAlign: "center",
+          }}>
+            <p style={{ color: "#5e6e85", marginBottom: 16 }}>No portfolios yet.</p>
+            <button
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "linear-gradient(135deg, #0a86d8, #4f46e5)", color: "#fff",
+                border: 0, borderRadius: 3, fontFamily: "var(--font-sans)", fontWeight: 600,
+                fontSize: 13, padding: "11px 18px", cursor: "pointer",
+                boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
               }}
+              onClick={openAddPortfolio}
             >
+              <Plus size={15} color="#fff" />
               Create your first portfolio
-            </Button>
+            </button>
           </div>
         ) : (
           <>
-            {/* Combined summary */}
-            <PortfolioSummaryCard summary={combinedSummary} title="All Portfolios" />
+            {/* Summary strip */}
+            <PortfolioSummaryCard summary={activeSummary} />
 
-            {/* Per-portfolio sections */}
-            {portfolios.map((p) => (
-              <PortfolioSection
-                key={p.id}
-                portfolio={p}
-                transactions={txByPortfolio.get(p.id) ?? []}
-                prices={prices}
-                sectors={sectors}
-                onAddTransaction={(id) => {
-                  setAddTransactionPortfolioId(id);
-                }}
-                onEditPortfolio={(portfolio) => {
-                  setEditPortfolio(portfolio);
-                  setEditPortfolioName(portfolio.name);
-                  setEditPortfolioError(null);
-                }}
-                onDeletePortfolio={(id) => {
-                  setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
-                }}
-                onShowLots={(ticker, portfolioId) => {
-                  setLotsContext({ ticker, portfolioId });
-                }}
-              />
-            ))}
+            {activeTab === "all" ? (
+              /* All portfolios — stacked compact sections */
+              portfolios.map((p) => (
+                <PortfolioSection
+                  key={p.id}
+                  compact
+                  portfolio={p}
+                  transactions={txByPortfolio.get(p.id) ?? []}
+                  prices={prices}
+                  sectors={sectors}
+                  onAddTransaction={(id) => setAddTransactionPortfolioId(id)}
+                  onEditPortfolio={(portfolio) => {
+                    setEditPortfolio(portfolio);
+                    setEditPortfolioName(portfolio.name);
+                    setEditPortfolioError(null);
+                  }}
+                  onDeletePortfolio={(id) => {
+                    setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
+                  }}
+                  onShowLots={(ticker, portfolioId) => setLotsContext({ ticker, portfolioId })}
+                />
+              ))
+            ) : (
+              /* Single portfolio — full sidebar layout */
+              activePortfolio && (
+                <PortfolioSection
+                  portfolio={activePortfolio}
+                  transactions={txByPortfolio.get(activePortfolio.id) ?? []}
+                  prices={prices}
+                  sectors={sectors}
+                  onAddTransaction={(id) => setAddTransactionPortfolioId(id)}
+                  onEditPortfolio={(portfolio) => {
+                    setEditPortfolio(portfolio);
+                    setEditPortfolioName(portfolio.name);
+                    setEditPortfolioError(null);
+                  }}
+                  onDeletePortfolio={(id) => {
+                    setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
+                  }}
+                  onShowLots={(ticker, portfolioId) => setLotsContext({ ticker, portfolioId })}
+                />
+              )
+            )}
           </>
         )}
+      </main>
 
-        {/* Lots modal */}
-        <LotsModal
-          ticker={lotsContext?.ticker ?? ""}
-          open={lotsContext !== null}
-          onOpenChange={(open) => {
-            if (!open) setLotsContext(null);
-          }}
-          transactions={lotsContext ? (txByPortfolio.get(lotsContext.portfolioId) ?? []) : []}
-          onEditRequest={setEditingTransaction}
-          onDeleteRequest={(t) => {
-            setDeleteError(null);
-            setDeletingTransaction(t);
-          }}
-        />
+      {/* Mobile sticky CTA */}
+      {portfolios.length > 0 && (
+        <div className="mobile-cta-bar">
+          <button
+            style={{
+              display: "flex", alignItems: "center", gap: 8, justifyContent: "center",
+              width: "100%", background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+              color: "#fff", border: 0, borderRadius: 3, fontFamily: "var(--font-sans)",
+              fontWeight: 600, fontSize: 13, padding: 11, cursor: "pointer",
+              boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
+            }}
+            onClick={() => setAddTransactionPortfolioId(mobileCtaPortfolioId)}
+          >
+            <Plus size={16} color="#fff" strokeWidth={2.4} />
+            Add transaction
+          </button>
+        </div>
+      )}
 
-        {/* Add transaction dialog */}
-        <Dialog
-          open={addTransactionPortfolioId !== null}
-          onOpenChange={(open) => {
-            if (!open) setAddTransactionPortfolioId(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add transaction</DialogTitle>
-            </DialogHeader>
-            <AddTransactionForm
-              onSuccess={handleAddSuccess}
-              onCancel={() => {
-                setAddTransactionPortfolioId(null);
-              }}
-              portfolios={portfolios}
-              defaultPortfolioId={addTransactionPortfolioId ?? undefined}
-            />
-          </DialogContent>
-        </Dialog>
+      {/* Lots modal */}
+      <LotsModal
+        ticker={lotsContext?.ticker ?? ""}
+        open={lotsContext !== null}
+        onOpenChange={(open) => { if (!open) setLotsContext(null); }}
+        transactions={lotsContext ? (txByPortfolio.get(lotsContext.portfolioId) ?? []) : []}
+        onEditRequest={setEditingTransaction}
+        onDeleteRequest={(t) => { setDeleteError(null); setDeletingTransaction(t); }}
+      />
 
-        {/* Edit transaction dialog */}
-        <Dialog
-          open={editingTransaction !== null}
-          onOpenChange={(open) => {
-            if (!open) setEditingTransaction(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit transaction</DialogTitle>
-            </DialogHeader>
-            <AddTransactionForm
-              transaction={editingTransaction ?? undefined}
-              onSuccess={handleEditSuccess}
-              onCancel={() => {
-                setEditingTransaction(null);
-              }}
-              portfolios={portfolios}
-            />
-          </DialogContent>
-        </Dialog>
+      {/* Add transaction dialog */}
+      <Dialog
+        open={addTransactionPortfolioId !== null}
+        onOpenChange={(open) => { if (!open) setAddTransactionPortfolioId(null); }}
+      >
+        <DialogContent>
+          <DialogHeader><DialogTitle>Add transaction</DialogTitle></DialogHeader>
+          <AddTransactionForm
+            onSuccess={handleAddSuccess}
+            onCancel={() => setAddTransactionPortfolioId(null)}
+            portfolios={portfolios}
+            defaultPortfolioId={addTransactionPortfolioId ?? undefined}
+          />
+        </DialogContent>
+      </Dialog>
 
-        {/* Delete transaction dialog */}
-        <AlertDialog
-          open={deletingTransaction !== null}
-          onOpenChange={(open) => {
-            if (!open && !isDeleteLoading) {
-              setDeletingTransaction(null);
-              setDeleteError(null);
-            }
-          }}
-        >
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete transaction</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will permanently delete the {deletingTransaction?.ticker} transaction from{" "}
-                {deletingTransaction?.purchase_date}. This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            {deleteError && (
+      {/* Edit transaction dialog */}
+      <Dialog
+        open={editingTransaction !== null}
+        onOpenChange={(open) => { if (!open) setEditingTransaction(null); }}
+      >
+        <DialogContent>
+          <DialogHeader><DialogTitle>Edit transaction</DialogTitle></DialogHeader>
+          <AddTransactionForm
+            transaction={editingTransaction ?? undefined}
+            onSuccess={handleEditSuccess}
+            onCancel={() => setEditingTransaction(null)}
+            portfolios={portfolios}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete transaction dialog */}
+      <AlertDialog
+        open={deletingTransaction !== null}
+        onOpenChange={(open) => { if (!open && !isDeleteLoading) { setDeletingTransaction(null); setDeleteError(null); } }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete transaction</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the {deletingTransaction?.ticker} transaction from{" "}
+              {deletingTransaction?.purchase_date}. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {deleteError && (
+            <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {deleteError}
+            </p>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleteLoading}>Cancel</AlertDialogCancel>
+            <Button variant="destructive" onClick={handleDeleteTransactionConfirm} disabled={isDeleteLoading}>
+              {isDeleteLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {isDeleteLoading ? "Deleting..." : "Delete"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Add portfolio dialog */}
+      <Dialog
+        open={isAddPortfolioDialogOpen}
+        onOpenChange={(open) => { if (!open) { setIsAddPortfolioDialogOpen(false); setAddPortfolioError(null); } }}
+      >
+        <DialogContent>
+          <DialogHeader><DialogTitle>Add portfolio</DialogTitle></DialogHeader>
+          <form onSubmit={handleAddPortfolioSubmit} className="space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="portfolio-name">Name</Label>
+              <Input
+                id="portfolio-name"
+                type="text"
+                placeholder="e.g. Regular Investing"
+                value={addPortfolioName}
+                onChange={(e) => setAddPortfolioName(e.target.value)}
+                maxLength={100}
+                required
+              />
+            </div>
+            {addPortfolioError && (
               <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
-                {deleteError}
+                {addPortfolioError}
               </p>
             )}
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeleteLoading}>Cancel</AlertDialogCancel>
-              <Button variant="destructive" onClick={handleDeleteTransactionConfirm} disabled={isDeleteLoading}>
-                {isDeleteLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-                {isDeleteLoading ? "Deleting..." : "Delete"}
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setIsAddPortfolioDialogOpen(false)} disabled={isAddPortfolioLoading}>
+                Cancel
               </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+              <Button type="submit" disabled={isAddPortfolioLoading}>
+                {isAddPortfolioLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {isAddPortfolioLoading ? "Creating..." : "Create"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
-        {/* Add portfolio dialog */}
-        <Dialog
-          open={isAddPortfolioDialogOpen}
-          onOpenChange={(open) => {
-            if (!open) {
-              setIsAddPortfolioDialogOpen(false);
-              setAddPortfolioError(null);
-            }
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add portfolio</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleAddPortfolioSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <Label htmlFor="portfolio-name">Name</Label>
-                <Input
-                  id="portfolio-name"
-                  type="text"
-                  placeholder="e.g. Regular Investing"
-                  value={addPortfolioName}
-                  onChange={(e) => {
-                    setAddPortfolioName(e.target.value);
-                  }}
-                  maxLength={100}
-                  required
-                />
-              </div>
-              {addPortfolioError && (
-                <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
-                  {addPortfolioError}
-                </p>
-              )}
-              <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setIsAddPortfolioDialogOpen(false);
-                  }}
-                  disabled={isAddPortfolioLoading}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isAddPortfolioLoading}>
-                  {isAddPortfolioLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-                  {isAddPortfolioLoading ? "Creating..." : "Create"}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* Rename portfolio dialog */}
-        <Dialog
-          open={editPortfolio !== null}
-          onOpenChange={(open) => {
-            if (!open) {
-              setEditPortfolio(null);
-              setEditPortfolioName("");
-            }
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Rename portfolio</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleEditPortfolioSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <Label htmlFor="edit-portfolio-name">Name</Label>
-                <Input
-                  id="edit-portfolio-name"
-                  type="text"
-                  value={editPortfolioName}
-                  onChange={(e) => {
-                    setEditPortfolioName(e.target.value);
-                  }}
-                  maxLength={100}
-                  required
-                />
-              </div>
-              {editPortfolioError && (
-                <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
-                  {editPortfolioError}
-                </p>
-              )}
-              <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setEditPortfolio(null);
-                  }}
-                  disabled={isEditPortfolioLoading}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isEditPortfolioLoading}>
-                  {isEditPortfolioLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-                  {isEditPortfolioLoading ? "Saving..." : "Save"}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* Delete portfolio dialog */}
-        <AlertDialog
-          open={deletingPortfolio !== null}
-          onOpenChange={(open) => {
-            if (!open && !isDeletePortfolioLoading) {
-              setDeletingPortfolio(null);
-              setDeletePortfolioError(null);
-            }
-          }}
-        >
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete portfolio</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete &quot;{deletingPortfolio?.name}&quot;? This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            {deletePortfolioError && (
+      {/* Rename portfolio dialog */}
+      <Dialog
+        open={editPortfolio !== null}
+        onOpenChange={(open) => { if (!open) { setEditPortfolio(null); setEditPortfolioName(""); } }}
+      >
+        <DialogContent>
+          <DialogHeader><DialogTitle>Rename portfolio</DialogTitle></DialogHeader>
+          <form onSubmit={handleEditPortfolioSubmit} className="space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="edit-portfolio-name">Name</Label>
+              <Input
+                id="edit-portfolio-name"
+                type="text"
+                value={editPortfolioName}
+                onChange={(e) => setEditPortfolioName(e.target.value)}
+                maxLength={100}
+                required
+              />
+            </div>
+            {editPortfolioError && (
               <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
-                {deletePortfolioError}
+                {editPortfolioError}
               </p>
             )}
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeletePortfolioLoading}>Cancel</AlertDialogCancel>
-              <Button variant="destructive" onClick={handleDeletePortfolioConfirm} disabled={isDeletePortfolioLoading}>
-                {isDeletePortfolioLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-                {isDeletePortfolioLoading ? "Deleting..." : "Delete"}
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setEditPortfolio(null)} disabled={isEditPortfolioLoading}>
+                Cancel
               </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+              <Button type="submit" disabled={isEditPortfolioLoading}>
+                {isEditPortfolioLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {isEditPortfolioLoading ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete portfolio dialog */}
+      <AlertDialog
+        open={deletingPortfolio !== null}
+        onOpenChange={(open) => { if (!open && !isDeletePortfolioLoading) { setDeletingPortfolio(null); setDeletePortfolioError(null); } }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete portfolio</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete &quot;{deletingPortfolio?.name}&quot;? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {deletePortfolioError && (
+            <p className="flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {deletePortfolioError}
+            </p>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletePortfolioLoading}>Cancel</AlertDialogCancel>
+            <Button variant="destructive" onClick={handleDeletePortfolioConfirm} disabled={isDeletePortfolioLoading}>
+              {isDeletePortfolioLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {isDeletePortfolioLoading ? "Deleting..." : "Delete"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
