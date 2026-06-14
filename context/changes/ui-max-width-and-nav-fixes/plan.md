@@ -100,6 +100,14 @@ Add a 1024 px centred wrapper in `DashboardView.tsx`, fix `.holdings-table` disp
 
 ---
 
+## Addendum (impl-review 2026-06-14)
+
+**Body background added in Layout.astro.** `background: var(--tl-bg)` was added to the `html, body` block to produce the gray gutters. Not in the original plan, but functionally required for the success criterion. The initial implementation used the hardcoded hex `#eef1f6`; corrected during impl-review to use the design token `--tl-bg` (same value, but token-aligned).
+
+**Sidebar column width: 256px, not 320px.** During visual testing at 1152px width, 320px was found to be excessive. The portfolio sidebar was narrowed to 256px (`grid-template-columns: 1fr 256px`), giving more room to the holdings table. Accepted as an intentional visual adjustment, outside the original "What We're NOT Doing" constraint but endorsed after review.
+
+**Max-width value: 1152px, not 1024px.** The plan text "restore the 1024 px max-width constraint" was inaccurate. The pre-Terminal-Light layout used Tailwind `max-w-6xl` (72rem = 1152px at browser default font size), as confirmed by commit `9d49654`. The implementation correctly restored 1152px with `padding: "0 16px"` inside the wrapper. The plan text was wrong; 1152 is the right value.
+
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles.
