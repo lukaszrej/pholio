@@ -118,8 +118,27 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.1 Adding a unit test (pure function)
 
-TBD — see §3 Phase 1. Will cover: file location, naming convention,
-run command, and a reference test for the ROI/aggregation computation pattern.
+**Established by:** §3 Phase 1 (testing-business-logic-unit-suite)
+
+**File location:** Colocated with the module under test — `src/lib/<module>.test.ts`. Do not create a separate `__tests__/` directory; tests live next to the source they cover.
+
+**Naming convention:** `<module>.test.ts` — e.g. `src/lib/portfolio.test.ts`, `src/lib/finnhub.test.ts`.
+
+**Run commands:**
+
+- One-shot (CI-style): `npm test`
+- Watch mode (local dev): `npm run test:watch`
+
+**Reference tests:**
+
+- Pure-function math (no mocking): `src/lib/portfolio.test.ts` — see `describe("computePositions")` for weighted-average oracle pattern and `describe("computePortfolioSummary")` for roll-up assertions.
+- Fetch-edge with mocked `global.fetch`: `src/lib/finnhub.test.ts` — see `describe("fetchQuote")` for the `vi.fn()` / `beforeEach` / `afterEach` restore pattern.
+
+**Virtual-module mocking (`astro:env/server`):** `src/lib/finnhub.ts` imports `FINNHUB_API_KEY` from the Astro virtual module `astro:env/server`. Plain Vitest cannot resolve this id. It is aliased in `vitest.config.ts` to the test stub at `src/test/stubs/astro-env-server.ts`, which exports a **mutable** `let FINNHUB_API_KEY`. Any new module that imports from `astro:env/server` is automatically covered by this alias — no per-test change needed. If you need to toggle the key within a test, import the stub directly and reassign the export; restore it in `afterEach`.
+
+**`@` alias:** `vitest.config.ts` mirrors the `@/* → ./src/*` path alias from `tsconfig.json`. Import project modules with `@/lib/...` inside tests exactly as in production code.
+
+**Oracle rule:** Never derive expected values by calling the function under test and snapshotting the result. Compute each expected number by hand (or write the arithmetic as a comment). A test whose oracle came from the implementation cannot catch a bug in that implementation.
 
 ### 6.2 Adding an integration test (API route or security scenario)
 

@@ -315,21 +315,21 @@ None — additive only. No production source changes.
 
 #### Automated
 
-- [x] 3.1 `npm test` passes with all fetchQuote tests green
-- [x] 3.2 `npm run lint` passes
-- [x] 3.3 Mutation check: removing `|| data.c === 0` at `finnhub.ts:53` makes the c===0 test fail (then revert)
+- [x] 3.1 `npm test` passes with all fetchQuote tests green — 93bfeb4
+- [x] 3.2 `npm run lint` passes — 93bfeb4
+- [x] 3.3 Mutation check: removing `|| data.c === 0` at `finnhub.ts:53` makes the c===0 test fail (then revert) — 93bfeb4
 
 #### Manual
 
-- [x] 3.4 The "missing API key" test asserts `fetch` was never called
+- [x] 3.4 The "missing API key" test asserts `fetch` was never called — 93bfeb4
 
 ### Phase 4: Cookbook update (test-plan §6.1)
 
 #### Automated
 
-- [ ] 4.1 `npm test` passes after smoke-test deletion
-- [ ] 4.2 `context/foundation/test-plan.md` §6.1 no longer contains "TBD"
+- [x] 4.1 `npm test` passes after smoke-test deletion
+- [x] 4.2 `context/foundation/test-plan.md` §6.1 no longer contains "TBD"
 
 #### Manual
 
-- [ ] 4.3 A reader can add a new unit test following §6.1 alone
+- [x] 4.3 A reader can add a new unit test following §6.1 alone
