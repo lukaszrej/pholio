@@ -291,25 +291,25 @@ None — additive only. No production source changes.
 
 #### Automated
 
-- [x] 1.1 `npm test` runs and the smoke test passes
-- [x] 1.2 `npm run lint` passes on `vitest.config.ts` and the stub file
-- [x] 1.3 `npm run typecheck` still passes
+- [x] 1.1 `npm test` runs and the smoke test passes — 5a0748d
+- [x] 1.2 `npm run lint` passes on `vitest.config.ts` and the stub file — 5a0748d
+- [x] 1.3 `npm run typecheck` still passes — 5a0748d
 
 #### Manual
 
-- [x] 1.4 Flipping the smoke assertion to false makes `npm test` exit non-zero
+- [x] 1.4 Flipping the smoke assertion to false makes `npm test` exit non-zero — 5a0748d
 
 ### Phase 2: Portfolio math unit tests (Risk #1)
 
 #### Automated
 
-- [ ] 2.1 `npm test` passes with all portfolio tests green
-- [ ] 2.2 `npm run lint` passes on the test file
-- [ ] 2.3 Mutation check: `* 100` → `* 10` at `portfolio.ts:124` makes the suite fail (then revert)
+- [x] 2.1 `npm test` passes with all portfolio tests green
+- [x] 2.2 `npm run lint` passes on the test file
+- [x] 2.3 Mutation check: `* 100` → `* 10` at `portfolio.ts:124` makes the suite fail (then revert)
 
 #### Manual
 
-- [ ] 2.4 Two expected values re-derived by hand match the test literals
+- [x] 2.4 Two expected values re-derived by hand match the test literals
 
 ### Phase 3: fetchQuote unit tests (Risk #6)
 
