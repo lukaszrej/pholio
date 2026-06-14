@@ -94,6 +94,7 @@ function tabBtnStyle(isActive: boolean): React.CSSProperties {
     display: "inline-flex",
     gap: 8,
     alignItems: "center",
+    justifyContent: "center" as const,
     whiteSpace: "nowrap" as const,
     transition: "color .22s",
     flexShrink: 0,
@@ -143,11 +144,9 @@ function NavTabs({ portfolios, activeTab, positionCounts, onTabChange }: NavTabs
         position: "relative",
         display: "flex",
         gap: 4,
-        padding: "0 22px",
-        borderBottom: "1px solid #dde4ee",
         overflowX: "auto",
         scrollbarWidth: "none",
-        background: "#fff",
+        width: "100%",
       }}
     >
       <button
@@ -413,137 +412,227 @@ export default function DashboardView({
       {/* Ticker tape */}
       <TickerTape positions={allPositions} />
 
-      {/* Header */}
-      <header
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "18px 22px 0",
-          background: "#fff",
-        }}
-      >
-        {/* Brand */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span
+      {/* Constrained content — 16px side padding keeps everything visually the same width */}
+      <div style={{ maxWidth: 1152, margin: "0 auto", padding: "0 16px" }}>
+        {/* White app bar: header + nav share one white background */}
+        <div style={{ background: "#fff" }}>
+          {/* Header */}
+          <header
             style={{
-              width: 30,
-              height: 30,
-              borderRadius: 3,
-              flexShrink: 0,
-              background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 6px 16px -6px rgba(10,134,216,.6)",
-            }}
-          >
-            <TrendingUp size={16} color="#fff" strokeWidth={2.4} />
-          </span>
-          <span style={{ fontWeight: 700, fontSize: 22, letterSpacing: "-.02em", color: "#0f1825" }}>
-            Phol<span style={{ color: "#0a86d8" }}>io</span>
-          </span>
-        </div>
-
-        {/* Desktop: email + add portfolio + sign out */}
-        <div className="hidden items-center gap-3 sm:flex" style={{ color: "#5e6e85", fontSize: 12 }}>
-          {userEmail && <span className="font-numeric">{userEmail}</span>}
-          <button
-            onClick={openAddPortfolio}
-            style={{
-              border: "1px solid #dde4ee",
-              padding: "6px 12px",
-              borderRadius: 3,
-              color: "#0f1825",
+              justifyContent: "space-between",
+              padding: "18px 0 0",
               background: "#fff",
-              fontFamily: "var(--font-numeric)",
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-              fontSize: 12,
-              transition: "border-color .2s, color .2s, box-shadow .2s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#0a86d8";
-              e.currentTarget.style.color = "#0a86d8";
-              e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(10,134,216,.5)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "#dde4ee";
-              e.currentTarget.style.color = "#0f1825";
-              e.currentTarget.style.boxShadow = "none";
             }}
           >
-            + Add portfolio
-          </button>
-          <form method="POST" action="/api/auth/signout">
+            {/* Brand */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 3,
+                  flexShrink: 0,
+                  background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 6px 16px -6px rgba(10,134,216,.6)",
+                }}
+              >
+                <TrendingUp size={16} color="#fff" strokeWidth={2.4} />
+              </span>
+              <span style={{ fontWeight: 700, fontSize: 22, letterSpacing: "-.02em", color: "#0f1825" }}>
+                Phol<span style={{ color: "#0a86d8" }}>io</span>
+              </span>
+            </div>
+
+            {/* Desktop: email + add portfolio + sign out */}
+            <div className="hidden items-center gap-3 sm:flex" style={{ color: "#5e6e85", fontSize: 12 }}>
+              {userEmail && <span className="font-numeric">{userEmail}</span>}
+              <button
+                onClick={openAddPortfolio}
+                style={{
+                  border: "1px solid #dde4ee",
+                  padding: "6px 12px",
+                  borderRadius: 3,
+                  color: "#0f1825",
+                  background: "#fff",
+                  fontFamily: "var(--font-numeric)",
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                  fontSize: 12,
+                  transition: "border-color .2s, color .2s, box-shadow .2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#0a86d8";
+                  e.currentTarget.style.color = "#0a86d8";
+                  e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(10,134,216,.5)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#dde4ee";
+                  e.currentTarget.style.color = "#0f1825";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                + Add portfolio
+              </button>
+              <form method="POST" action="/api/auth/signout">
+                <button
+                  type="submit"
+                  style={{
+                    border: "1px solid #dde4ee",
+                    padding: "6px 12px",
+                    borderRadius: 3,
+                    color: "#5e6e85",
+                    background: "#fff",
+                    fontFamily: "var(--font-sans)",
+                    cursor: "pointer",
+                    fontSize: 12,
+                  }}
+                >
+                  Sign out
+                </button>
+              </form>
+            </div>
+
+            {/* Mobile: avatar icon */}
             <button
-              type="submit"
+              className="flex sm:hidden"
               style={{
+                width: 34,
+                height: 34,
                 border: "1px solid #dde4ee",
-                padding: "6px 12px",
-                borderRadius: 3,
-                color: "#5e6e85",
+                borderRadius: 6,
                 background: "#fff",
-                fontFamily: "var(--font-sans)",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#5e6e85",
                 cursor: "pointer",
-                fontSize: 12,
               }}
             >
-              Sign out
+              <User size={17} />
             </button>
-          </form>
+          </header>
+
+          {/* Nav tabs */}
+          <div style={{ borderBottom: "1px solid #dde4ee" }}>
+            <NavTabs
+              portfolios={portfolios}
+              activeTab={activeTab}
+              positionCounts={portfolioPositionCounts}
+              onTabChange={setActiveTab}
+            />
+          </div>
         </div>
 
-        {/* Mobile: avatar icon */}
-        <button
-          className="flex sm:hidden"
-          style={{
-            width: 34,
-            height: 34,
-            border: "1px solid #dde4ee",
-            borderRadius: 6,
-            background: "#fff",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#5e6e85",
-            cursor: "pointer",
-          }}
-        >
-          <User size={17} />
-        </button>
-      </header>
+        {/* Main content */}
+        <main style={{ padding: "22px 0", paddingBottom: portfolios.length > 0 ? 88 : 40 }}>
+          {portfolios.length === 0 ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "1px solid #dde4ee",
+                background: "#fff",
+                padding: "80px 20px",
+                textAlign: "center",
+              }}
+            >
+              <p style={{ color: "#5e6e85", marginBottom: 16 }}>No portfolios yet.</p>
+              <button
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+                  color: "#fff",
+                  border: 0,
+                  borderRadius: 3,
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  padding: "11px 18px",
+                  cursor: "pointer",
+                  boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
+                }}
+                onClick={openAddPortfolio}
+              >
+                <Plus size={15} color="#fff" />
+                Create your first portfolio
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Summary strip */}
+              <PortfolioSummaryCard summary={activeSummary} />
 
-      {/* Nav tabs */}
-      <div style={{ background: "#fff" }}>
-        <NavTabs
-          portfolios={portfolios}
-          activeTab={activeTab}
-          positionCounts={portfolioPositionCounts}
-          onTabChange={setActiveTab}
-        />
-      </div>
+              {activeTab === "all"
+                ? /* All portfolios — stacked compact sections */
+                  portfolios.map((p) => (
+                    <PortfolioSection
+                      key={p.id}
+                      compact
+                      portfolio={p}
+                      transactions={txByPortfolio.get(p.id) ?? []}
+                      prices={prices}
+                      sectors={sectors}
+                      onAddTransaction={(id) => {
+                        setAddTransactionPortfolioId(id);
+                      }}
+                      onEditPortfolio={(portfolio) => {
+                        setEditPortfolio(portfolio);
+                        setEditPortfolioName(portfolio.name);
+                        setEditPortfolioError(null);
+                      }}
+                      onDeletePortfolio={(id) => {
+                        setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
+                      }}
+                      onShowLots={(ticker, portfolioId) => {
+                        setLotsContext({ ticker, portfolioId });
+                      }}
+                    />
+                  ))
+                : /* Single portfolio — full sidebar layout */
+                  activePortfolio && (
+                    <PortfolioSection
+                      portfolio={activePortfolio}
+                      transactions={txByPortfolio.get(activePortfolio.id) ?? []}
+                      prices={prices}
+                      sectors={sectors}
+                      onAddTransaction={(id) => {
+                        setAddTransactionPortfolioId(id);
+                      }}
+                      onEditPortfolio={(portfolio) => {
+                        setEditPortfolio(portfolio);
+                        setEditPortfolioName(portfolio.name);
+                        setEditPortfolioError(null);
+                      }}
+                      onDeletePortfolio={(id) => {
+                        setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
+                      }}
+                      onShowLots={(ticker, portfolioId) => {
+                        setLotsContext({ ticker, portfolioId });
+                      }}
+                    />
+                  )}
+            </>
+          )}
+        </main>
 
-      {/* Main content */}
-      <main style={{ padding: "22px", paddingBottom: portfolios.length > 0 ? 88 : 40 }}>
-        {portfolios.length === 0 ? (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px solid #dde4ee",
-              background: "#fff",
-              padding: "80px 20px",
-              textAlign: "center",
-            }}
-          >
-            <p style={{ color: "#5e6e85", marginBottom: 16 }}>No portfolios yet.</p>
+        {/* Mobile sticky CTA */}
+        {portfolios.length > 0 && (
+          <div className="mobile-cta-bar">
             <button
               style={{
-                display: "inline-flex",
+                display: "flex",
                 alignItems: "center",
                 gap: 8,
+                justifyContent: "center",
+                width: "100%",
                 background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
                 color: "#fff",
                 border: 0,
@@ -551,104 +640,20 @@ export default function DashboardView({
                 fontFamily: "var(--font-sans)",
                 fontWeight: 600,
                 fontSize: 13,
-                padding: "11px 18px",
+                padding: 11,
                 cursor: "pointer",
                 boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
               }}
-              onClick={openAddPortfolio}
+              onClick={() => {
+                setAddTransactionPortfolioId(mobileCtaPortfolioId);
+              }}
             >
-              <Plus size={15} color="#fff" />
-              Create your first portfolio
+              <Plus size={16} color="#fff" strokeWidth={2.4} />
+              Add transaction
             </button>
           </div>
-        ) : (
-          <>
-            {/* Summary strip */}
-            <PortfolioSummaryCard summary={activeSummary} />
-
-            {activeTab === "all"
-              ? /* All portfolios — stacked compact sections */
-                portfolios.map((p) => (
-                  <PortfolioSection
-                    key={p.id}
-                    compact
-                    portfolio={p}
-                    transactions={txByPortfolio.get(p.id) ?? []}
-                    prices={prices}
-                    sectors={sectors}
-                    onAddTransaction={(id) => {
-                      setAddTransactionPortfolioId(id);
-                    }}
-                    onEditPortfolio={(portfolio) => {
-                      setEditPortfolio(portfolio);
-                      setEditPortfolioName(portfolio.name);
-                      setEditPortfolioError(null);
-                    }}
-                    onDeletePortfolio={(id) => {
-                      setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
-                    }}
-                    onShowLots={(ticker, portfolioId) => {
-                      setLotsContext({ ticker, portfolioId });
-                    }}
-                  />
-                ))
-              : /* Single portfolio — full sidebar layout */
-                activePortfolio && (
-                  <PortfolioSection
-                    portfolio={activePortfolio}
-                    transactions={txByPortfolio.get(activePortfolio.id) ?? []}
-                    prices={prices}
-                    sectors={sectors}
-                    onAddTransaction={(id) => {
-                      setAddTransactionPortfolioId(id);
-                    }}
-                    onEditPortfolio={(portfolio) => {
-                      setEditPortfolio(portfolio);
-                      setEditPortfolioName(portfolio.name);
-                      setEditPortfolioError(null);
-                    }}
-                    onDeletePortfolio={(id) => {
-                      setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
-                    }}
-                    onShowLots={(ticker, portfolioId) => {
-                      setLotsContext({ ticker, portfolioId });
-                    }}
-                  />
-                )}
-          </>
         )}
-      </main>
-
-      {/* Mobile sticky CTA */}
-      {portfolios.length > 0 && (
-        <div className="mobile-cta-bar">
-          <button
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              justifyContent: "center",
-              width: "100%",
-              background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
-              color: "#fff",
-              border: 0,
-              borderRadius: 3,
-              fontFamily: "var(--font-sans)",
-              fontWeight: 600,
-              fontSize: 13,
-              padding: 11,
-              cursor: "pointer",
-              boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
-            }}
-            onClick={() => {
-              setAddTransactionPortfolioId(mobileCtaPortfolioId);
-            }}
-          >
-            <Plus size={16} color="#fff" strokeWidth={2.4} />
-            Add transaction
-          </button>
-        </div>
-      )}
+      </div>
 
       {/* Lots modal */}
       <LotsModal

@@ -122,8 +122,12 @@
 
 /* Ticker tape scroll animation */
 @keyframes ticker-slide {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* Summary strip — 2×2 on mobile, 4-col on md+ */
@@ -140,16 +144,24 @@
   border-right: 1px solid var(--tl-line-soft);
   border-bottom: 1px solid var(--tl-line-soft);
 }
-.summary-cell:nth-child(2n)   { border-right: 0; }
-.summary-cell:nth-child(n+3)  { border-bottom: 0; }
+.summary-cell:nth-child(2n) {
+  border-right: 0;
+}
+.summary-cell:nth-child(n + 3) {
+  border-bottom: 0;
+}
 
 @media (min-width: 768px) {
-  .summary-grid { grid-template-columns: repeat(4, 1fr); }
+  .summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
   .summary-cell {
     border-right: 1px solid var(--tl-line-soft);
     border-bottom: 0;
   }
-  .summary-cell:last-child { border-right: 0; }
+  .summary-cell:last-child {
+    border-right: 0;
+  }
 }
 
 /* Portfolio content: [holdings | 320 px sidebar] on md+, stacked on mobile */
@@ -162,16 +174,24 @@
 @media (min-width: 768px) {
   .portfolio-content {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 256px;
   }
 }
 
 /* Holdings table vs list */
-.holdings-table { display: none; }
-.holdings-list  { display: block; }
+.holdings-table {
+  display: none;
+}
+.holdings-list {
+  display: block;
+}
 @media (min-width: 768px) {
-  .holdings-table { display: table; }
-  .holdings-list  { display: none; }
+  .holdings-table {
+    display: block;
+  }
+  .holdings-list {
+    display: none;
+  }
 }
 
 /* Mobile sticky CTA bar */
@@ -196,7 +216,9 @@
 }
 
 /* Nav tabs scrollbar hiding */
-.pholio-tabs::-webkit-scrollbar { display: none; }
+.pholio-tabs::-webkit-scrollbar {
+  display: none;
+}
 
 @utility bg-cosmic {
   background-color: var(--tl-bg);
