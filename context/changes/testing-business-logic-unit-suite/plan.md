@@ -303,25 +303,25 @@ None — additive only. No production source changes.
 
 #### Automated
 
-- [x] 2.1 `npm test` passes with all portfolio tests green
-- [x] 2.2 `npm run lint` passes on the test file
-- [x] 2.3 Mutation check: `* 100` → `* 10` at `portfolio.ts:124` makes the suite fail (then revert)
+- [x] 2.1 `npm test` passes with all portfolio tests green — 66c66be
+- [x] 2.2 `npm run lint` passes on the test file — 66c66be
+- [x] 2.3 Mutation check: `* 100` → `* 10` at `portfolio.ts:124` makes the suite fail (then revert) — 66c66be
 
 #### Manual
 
-- [x] 2.4 Two expected values re-derived by hand match the test literals
+- [x] 2.4 Two expected values re-derived by hand match the test literals — 66c66be
 
 ### Phase 3: fetchQuote unit tests (Risk #6)
 
 #### Automated
 
-- [ ] 3.1 `npm test` passes with all fetchQuote tests green
-- [ ] 3.2 `npm run lint` passes
-- [ ] 3.3 Mutation check: removing `|| data.c === 0` at `finnhub.ts:53` makes the c===0 test fail (then revert)
+- [x] 3.1 `npm test` passes with all fetchQuote tests green
+- [x] 3.2 `npm run lint` passes
+- [x] 3.3 Mutation check: removing `|| data.c === 0` at `finnhub.ts:53` makes the c===0 test fail (then revert)
 
 #### Manual
 
-- [ ] 3.4 The "missing API key" test asserts `fetch` was never called
+- [x] 3.4 The "missing API key" test asserts `fetch` was never called
 
 ### Phase 4: Cookbook update (test-plan §6.1)
 
