@@ -1,10 +1,10 @@
 ---
 change_id: ui-max-width-and-nav-fixes
 title: Constrain app max-width, fix portfolio table width, and center nav tab labels
-status: impl_reviewed
+status: archived
 created: 2026-06-14
 updated: 2026-06-14
-archived_at: null
+archived_at: 2026-06-14T14:25:38Z
 ---
 
 ## Notes
