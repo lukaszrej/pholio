@@ -460,29 +460,29 @@ it is never imported by a non-test module.
 
 #### Automated
 
-- [x] 1.1 Unit suite unaffected and Docker-free: `npm test`
-- [x] 1.2 Type checking passes: `npm run typecheck`
-- [x] 1.3 Linting passes: `npm run lint`
-- [x] 1.4 Integration smoke passes against local Supabase: `npm run test:integration`
-- [x] 1.5 `npm test` does NOT execute any `*.integration.test.ts` file
+- [x] 1.1 Unit suite unaffected and Docker-free: `npm test` — 597032b
+- [x] 1.2 Type checking passes: `npm run typecheck` — 597032b
+- [x] 1.3 Linting passes: `npm run lint` — 597032b
+- [x] 1.4 Integration smoke passes against local Supabase: `npm run test:integration` — 597032b
+- [x] 1.5 `npm test` does NOT execute any `*.integration.test.ts` file — 597032b
 
 #### Manual
 
-- [x] 1.6 Supabase-down run fails with a clear "start Supabase" message
-- [x] 1.7 Service-role key present only in test config, not imported by any `src/` non-test module
+- [x] 1.6 Supabase-down run fails with a clear "start Supabase" message — 597032b
+- [x] 1.7 Service-role key present only in test config, not imported by any `src/` non-test module — 597032b
 
 ### Phase 2: RLS Data-Scope + IDOR Tests (Risks #2, #4)
 
 #### Automated
 
-- [ ] 2.1 Integration suite passes: `npm run test:integration`
-- [ ] 2.2 Type checking passes: `npm run typecheck`
-- [ ] 2.3 Linting passes: `npm run lint`
+- [x] 2.1 Integration suite passes: `npm run test:integration`
+- [x] 2.2 Type checking passes: `npm run typecheck`
+- [x] 2.3 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.4 Disabling RLS on `transactions` locally makes #2/#4 fail; re-enabled
-- [ ] 2.5 IDOR oracle is the seeded value (verified by reading test source)
+- [x] 2.4 Disabling RLS on `transactions` locally makes #2/#4 fail; re-enabled
+- [x] 2.5 IDOR oracle is the seeded value (verified by reading test source)
 
 ### Phase 3: Unauthenticated API Guard Test (Risk #3)
 

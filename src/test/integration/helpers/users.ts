@@ -40,7 +40,7 @@ export async function buildFixture(): Promise<Fixture> {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  const tag = Date.now();
+  const tag = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   const userAEmail = `integration-user-a-${tag}@test.invalid`;
   const userBEmail = `integration-user-b-${tag}@test.invalid`;
 
