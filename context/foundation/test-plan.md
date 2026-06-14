@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-14 (Phase 1 → change opened)
+> Last updated: 2026-06-14 (Phase 1 complete; Phase 2 → change opened)
 
 ---
 
@@ -72,8 +72,8 @@ orchestrator updates Status as artifacts appear on disk.
 
 | #   | Phase name                     | Goal (one line)                                                                           | Risks covered | Test types                                  | Status        | Change folder                                     |
 | --- | ------------------------------ | ----------------------------------------------------------------------------------------- | ------------- | ------------------------------------------- | ------------- | ------------------------------------------------- |
-| 1   | Business logic unit suite      | Prove ROI aggregation and zero-price guard are correct at the cheapest layer              | #1, #6        | Unit (Vitest)                               | change opened | context/changes/testing-business-logic-unit-suite |
-| 2   | API security integration tests | Prove users can only read and write their own data; unauthenticated requests are rejected | #2, #3, #4    | Integration (real Supabase, two test users) | not started   | —                                                 |
+| 1   | Business logic unit suite      | Prove ROI aggregation and zero-price guard are correct at the cheapest layer              | #1, #6        | Unit (Vitest)                               | complete      | context/changes/testing-business-logic-unit-suite |
+| 2   | API security integration tests | Prove users can only read and write their own data; unauthenticated requests are rejected | #2, #3, #4    | Integration (real Supabase, two test users) | change opened | context/changes/testing-api-security-integration  |
 | 3   | External dependency resilience | Prove Finnhub outage neither crashes the dashboard nor silently misleads the user         | #5            | Integration (mock Finnhub HTTP, real cache) | not started   | —                                                 |
 | 4   | Quality gates wiring           | Wire Vitest into CI so no change reaches production with a failing test                   | all           | CI config (GitHub Actions)                  | not started   | —                                                 |
 
