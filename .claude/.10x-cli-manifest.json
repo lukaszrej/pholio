@@ -2,7 +2,7 @@
   "package": "@przeprogramowani/10x-cli",
   "version": "1.8.0",
   "manifestVersion": 3,
-  "lastApplied": "2026-06-07T20:41:31.077Z",
+  "lastApplied": "2026-06-14T14:29:26.775Z",
   "lessonId": "m3l1",
   "course": "10xdevs3",
   "tool": "claude-code",
@@ -123,7 +123,7 @@
       "10x-plan": {
         "files": ["references/progress-format.md", "SKILL.md"],
         "contentHashes": {
-          "references/progress-format.md": "ef1121e46a0bca60c132fa6ebd9e66ef644553fc8e9c552beeceeff2c9a0befc",
+          "references/progress-format.md": "acd3841cb4b2baa3066f5ec4997d0c21b8791fcd432a66777fd8bcb38119e218",
           "SKILL.md": "8a0fb60803173a825c808cb90b7875a2073f914cb31de2428db7e0483e1fe2f0"
         }
       },
@@ -142,7 +142,7 @@
       "10x-archive": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "33051c309a6cbbf5fc92b0fa2101ce7db931eb6e098561f48ecc6251f4c481a1"
+          "SKILL.md": "993e9ba98fa067238e9b5851db6a094fea85317518f7c35baa0dda20c9aec637"
         }
       },
       "10x-impl-review": {
@@ -573,7 +573,7 @@
       "configs": []
     },
     "m3l1": {
-      "appliedAt": "2026-06-07T20:41:31.076Z",
+      "appliedAt": "2026-06-14T14:29:26.774Z",
       "skills": {
         "10x-init": {
           "files": ["SKILL.md"]
