@@ -327,9 +327,9 @@ None — additive only. No production source changes.
 
 #### Automated
 
-- [x] 4.1 `npm test` passes after smoke-test deletion
-- [x] 4.2 `context/foundation/test-plan.md` §6.1 no longer contains "TBD"
+- [x] 4.1 `npm test` passes after smoke-test deletion — 6aa8b18
+- [x] 4.2 `context/foundation/test-plan.md` §6.1 no longer contains "TBD" — 6aa8b18
 
 #### Manual
 
-- [x] 4.3 A reader can add a new unit test following §6.1 alone
+- [x] 4.3 A reader can add a new unit test following §6.1 alone — 6aa8b18

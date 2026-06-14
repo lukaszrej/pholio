@@ -1,7 +1,7 @@
 ---
 change_id: testing-business-logic-unit-suite
 title: Rollout Phase 1 — business logic unit suite
-status: implementing
+status: implemented
 created: 2026-06-14
 updated: 2026-06-14
 archived_at: null
