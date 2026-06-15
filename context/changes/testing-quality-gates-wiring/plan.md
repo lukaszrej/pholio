@@ -379,25 +379,25 @@ proving the gate behaves correctly:
 
 #### Automated
 
-- [ ] 2.1 `deploy.yml` parses and appears in the Actions tab
-- [ ] 2.2 Green push to `main` → deploy starts only after CI concludes `success`
-- [ ] 2.3 Red push to `main` → deploy job skipped (no `wrangler deploy`)
+- [x] 2.1 `deploy.yml` parses and appears in the Actions tab — 7e6148f
+- [x] 2.2 Green push to `main` → deploy starts only after CI concludes `success` — 7e6148f
+- [x] 2.3 Red push to `main` → deploy job skipped (no `wrangler deploy`) — 7e6148f
 
 #### Manual
 
-- [ ] 2.4 Deploy is triggered by CI `workflow_run`, not by `push`
-- [ ] 2.5 Deployed commit SHA matches CI run `head_sha`
-- [ ] 2.6 Non-`main` branch push does not trigger a deploy
+- [x] 2.4 Deploy is triggered by CI `workflow_run`, not by `push` — 7e6148f
+- [x] 2.5 Deployed commit SHA matches CI run `head_sha` — 7e6148f
+- [x] 2.6 Non-`main` branch push does not trigger a deploy — 7e6148f
 
 ### Phase 3: Close the merge path + sync test-plan docs
 
 #### Automated
 
-- [ ] 3.1 `test-plan.md` §3 Phase 4 reads `complete`; §5 "required after Phase 4" qualifiers removed
-- [ ] 3.2 `change.md` front-matter status updated
+- [x] 3.1 `test-plan.md` §3 Phase 4 reads `complete`; §5 "required after Phase 4" qualifiers removed
+- [x] 3.2 `change.md` front-matter status updated
 
 #### Manual
 
-- [ ] 3.3 Branch protection active — PR with a failing test shows blocked merge button
-- [ ] 3.4 Branch protection requires the `unit` and `integration` checks specifically
-- [ ] 3.5 Test-plan header reflects Phase 4 completion
+- [x] 3.3 Branch protection active — PR with a failing test shows blocked merge button
+- [x] 3.4 Branch protection requires the `unit` and `integration` checks specifically
+- [x] 3.5 Test-plan header reflects Phase 4 completion

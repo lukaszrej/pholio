@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-15 (Phase 3 complete; Phase 4 → not started)
+> Last updated: 2026-06-15 (Phase 4 complete — all gates wired in CI)
 
 ---
 
@@ -70,12 +70,12 @@ Each row is a discrete rollout phase that will open its own change folder
 via `/10x-new`. Status moves left-to-right through the values below; the
 orchestrator updates Status as artifacts appear on disk.
 
-| #   | Phase name                     | Goal (one line)                                                                           | Risks covered | Test types                                  | Status      | Change folder                                          |
-| --- | ------------------------------ | ----------------------------------------------------------------------------------------- | ------------- | ------------------------------------------- | ----------- | ------------------------------------------------------ |
-| 1   | Business logic unit suite      | Prove ROI aggregation and zero-price guard are correct at the cheapest layer              | #1, #6        | Unit (Vitest)                               | complete    | context/changes/testing-business-logic-unit-suite      |
-| 2   | API security integration tests | Prove users can only read and write their own data; unauthenticated requests are rejected | #2, #3, #4    | Integration (real Supabase, two test users) | complete    | context/changes/testing-api-security-integration       |
-| 3   | External dependency resilience | Prove Finnhub outage neither crashes the dashboard nor silently misleads the user         | #5            | Integration (mock Finnhub HTTP, real cache) | complete    | context/changes/testing-external-dependency-resilience |
-| 4   | Quality gates wiring           | Wire Vitest into CI so no change reaches production with a failing test                   | all           | CI config (GitHub Actions)                  | not started | —                                                      |
+| #   | Phase name                     | Goal (one line)                                                                           | Risks covered | Test types                                  | Status   | Change folder                                          |
+| --- | ------------------------------ | ----------------------------------------------------------------------------------------- | ------------- | ------------------------------------------- | -------- | ------------------------------------------------------ |
+| 1   | Business logic unit suite      | Prove ROI aggregation and zero-price guard are correct at the cheapest layer              | #1, #6        | Unit (Vitest)                               | complete | context/changes/testing-business-logic-unit-suite      |
+| 2   | API security integration tests | Prove users can only read and write their own data; unauthenticated requests are rejected | #2, #3, #4    | Integration (real Supabase, two test users) | complete | context/changes/testing-api-security-integration       |
+| 3   | External dependency resilience | Prove Finnhub outage neither crashes the dashboard nor silently misleads the user         | #5            | Integration (mock Finnhub HTTP, real cache) | complete | context/changes/testing-external-dependency-resilience |
+| 4   | Quality gates wiring           | Wire Vitest into CI so no change reaches production with a failing test                   | all           | CI config (GitHub Actions)                  | complete | context/changes/testing-quality-gates-wiring           |
 
 ---
 
@@ -100,13 +100,13 @@ orchestrator updates Status as artifacts appear on disk.
 
 ## 5. Quality Gates
 
-| Gate                  | Where          | Required?                                                                                                              | Catches                                                            |
-| --------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| lint + typecheck      | local + CI     | required (already wired in CI)                                                                                         | syntactic and type drift                                           |
-| unit tests            | local + CI     | required after §3 Phase 1                                                                                              | ROI computation regressions, price-guard regressions               |
-| integration tests     | local + CI     | required after §3 Phase 2                                                                                              | cross-user data access, unauthenticated API access, IDOR on writes |
-| Finnhub fallback test | local + CI     | required after §3 Phase 3 (satisfied locally via `npm run test:integration`; CI enforcement required after §3 Phase 4) | outage regressions in the price-fetch/cache path                   |
-| CI gate enforcement   | GitHub Actions | required after §3 Phase 4                                                                                              | prevents any of the above regressions from merging                 |
+| Gate                  | Where          | Required?                                                                           | Catches                                                            |
+| --------------------- | -------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| lint + typecheck      | local + CI     | required (already wired in CI)                                                      | syntactic and type drift                                           |
+| unit tests            | local + CI     | required (wired in CI)                                                              | ROI computation regressions, price-guard regressions               |
+| integration tests     | local + CI     | required (wired in CI)                                                              | cross-user data access, unauthenticated API access, IDOR on writes |
+| Finnhub fallback test | local + CI     | required (wired in CI)                                                              | outage regressions in the price-fetch/cache path                   |
+| CI gate enforcement   | GitHub Actions | required (active — `unit` + `integration` jobs enforce all suites on every push/PR) | prevents any of the above regressions from merging                 |
 
 ---
 
