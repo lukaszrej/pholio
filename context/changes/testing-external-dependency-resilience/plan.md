@@ -396,27 +396,27 @@ clean their own rows on the global table using unique per-run tickers.
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Build succeeds: `npm run build`
-- [x] 1.4 Existing unit + integration suites still green: `npm test` and `npm run test:integration`
+- [x] 1.1 Type checking passes: `npm run typecheck` — a3bdf5d
+- [x] 1.2 Linting passes: `npm run lint` — a3bdf5d
+- [x] 1.3 Build succeeds: `npm run build` — a3bdf5d
+- [x] 1.4 Existing unit + integration suites still green: `npm test` and `npm run test:integration` — a3bdf5d
 
 #### Manual
 
-- [x] 1.5 Dashboard renders prices identically to before via `npm run dev`
+- [x] 1.5 Dashboard renders prices identically to before via `npm run dev` — a3bdf5d
 
 ### Phase 2: Resilience Test Matrix
 
 #### Automated
 
-- [ ] 2.1 Unit suite passes including the new timeout case: `npm test`
-- [ ] 2.2 Integration suite passes (local Supabase running): `npm run test:integration`
-- [ ] 2.3 Linting passes: `npm run lint`
-- [ ] 2.4 Type checking passes: `npm run typecheck`
+- [x] 2.1 Unit suite passes including the new timeout case: `npm test`
+- [x] 2.2 Integration suite passes (local Supabase running): `npm run test:integration`
+- [x] 2.3 Linting passes: `npm run lint`
+- [x] 2.4 Type checking passes: `npm run typecheck`
 
 #### Manual
 
-- [ ] 2.5 Forced Finnhub failure shows stale/no-price signal without a crash on the live dashboard
+- [x] 2.5 Forced Finnhub failure shows stale/no-price signal without a crash on the live dashboard
 
 ### Phase 3: Cookbook + Close-out
 

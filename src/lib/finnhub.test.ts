@@ -22,6 +22,7 @@ describe("fetchQuote", () => {
   afterEach(() => {
     mockFetch.mockReset();
     mockApiKey = "test-key";
+    vi.useRealTimers();
   });
 
   it("valid quote — returns the price", async () => {
@@ -78,6 +79,23 @@ describe("fetchQuote", () => {
     mockFetch.mockRejectedValueOnce(new Error("Network error"));
 
     const result = await fetchQuote("AAPL");
+
+    expect(result).toBeNull();
+  });
+
+  it("AbortController fires at 2500ms — returns null", async () => {
+    vi.useFakeTimers();
+    mockFetch.mockImplementationOnce((_input: RequestInfo | URL, init?: RequestInit) => {
+      return new Promise<Response>((_, reject) => {
+        init?.signal?.addEventListener("abort", () => {
+          reject(new DOMException("signal is aborted without reason", "AbortError"));
+        });
+      });
+    });
+
+    const promise = fetchQuote("AAPL");
+    await vi.advanceTimersByTimeAsync(2500);
+    const result = await promise;
 
     expect(result).toBeNull();
   });
