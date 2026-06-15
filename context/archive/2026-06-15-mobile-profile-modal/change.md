@@ -1,9 +1,10 @@
 ---
 id: mobile-profile-modal
 title: Mobile Profile Modal
-status: impl_reviewed
+status: archived
 created: 2026-06-15
 updated: 2026-06-15
+archived_at: 2026-06-15T20:14:37Z
 ---
 
 # Mobile Profile Modal
