@@ -40,7 +40,7 @@ const position = (overrides: Partial<PortfolioPosition>): PortfolioPosition => (
   costBasis: 1000,
   positionValue: 1500,
   weightPct: 100,
-  roiPct: 999, // deliberately broken — CI gate test
+  roiPct: 50,
   roiAbs: 500,
   ...overrides,
 });
@@ -65,7 +65,7 @@ describe("computePositions", () => {
     expect(p.totalShares).toBe(10);
     expect(p.positionValue).toBe(1500);
     expect(p.roiAbs).toBe(500);
-    expect(p.roiPct).toBe(50);
+    expect(p.roiPct).toBe(999); // deliberately broken — CI gate test
   });
 
   it("multi-purchase weighted average (even split)", () => {
