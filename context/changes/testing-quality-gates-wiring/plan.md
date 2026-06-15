@@ -364,16 +364,16 @@ proving the gate behaves correctly:
 
 #### Automated
 
-- [x] 1.1 CI workflow YAML valid — run is created without "invalid workflow file"
-- [x] 1.2 `unit` job runs `npm test` and passes on a green commit
-- [x] 1.3 `integration` job reaches and passes `npm run test:integration` (Supabase health check OK)
-- [x] 1.4 A broken unit assertion fails the `unit` job and the overall CI workflow
+- [x] 1.1 CI workflow YAML valid — run is created without "invalid workflow file" — e452ae9
+- [x] 1.2 `unit` job runs `npm test` and passes on a green commit — e452ae9
+- [x] 1.3 `integration` job reaches and passes `npm run test:integration` (Supabase health check OK) — e452ae9
+- [x] 1.4 A broken unit assertion fails the `unit` job and the overall CI workflow — e452ae9
 
 #### Manual
 
-- [x] 1.5 Integration logs show `supabase start` + migrations applied
-- [x] 1.6 `.env.test` populated with the three expected vars
-- [x] 1.7 Total CI wall-clock acceptable (unit fast; integration ~2–4 min)
+- [x] 1.5 Integration logs show `supabase start` + migrations applied — e452ae9
+- [x] 1.6 `.env.test` populated with the three expected vars — e452ae9
+- [x] 1.7 Total CI wall-clock acceptable (unit fast; integration ~2–4 min) — e452ae9
 
 ### Phase 2: Gate production deploy on green CI
 
