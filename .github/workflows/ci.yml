@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  ci:
+  unit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,3 +22,30 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      - run: npm test
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase start
+      - name: Write .env.test from Supabase status
+        run: |
+          SB_ENV=$(supabase status -o env)
+          SUPABASE_URL_VAL=$(echo "$SB_ENV" | grep '^API_URL=' | cut -d= -f2-)
+          SUPABASE_KEY_VAL=$(echo "$SB_ENV" | grep '^ANON_KEY=' | cut -d= -f2-)
+          SERVICE_ROLE_VAL=$(echo "$SB_ENV" | grep '^SERVICE_ROLE_KEY=' | cut -d= -f2-)
+          {
+            echo "SUPABASE_URL=${SUPABASE_URL_VAL}"
+            echo "SUPABASE_KEY=${SUPABASE_KEY_VAL}"
+            echo "SUPABASE_SERVICE_ROLE_KEY=${SERVICE_ROLE_VAL}"
+          } > .env.test
+      - run: npm run test:integration
