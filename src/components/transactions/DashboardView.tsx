@@ -249,6 +249,9 @@ export default function DashboardView({
   const [isDeletePortfolioLoading, setIsDeletePortfolioLoading] = useState(false);
   const [deletePortfolioError, setDeletePortfolioError] = useState<string | null>(null);
 
+  // Mobile profile modal
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
   const allPositions = useMemo(() => computePositions(transactions, prices), [transactions, prices]);
   const combinedSummary = useMemo(() => computePortfolioSummary(allPositions), [allPositions]);
 
@@ -501,9 +504,12 @@ export default function DashboardView({
             {/* Mobile: avatar icon */}
             <button
               className="flex sm:hidden"
+              onClick={() => {
+                setIsProfileModalOpen(true);
+              }}
               style={{
-                width: 34,
-                height: 34,
+                width: 44,
+                height: 44,
                 border: "1px solid #dde4ee",
                 borderRadius: 6,
                 background: "#fff",
@@ -886,6 +892,74 @@ export default function DashboardView({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Mobile: profile modal */}
+      <Dialog
+        open={isProfileModalOpen}
+        onOpenChange={(open) => {
+          setIsProfileModalOpen(open);
+        }}
+      >
+        <DialogContent className="sm:max-w-xs">
+          <DialogHeader>
+            <DialogTitle>Account</DialogTitle>
+          </DialogHeader>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {userEmail && (
+              <span style={{ fontSize: 13, color: "#5e6e85", fontFamily: "var(--font-numeric)" }}>{userEmail}</span>
+            )}
+            <button
+              onClick={() => {
+                openAddPortfolio();
+                setIsProfileModalOpen(false);
+              }}
+              style={{
+                width: "100%",
+                border: "1px solid #dde4ee",
+                padding: "6px 12px",
+                borderRadius: 3,
+                color: "#0f1825",
+                background: "#fff",
+                fontFamily: "var(--font-numeric)",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                fontSize: 12,
+                transition: "border-color .2s, color .2s, box-shadow .2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "#0a86d8";
+                e.currentTarget.style.color = "#0a86d8";
+                e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(10,134,216,.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "#dde4ee";
+                e.currentTarget.style.color = "#0f1825";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              + Add portfolio
+            </button>
+            <form method="POST" action="/api/auth/signout">
+              <button
+                type="submit"
+                style={{
+                  width: "100%",
+                  border: "1px solid #dc2626",
+                  padding: "6px 12px",
+                  borderRadius: 3,
+                  color: "#fff",
+                  background: "#dc2626",
+                  fontFamily: "var(--font-sans)",
+                  cursor: "pointer",
+                  fontSize: 12,
+                }}
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
