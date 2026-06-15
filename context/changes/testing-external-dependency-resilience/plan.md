@@ -422,10 +422,10 @@ clean their own rows on the global table using unique per-run tickers.
 
 #### Automated
 
-- [x] 3.1 §6.3 no longer contains "TBD" (grep check)
-- [x] 3.2 Full suite still green: `npm test` and `npm run test:integration`
+- [x] 3.1 §6.3 no longer contains "TBD" (grep check) — ba0e41b
+- [x] 3.2 Full suite still green: `npm test` and `npm run test:integration` — ba0e41b
 
 #### Manual
 
-- [ ] 3.3 §6.3 reads as a usable recipe for the next external-HTTP test author
-- [ ] 3.4 §4 / Risk #5 wording no longer contradicts the implemented harness
+- [x] 3.3 §6.3 reads as a usable recipe for the next external-HTTP test author
+- [x] 3.4 §4 / Risk #5 wording no longer contradicts the implemented harness
