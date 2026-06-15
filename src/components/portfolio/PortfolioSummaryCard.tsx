@@ -1,5 +1,5 @@
 import type { PortfolioSummary } from "@/lib/portfolio";
-import { formatSigned } from "@/lib/format";
+import { formatSigned, formatNum } from "@/lib/format";
 
 interface Props {
   summary: PortfolioSummary;
@@ -33,7 +33,7 @@ export default function PortfolioSummaryCard({ summary }: Props) {
           className="font-numeric"
           style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: "#0f1825" }}
         >
-          {totalInvested.toFixed(2)}
+          {formatNum(totalInvested)}
           {cur && <small style={{ fontSize: 12, color: "#5e6e85", fontWeight: 400, marginLeft: 6 }}>{cur}</small>}
         </div>
       </div>
@@ -54,7 +54,7 @@ export default function PortfolioSummaryCard({ summary }: Props) {
           className="font-numeric"
           style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: "#0f1825" }}
         >
-          {currentValue !== null ? currentValue.toFixed(2) : "—"}
+          {currentValue !== null ? formatNum(currentValue) : "—"}
           {cur && currentValue !== null && (
             <small style={{ fontSize: 12, color: "#5e6e85", fontWeight: 400, marginLeft: 6 }}>{cur}</small>
           )}

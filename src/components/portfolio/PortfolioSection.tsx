@@ -13,7 +13,7 @@ import {
 import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
 import SectorAllocationChart from "@/components/portfolio/SectorAllocationChart";
 import { Button } from "@/components/ui/button";
-import { formatShares, formatSigned, pnlClass } from "@/lib/format";
+import { formatShares, formatSigned, formatNum, pnlClass } from "@/lib/format";
 
 type SortKey =
   | "totalShares"
@@ -117,7 +117,7 @@ function sortIcon(key: Exclude<SortKey, "weightPct">, sortKey: SortKey, sortDir:
 
 function formatCurrentPrice(pos: PortfolioPosition): string {
   if (pos.currentPrice === null) return "—";
-  return pos.currentPrice.toFixed(2);
+  return formatNum(pos.currentPrice);
 }
 
 interface Props {
@@ -389,7 +389,7 @@ export default function PortfolioSection({
                         {formatShares(pos.totalShares)}
                       </td>
                       <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
-                        {pos.avgCost.toFixed(2)}
+                        {formatNum(pos.avgCost)}
                       </td>
                       <td
                         className="font-numeric"
@@ -403,22 +403,22 @@ export default function PortfolioSection({
                         {formatCurrentPrice(pos)}
                       </td>
                       <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
-                        {pos.costBasis.toFixed(2)}
-                      </td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
-                        {pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}
+                        {formatNum(pos.costBasis)}
                       </td>
                       <td
-                        className={`font-numeric ${pnlClass(pos.roiAbs)}`}
-                        style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}
+                        className="font-numeric"
+                        style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5, fontWeight: 700 }}
                       >
+                        {pos.positionValue !== null ? formatNum(pos.positionValue) : "—"}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
                         {pos.roiAbs !== null ? formatSigned(pos.roiAbs) : "—"}
                       </td>
                       <td
                         className={`font-numeric ${pnlClass(pos.roiPct)}`}
                         style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}
                       >
-                        {formatSigned(pos.roiPct)}
+                        {formatSigned(pos.roiPct, 2, false)}
                         {pos.roiPct !== null && "%"}
                       </td>
                     </tr>
@@ -571,7 +571,7 @@ export default function PortfolioSection({
                         {formatShares(pos.totalShares)}
                       </td>
                       <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
-                        {pos.avgCost.toFixed(2)}
+                        {formatNum(pos.avgCost)}
                       </td>
                       <td
                         className="font-numeric"
@@ -585,22 +585,22 @@ export default function PortfolioSection({
                         {formatCurrentPrice(pos)}
                       </td>
                       <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
-                        {pos.costBasis.toFixed(2)}
-                      </td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
-                        {pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}
+                        {formatNum(pos.costBasis)}
                       </td>
                       <td
-                        className={`font-numeric ${pnlClass(pos.roiAbs)}`}
-                        style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}
+                        className="font-numeric"
+                        style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5, fontWeight: 700 }}
                       >
+                        {pos.positionValue !== null ? formatNum(pos.positionValue) : "—"}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
                         {pos.roiAbs !== null ? `${formatSigned(pos.roiAbs)} ${pos.currency}` : "—"}
                       </td>
                       <td
                         className={`font-numeric ${pnlClass(pos.roiPct)}`}
                         style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}
                       >
-                        {formatSigned(pos.roiPct)}
+                        {formatSigned(pos.roiPct, 2, false)}
                         {pos.roiPct !== null && "%"}
                       </td>
                       <td style={{ padding: "10px 8px", color: "#93a1b5" }}>
@@ -662,13 +662,13 @@ export default function PortfolioSection({
                         {pos.ticker}
                       </div>
                       <div className="font-numeric" style={{ fontSize: 11, color: "#5e6e85", marginTop: 2 }}>
-                        {formatShares(pos.totalShares)} sh · avg {pos.avgCost.toFixed(2)}
+                        {formatShares(pos.totalShares)} sh · avg {formatNum(pos.avgCost)}
                       </div>
                     </div>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3 }}>
                     <div className="font-numeric" style={{ fontSize: 13.5, fontWeight: 600, color: "#0f1825" }}>
-                      {pos.positionValue !== null ? pos.positionValue.toFixed(2) : "—"}
+                      {pos.positionValue !== null ? formatNum(pos.positionValue) : "—"}
                     </div>
                     {pos.roiPct !== null && (
                       <span
@@ -682,7 +682,7 @@ export default function PortfolioSection({
                           color: pos.roiPct >= 0 ? "#0a9d6e" : "#e23950",
                         }}
                       >
-                        {formatSigned(pos.roiPct)}%
+                        {formatSigned(pos.roiPct, 2, false)}%
                       </span>
                     )}
                   </div>

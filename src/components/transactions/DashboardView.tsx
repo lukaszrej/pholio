@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useLayoutEffect, useEffect, useCallback } from "react";
+import { formatNum } from "@/lib/format";
 import type { Transaction } from "@/types/transaction";
 import type { Portfolio } from "@/types/portfolio";
 import { computePositions, computePortfolioSummary, type PriceData, type PortfolioPosition } from "@/lib/portfolio";
@@ -60,9 +61,9 @@ function TickerTape({ positions }: { positions: PortfolioPosition[] }) {
             style={{ fontSize: 12, color: "#5e6e85", display: "inline-flex", gap: 8, alignItems: "center" }}
           >
             <b style={{ color: "#0f1825", fontWeight: 600 }}>{p.ticker}</b>
-            {p.currentPrice.toFixed(2)}
+            {formatNum(p.currentPrice)}
             <span style={{ color: p.roiPct >= 0 ? "#0a9d6e" : "#e23950" }}>
-              {p.roiPct >= 0 ? "▲" : "▼"} {Math.abs(p.roiPct).toFixed(2)}%
+              {p.roiPct >= 0 ? "▲" : "▼"} {formatNum(Math.abs(p.roiPct))}%
             </span>
           </span>
         ))}
