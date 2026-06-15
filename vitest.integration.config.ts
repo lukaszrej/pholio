@@ -19,6 +19,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve("./src"),
       "astro:env/server": path.resolve("./src/test/stubs/astro-env-server.ts"),
+      "astro:middleware": path.resolve("./src/test/stubs/astro-middleware.ts"),
     },
   },
 });

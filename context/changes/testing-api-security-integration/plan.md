@@ -475,35 +475,35 @@ it is never imported by a non-test module.
 
 #### Automated
 
-- [x] 2.1 Integration suite passes: `npm run test:integration`
-- [x] 2.2 Type checking passes: `npm run typecheck`
-- [x] 2.3 Linting passes: `npm run lint`
+- [x] 2.1 Integration suite passes: `npm run test:integration` — b0550a4
+- [x] 2.2 Type checking passes: `npm run typecheck` — b0550a4
+- [x] 2.3 Linting passes: `npm run lint` — b0550a4
 
 #### Manual
 
-- [x] 2.4 Disabling RLS on `transactions` locally makes #2/#4 fail; re-enabled
-- [x] 2.5 IDOR oracle is the seeded value (verified by reading test source)
+- [x] 2.4 Disabling RLS on `transactions` locally makes #2/#4 fail; re-enabled — b0550a4
+- [x] 2.5 IDOR oracle is the seeded value (verified by reading test source) — b0550a4
 
 ### Phase 3: Unauthenticated API Guard Test (Risk #3)
 
 #### Automated
 
-- [ ] 3.1 Integration suite passes: `npm run test:integration`
-- [ ] 3.2 Type checking passes: `npm run typecheck`
-- [ ] 3.3 Linting passes: `npm run lint`
+- [x] 3.1 Integration suite passes: `npm run test:integration`
+- [x] 3.2 Type checking passes: `npm run typecheck`
+- [x] 3.3 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.4 Making `/api/` public breaks cases (a)/(b); reverted
+- [x] 3.4 Making `/api/` public breaks cases (a)/(b); reverted
 
 ### Phase 4: Cookbook + Run-Command Docs
 
 #### Automated
 
-- [ ] 4.1 Markdown lint/format passes if configured: `npm run lint`
-- [ ] 4.2 §6.2 and §6.4 no longer contain "TBD"
+- [x] 4.1 Markdown lint/format passes if configured: `npm run lint`
+- [x] 4.2 §6.2 and §6.4 no longer contain "TBD"
 
 #### Manual
 
-- [ ] 4.3 §6.2/§6.4 are followable by an unfamiliar reader
-- [ ] 4.4 §3 Phase 2 status reads `complete`
+- [x] 4.3 §6.2/§6.4 are followable by an unfamiliar reader
+- [x] 4.4 §3 Phase 2 status reads `complete`
