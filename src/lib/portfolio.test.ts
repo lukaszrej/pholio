@@ -61,7 +61,7 @@ describe("computePositions", () => {
 
     const [p] = computePositions(txns, prices);
 
-    expect(p.avgCost).toBe(100);
+    expect(p.avgCost).toBe(999); // TEMP: branch-protection gate verify — will be force-closed
     expect(p.totalShares).toBe(10);
     expect(p.positionValue).toBe(1500);
     expect(p.roiAbs).toBe(500);
