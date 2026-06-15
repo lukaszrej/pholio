@@ -52,7 +52,7 @@ function TickerTape({ positions }: { positions: PortfolioPosition[] }) {
         boxShadow: "0 1px 0 rgba(15,24,37,.03)",
       }}
     >
-      <div style={{ display: "flex", gap: 34, animation: "ticker-slide 24s linear infinite" }}>
+      <div style={{ display: "flex", gap: 34, animation: "ticker-slide 80s linear infinite" }}>
         {doubled.map((p, i) => (
           <span
             key={i}
@@ -156,7 +156,7 @@ function NavTabs({ portfolios, activeTab, positionCounts, onTabChange }: NavTabs
           handleClick("all", e.currentTarget);
         }}
       >
-        All Portfolios
+        Dashboard
       </button>
 
       {portfolios.map((p) => {
@@ -415,7 +415,7 @@ export default function DashboardView({
       {/* Constrained content — 16px side padding keeps everything visually the same width */}
       <div style={{ maxWidth: 1152, margin: "0 auto", padding: "0 16px" }}>
         {/* White app bar: header + nav share one white background */}
-        <div style={{ background: "#fff" }}>
+        <div style={{ background: "#fff", paddingInline: 18 }}>
           {/* Header */}
           <header
             style={{

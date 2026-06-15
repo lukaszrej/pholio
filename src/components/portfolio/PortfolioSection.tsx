@@ -174,8 +174,8 @@ export default function PortfolioSection({
   );
 
   const sectionHeader = (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, paddingTop: compact ? 20 : 0 }}>
-      <h2 style={{ fontSize: compact ? 16 : 18, fontWeight: 600, color: "#0f1825", margin: 0 }}>{portfolio.name}</h2>
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, paddingTop: 16 }}>
+      <h2 style={{ fontSize: 18, fontWeight: 600, color: "#0f1825", margin: 0 }}>{portfolio.name}</h2>
       <button
         type="button"
         style={{
