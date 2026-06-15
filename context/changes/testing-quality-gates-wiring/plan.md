@@ -393,11 +393,11 @@ proving the gate behaves correctly:
 
 #### Automated
 
-- [x] 3.1 `test-plan.md` §3 Phase 4 reads `complete`; §5 "required after Phase 4" qualifiers removed
-- [x] 3.2 `change.md` front-matter status updated
+- [x] 3.1 `test-plan.md` §3 Phase 4 reads `complete`; §5 "required after Phase 4" qualifiers removed — 67d3abc
+- [x] 3.2 `change.md` front-matter status updated — 67d3abc
 
 #### Manual
 
-- [x] 3.3 Branch protection active — PR with a failing test shows blocked merge button
-- [x] 3.4 Branch protection requires the `unit` and `integration` checks specifically
-- [x] 3.5 Test-plan header reflects Phase 4 completion
+- [x] 3.3 Branch protection active — PR with a failing test shows blocked merge button — 67d3abc
+- [x] 3.4 Branch protection requires the `unit` and `integration` checks specifically — 67d3abc
+- [x] 3.5 Test-plan header reflects Phase 4 completion — 67d3abc
