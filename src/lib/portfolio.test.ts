@@ -40,7 +40,7 @@ const position = (overrides: Partial<PortfolioPosition>): PortfolioPosition => (
   costBasis: 1000,
   positionValue: 1500,
   weightPct: 100,
-  roiPct: 50,
+  roiPct: 999, // deliberately broken — CI gate test
   roiAbs: 500,
   ...overrides,
 });
