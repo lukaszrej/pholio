@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-14 (Phase 1 complete; Phase 2 → change opened)
+> Last updated: 2026-06-15 (Phase 3 complete; Phase 4 → not started)
 
 ---
 
@@ -70,24 +70,24 @@ Each row is a discrete rollout phase that will open its own change folder
 via `/10x-new`. Status moves left-to-right through the values below; the
 orchestrator updates Status as artifacts appear on disk.
 
-| #   | Phase name                     | Goal (one line)                                                                           | Risks covered | Test types                                  | Status        | Change folder                                     |
-| --- | ------------------------------ | ----------------------------------------------------------------------------------------- | ------------- | ------------------------------------------- | ------------- | ------------------------------------------------- |
-| 1   | Business logic unit suite      | Prove ROI aggregation and zero-price guard are correct at the cheapest layer              | #1, #6        | Unit (Vitest)                               | complete      | context/changes/testing-business-logic-unit-suite |
-| 2   | API security integration tests | Prove users can only read and write their own data; unauthenticated requests are rejected | #2, #3, #4    | Integration (real Supabase, two test users) | change opened | context/changes/testing-api-security-integration  |
-| 3   | External dependency resilience | Prove Finnhub outage neither crashes the dashboard nor silently misleads the user         | #5            | Integration (mock Finnhub HTTP, real cache) | not started   | —                                                 |
-| 4   | Quality gates wiring           | Wire Vitest into CI so no change reaches production with a failing test                   | all           | CI config (GitHub Actions)                  | not started   | —                                                 |
+| #   | Phase name                     | Goal (one line)                                                                           | Risks covered | Test types                                  | Status      | Change folder                                          |
+| --- | ------------------------------ | ----------------------------------------------------------------------------------------- | ------------- | ------------------------------------------- | ----------- | ------------------------------------------------------ |
+| 1   | Business logic unit suite      | Prove ROI aggregation and zero-price guard are correct at the cheapest layer              | #1, #6        | Unit (Vitest)                               | complete    | context/changes/testing-business-logic-unit-suite      |
+| 2   | API security integration tests | Prove users can only read and write their own data; unauthenticated requests are rejected | #2, #3, #4    | Integration (real Supabase, two test users) | complete    | context/changes/testing-api-security-integration       |
+| 3   | External dependency resilience | Prove Finnhub outage neither crashes the dashboard nor silently misleads the user         | #5            | Integration (mock Finnhub HTTP, real cache) | complete    | context/changes/testing-external-dependency-resilience |
+| 4   | Quality gates wiring           | Wire Vitest into CI so no change reaches production with a failing test                   | all           | CI config (GitHub Actions)                  | not started | —                                                      |
 
 ---
 
 ## 4. Stack
 
-| Layer             | Tool                                             | Notes                                                                                                                                        |
-| ----------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Unit              | Vitest ≥ 4.1                                     | Pure-function tests (e.g. position aggregation, price guard); no Workers runtime needed                                                      |
-| Integration       | Vitest ≥ 4.1 + `@cloudflare/vitest-pool-workers` | Runs tests inside the Workers runtime via Miniflare; reads bindings from `wrangler.jsonc` via `cloudflareTest({ wrangler: { configPath } })` |
-| HTTP mocking      | `undici` MockAgent                               | Available inside the Workers runtime via `nodejs_compat`; intercepts outbound Finnhub calls                                                  |
-| Supabase test env | Local `supabase start` or separate test project  | Required for Phase 2 (two-user RLS scenarios); research must confirm preferred setup                                                         |
-| e2e               | none yet — not in scope for this rollout         | Add if a future risk requires full browser context                                                                                           |
+| Layer             | Tool                                     | Notes                                                                                                                                                                                                                      |
+| ----------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit              | Vitest ≥ 4.1                             | Pure-function tests (e.g. position aggregation, price guard); no Workers runtime needed                                                                                                                                    |
+| Integration       | Vitest ≥ 4.1 (plain Node env)            | Runs in Node via `vitest.integration.config.ts`; `.env.test` loaded via `loadEnv`; `@`/`astro:env/server`/`astro:middleware` aliases wired. `@cloudflare/vitest-pool-workers` was aspirational; Phase 2/3 uses plain Node. |
+| HTTP mocking      | `vi.spyOn(global, "fetch")`              | Intercepts outbound Finnhub calls at the `global.fetch` boundary inside `fetchQuote`. `undici` MockAgent is not used — it requires the Workers runtime. Restore the spy in `afterEach` (see §6.3).                         |
+| Supabase test env | Local `supabase start`                   | Required for Phase 2 (two-user RLS) and Phase 3 (single-row cache fallback). Use service-role client to seed/clean test rows.                                                                                              |
+| e2e               | none yet — not in scope for this rollout | Add if a future risk requires full browser context                                                                                                                                                                         |
 
 **Stack grounding tools (current session):**
 
@@ -100,13 +100,13 @@ orchestrator updates Status as artifacts appear on disk.
 
 ## 5. Quality Gates
 
-| Gate                  | Where          | Required?                      | Catches                                                            |
-| --------------------- | -------------- | ------------------------------ | ------------------------------------------------------------------ |
-| lint + typecheck      | local + CI     | required (already wired in CI) | syntactic and type drift                                           |
-| unit tests            | local + CI     | required after §3 Phase 1      | ROI computation regressions, price-guard regressions               |
-| integration tests     | local + CI     | required after §3 Phase 2      | cross-user data access, unauthenticated API access, IDOR on writes |
-| Finnhub fallback test | local + CI     | required after §3 Phase 3      | outage regressions in the price-fetch/cache path                   |
-| CI gate enforcement   | GitHub Actions | required after §3 Phase 4      | prevents any of the above regressions from merging                 |
+| Gate                  | Where          | Required?                                                                                                              | Catches                                                            |
+| --------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| lint + typecheck      | local + CI     | required (already wired in CI)                                                                                         | syntactic and type drift                                           |
+| unit tests            | local + CI     | required after §3 Phase 1                                                                                              | ROI computation regressions, price-guard regressions               |
+| integration tests     | local + CI     | required after §3 Phase 2                                                                                              | cross-user data access, unauthenticated API access, IDOR on writes |
+| Finnhub fallback test | local + CI     | required after §3 Phase 3 (satisfied locally via `npm run test:integration`; CI enforcement required after §3 Phase 4) | outage regressions in the price-fetch/cache path                   |
+| CI gate enforcement   | GitHub Actions | required after §3 Phase 4                                                                                              | prevents any of the above regressions from merging                 |
 
 ---
 
@@ -142,21 +142,168 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.2 Adding an integration test (API route or security scenario)
 
-TBD — see §3 Phase 2. Will cover: Supabase test-user setup, how to
-authenticate in tests, the two-user fixture pattern for IDOR scenarios,
-and the run command.
+**Established by:** §3 Phase 2 (testing-api-security-integration)
+
+**Prerequisite:** Local Supabase must be running (`supabase start`). The
+integration suite will fast-fail with a clear message if it is not.
+
+**File location:** `src/test/integration/*.integration.test.ts`. The
+`integration` Vitest project picks up any file matching this glob; the `unit`
+project excludes them. Never place integration files next to source modules.
+
+**Naming convention:** `<scenario>.integration.test.ts` — e.g.
+`rls-cross-user.integration.test.ts`, `idor-write.integration.test.ts`,
+`unauthenticated-api.integration.test.ts`.
+
+**Run command:** `npm run test:integration`
+
+**Two-user fixture:** For any security or IDOR scenario import the fixture
+helper from `src/test/integration/helpers/users.ts`. Call it in `beforeAll`
+with the service-role client (from `process.env.SUPABASE_SERVICE_ROLE_KEY`,
+available via `.env.test`). The helper creates and confirms two test users,
+seeds one portfolio + one transaction each, returns an **anon-key** client
+authenticated with each user's JWT, the seeded row ids, and a `teardown()`
+function. Call `teardown()` in `afterAll`. The service-role key is used only
+inside the fixture helper — every assertion must use the anon+JWT client, or
+RLS is bypassed and the test proves nothing.
+
+**Negative-assertion rule:** "User A sees their own rows" is never the
+load-bearing check. The required assertion is "User A sees **zero** of User
+B's rows." A direct `.eq("id", <User B's id>)` lookup under User A's client
+must return an empty result set, not an error.
+
+**IDOR oracle rule:** After User A's update/delete attempt, re-fetch User B's
+row with **User B's client** and compare field-for-field against the
+hand-known seeded value. Do not infer success from the write response alone.
+
+**404 not 403:** RLS makes a foreign row invisible (returns 0 rows), which
+maps to PGRST116 → HTTP 404 at the REST layer. Assertions should check for
+zero affected rows at the DB layer, not a 403 status.
+
+**Reference tests:**
+
+- Cross-user read (Risk #2): `src/test/integration/rls-cross-user.integration.test.ts`
+- IDOR write (Risk #4): `src/test/integration/idor-write.integration.test.ts`
 
 ### 6.3 Adding a test for an external-HTTP dependency (Finnhub pattern)
 
-TBD — see §3 Phase 3. Will cover: how to intercept outbound HTTP via
-undici MockAgent inside the Workers runtime, the fallback-path test pattern,
-and the cache-preservation assertion pattern.
+**Established by:** §3 Phase 3 (testing-external-dependency-resilience)
+
+**Fallback signal:** The only machine-readable indicator of a Finnhub failure is
+`is_fresh: false` on a returned price row, or the ticker being **absent** from
+the result dict (no cached row). The ⚠ and "brak danych" wording in Risk #5 is
+satisfied by the existing gray-text (`#93a1b5`) stale indicator and em-dash
+no-price marker in the UI, backed by this data-layer signal. No explicit ⚠ icon
+or literal string "brak danych" was added to the codebase.
+
+#### Rule: split AbortController proof from integration fallback tests
+
+- **Timeout / AbortController proof** → **unit test** (`src/lib/finnhub.test.ts`).
+  Use `vi.useFakeTimers()` + a never-resolving `global.fetch` mock + `vi.advanceTimersByTimeAsync(2500)`.
+  Do NOT mix fake timers with real Supabase I/O — fake `setTimeout` breaks
+  Supabase's own retry logic.
+- **Cache-fallback scenarios** → **integration test** (`src/test/integration/prices.integration.test.ts`).
+  Mock `global.fetch` to return `{ ok: false }` (5xx) or `Promise.reject(...)` immediately —
+  no timers needed; the failure is instant.
+
+#### File locations
+
+| Test type                    | File                                                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Timeout proof (unit)         | `src/lib/finnhub.test.ts` — see `"AbortController fires at 2500ms"` case                                |
+| Cache fallback (integration) | `src/test/integration/prices.integration.test.ts` — see `describe("Risk #5 — Finnhub outage fallback")` |
+
+#### HTTP mock pattern (`vi.spyOn(global, "fetch")`)
+
+`fetchQuote` calls `global.fetch` directly. Intercept it with `vi.spyOn`:
+
+```typescript
+const realFetch = global.fetch.bind(global);
+let fetchSpy: MockInstance | undefined;
+
+fetchSpy = vi.spyOn(global, "fetch").mockImplementation((url, opts) => {
+  if (toUrlString(url).includes("finnhub.io")) {
+    return Promise.resolve({ ok: false, status: 503 } as unknown as Response);
+  }
+  return realFetch(url, opts); // let Supabase calls through
+});
+
+// Restore in afterEach — a leaked spy poisons Supabase's own fetch calls
+afterEach(() => {
+  fetchSpy?.mockRestore();
+  fetchSpy = undefined;
+});
+```
+
+Do **not** use `undici` MockAgent — it requires the Workers runtime, which the
+integration harness does not use (plain Node env, see §4).
+
+#### Seeding the global `prices` table
+
+The `prices` table has no `user_id` — one row per ticker. Use the service-role
+admin client (same shape as `src/test/integration/helpers/users.ts:buildAdminClient`)
+to seed and clean rows. Use a unique per-run ticker (e.g. `` `TST${Date.now()}` ``)
+to avoid collisions across parallel runs.
+
+```typescript
+const admin = createClient(url, serviceRoleKey, {
+  auth: { autoRefreshToken: false, persistSession: false },
+});
+
+// seed a stale row (fetched_at in the past so freshness short-circuit does not fire)
+await admin.from("prices").insert({ ticker, price: 42.5, fetched_at: "2020-01-01T00:00:00.000Z" });
+
+// clean up in afterEach and afterAll
+await admin.from("prices").delete().eq("ticker", ticker);
+```
+
+#### Load-bearing assertions
+
+Feed `refreshPricesForTickers` results through `computePositions` to assert the
+full data-layer signal, not just the raw price dict:
+
+- **Stale-cache fallback**: `result[ticker].is_fresh === false` + `result[ticker].price === seededPrice` + Supabase row unchanged (re-SELECT and compare). Then `computePositions(…).isFresh === false`, `currentPrice === seededPrice`.
+- **No-cache fallback**: `result[ticker] === undefined` + no row written (re-SELECT returns null). Then `computePositions(…).currentPrice === null`, `isFresh === false`.
+
+#### Run command
+
+```
+npm run test:integration
+```
+
+Local Supabase must be running (`supabase start`). The suite fast-fails with a
+clear message if it is not.
 
 ### 6.4 Adding a test for a new API endpoint
 
-TBD — see §3 Phase 2. Will cover: the preferred test type (integration
-over unit for API routes), the auth-header pattern, and the ownership-check
-assertion pattern.
+**Established by:** §3 Phase 2 (testing-api-security-integration)
+
+**Preferred test type:** Integration, not unit. API routes combine middleware,
+Supabase RLS, and business logic. Unit tests that mock the DB bypass the very
+layer where most API security failures occur.
+
+**Auth guard pattern:** Prove the route rejects unauthenticated callers by
+invoking `onRequest` from `src/middleware.ts` directly with a synthetic Astro
+context — no running server or build needed. The helper at
+`src/test/integration/helpers/middleware-context.ts` builds the synthetic
+context and a `next` spy. Test at minimum: no Cookie → 401 JSON; garbage
+Cookie → 401; `/api/auth/*` path → `next` IS called. Reference:
+`src/test/integration/unauthenticated-api.integration.test.ts`.
+
+**Ownership / IDOR pattern:** Prove at the Supabase-client layer using the
+two-user fixture (see §6.2). The negative assertion (User A cannot read or
+mutate User B's row) is the load-bearing check. The oracle for write attempts
+is User B's re-fetched row compared field-for-field to the seeded value.
+
+**404 not 403:** RLS invisibility causes PGRST116 → HTTP 404, not 403.
+Document this in any endpoint PR; do not write assertions expecting 403 for
+cross-user writes.
+
+**No `GET /api/transactions` endpoint exists** (as of Phase 2). Cross-user
+read for transactions is tested at the Supabase-client layer only, not via an
+HTTP surface. Update this entry when the endpoint is added.
+
+**Run command:** `npm run test:integration`
 
 ---
 
@@ -175,8 +322,8 @@ contributors should respect these unless the underlying assumption changes.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-14
-- Stack versions last verified: 2026-06-14
+- Strategy (§1–§5) last reviewed: 2026-06-15
+- Stack versions last verified: 2026-06-15
 - AI-native tool references last verified: n/a — no AI-native layer in this rollout
 
 Refresh (`/10x-test-plan --refresh`) when:

@@ -409,21 +409,21 @@ clean their own rows on the global table using unique per-run tickers.
 
 #### Automated
 
-- [x] 2.1 Unit suite passes including the new timeout case: `npm test`
-- [x] 2.2 Integration suite passes (local Supabase running): `npm run test:integration`
-- [x] 2.3 Linting passes: `npm run lint`
-- [x] 2.4 Type checking passes: `npm run typecheck`
+- [x] 2.1 Unit suite passes including the new timeout case: `npm test` — 298bd5c
+- [x] 2.2 Integration suite passes (local Supabase running): `npm run test:integration` — 298bd5c
+- [x] 2.3 Linting passes: `npm run lint` — 298bd5c
+- [x] 2.4 Type checking passes: `npm run typecheck` — 298bd5c
 
 #### Manual
 
-- [x] 2.5 Forced Finnhub failure shows stale/no-price signal without a crash on the live dashboard
+- [x] 2.5 Forced Finnhub failure shows stale/no-price signal without a crash on the live dashboard — 298bd5c
 
 ### Phase 3: Cookbook + Close-out
 
 #### Automated
 
-- [ ] 3.1 §6.3 no longer contains "TBD" (grep check)
-- [ ] 3.2 Full suite still green: `npm test` and `npm run test:integration`
+- [x] 3.1 §6.3 no longer contains "TBD" (grep check)
+- [x] 3.2 Full suite still green: `npm test` and `npm run test:integration`
 
 #### Manual
 
