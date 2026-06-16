@@ -13,9 +13,14 @@ export async function refreshPricesForTickers(
   const today = new Date().toISOString().split("T")[0];
 
   const { data: cachedRows } = await supabase.from("prices").select("*").in("ticker", tickers);
-  const cacheMap = new Map<string, { price: number; fetched_at: string }>();
-  for (const row of (cachedRows ?? []) as { ticker: string; price: number; fetched_at: string }[]) {
-    cacheMap.set(row.ticker, { price: row.price, fetched_at: row.fetched_at });
+  const cacheMap = new Map<string, { price: number; fetched_at: string; change_pct: number | null }>();
+  for (const row of (cachedRows ?? []) as {
+    ticker: string;
+    price: number;
+    fetched_at: string;
+    change_pct: number | null;
+  }[]) {
+    cacheMap.set(row.ticker, { price: row.price, fetched_at: row.fetched_at, change_pct: row.change_pct ?? null });
   }
 
   const limit = pLimit(10);
@@ -24,19 +29,31 @@ export async function refreshPricesForTickers(
       limit(async () => {
         const cached = cacheMap.get(ticker);
         if (cached?.fetched_at.split("T")[0] === today) {
-          prices[ticker] = { price: cached.price, fetched_at: cached.fetched_at, is_fresh: true };
+          prices[ticker] = {
+            price: cached.price,
+            fetched_at: cached.fetched_at,
+            is_fresh: true,
+            changePct: cached.change_pct,
+          };
           return;
         }
 
         const quote = await fetchQuote(ticker);
         if (quote !== null) {
           const fetched_at = new Date().toISOString();
-          const { error: upsertErr } = await supabase.from("prices").upsert({ ticker, price: quote, fetched_at });
+          const { error: upsertErr } = await supabase
+            .from("prices")
+            .upsert({ ticker, price: quote.price, fetched_at, change_pct: quote.changePct });
           // eslint-disable-next-line no-console
           if (upsertErr) console.error("[prices] upsert failed", ticker, upsertErr.message);
-          prices[ticker] = { price: quote, fetched_at, is_fresh: true };
+          prices[ticker] = { price: quote.price, fetched_at, is_fresh: true, changePct: quote.changePct };
         } else if (cached) {
-          prices[ticker] = { price: cached.price, fetched_at: cached.fetched_at, is_fresh: false };
+          prices[ticker] = {
+            price: cached.price,
+            fetched_at: cached.fetched_at,
+            is_fresh: false,
+            changePct: cached.change_pct,
+          };
         }
       }),
     ),

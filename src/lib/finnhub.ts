@@ -31,7 +31,7 @@ export async function fetchSector(ticker: string): Promise<string | null> {
   }
 }
 
-export async function fetchQuote(ticker: string): Promise<number | null> {
+export async function fetchQuote(ticker: string): Promise<{ price: number; changePct: number | null } | null> {
   if (!FINNHUB_API_KEY) return null;
 
   const controller = new AbortController();
@@ -49,10 +49,11 @@ export async function fetchQuote(ticker: string): Promise<number | null> {
 
     const json: unknown = await response.json();
     if (typeof json !== "object" || json === null) return null;
-    const data = json as { c: number };
+    const data = json as { c: number; dp: number };
     if (!data.c || data.c === 0) return null; // c === 0 means no market data for this symbol
 
-    return data.c;
+    const changePct = typeof data.dp === "number" && isFinite(data.dp) ? data.dp : null;
+    return { price: data.c, changePct };
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error("[finnhub] fetchQuote failed", ticker, e);

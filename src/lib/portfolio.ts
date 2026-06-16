@@ -4,6 +4,7 @@ export interface PriceData {
   price: number;
   fetched_at: string;
   is_fresh: boolean;
+  changePct: number | null;
 }
 
 export interface PortfolioPosition {
@@ -15,6 +16,7 @@ export interface PortfolioPosition {
   currentPrice: number | null;
   isFresh: boolean;
   priceDate: string | null;
+  changePct: number | null;
   costBasis: number;
   positionValue: number | null;
   weightPct: number | null;
@@ -118,6 +120,7 @@ export function computePositions(transactions: Transaction[], prices: Record<str
     const currentPrice = priceEntry?.price ?? null;
     const isFresh = priceEntry?.is_fresh ?? false;
     const priceDate = priceEntry?.fetched_at ?? null;
+    const changePct = priceEntry?.changePct ?? null;
     const costBasis = avgCost * totalShares;
     const positionValue = currentPrice != null ? currentPrice * totalShares : null;
     const roiAbs = !hasMultipleCurrencies && currentPrice != null ? (currentPrice - avgCost) * totalShares : null;
@@ -132,6 +135,7 @@ export function computePositions(transactions: Transaction[], prices: Record<str
       currentPrice,
       isFresh,
       priceDate,
+      changePct,
       costBasis,
       positionValue,
       roiAbs,

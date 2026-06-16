@@ -25,7 +25,18 @@ describe("fetchQuote", () => {
     vi.useRealTimers();
   });
 
-  it("valid quote — returns the price", async () => {
+  it("valid quote with dp — returns { price, changePct }", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ c: 123.45, dp: 1.23 }),
+    });
+
+    const result = await fetchQuote("AAPL");
+
+    expect(result).toEqual({ price: 123.45, changePct: 1.23 });
+  });
+
+  it("dp absent — changePct is null", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ c: 123.45 }),
@@ -33,7 +44,29 @@ describe("fetchQuote", () => {
 
     const result = await fetchQuote("AAPL");
 
-    expect(result).toBe(123.45);
+    expect(result).toEqual({ price: 123.45, changePct: null });
+  });
+
+  it("dp === 0 — changePct is 0 (valid flat day, not coerced to null)", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ c: 123.45, dp: 0 }),
+    });
+
+    const result = await fetchQuote("AAPL");
+
+    expect(result).toEqual({ price: 123.45, changePct: 0 });
+  });
+
+  it("dp is non-finite (Infinity) — changePct is null", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ c: 123.45, dp: Infinity }),
+    });
+
+    const result = await fetchQuote("AAPL");
+
+    expect(result).toEqual({ price: 123.45, changePct: null });
   });
 
   it("c === 0 — returns null (named guard at finnhub.ts:53)", async () => {

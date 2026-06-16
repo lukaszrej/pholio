@@ -7,6 +7,7 @@ import type { Transaction } from "@/types/transaction";
 interface PricesRow {
   price: number | string;
   fetched_at: string;
+  change_pct?: number | null;
 }
 
 function buildAdminClient() {

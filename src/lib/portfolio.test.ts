@@ -22,10 +22,11 @@ const txn = (overrides: Partial<Transaction>): Transaction => ({
   ...overrides,
 });
 
-const priceData = (p: number): PriceData => ({
+const priceData = (p: number, changePct: number | null = null): PriceData => ({
   price: p,
   fetched_at: "2026-06-14T00:00:00Z",
   is_fresh: true,
+  changePct,
 });
 
 const position = (overrides: Partial<PortfolioPosition>): PortfolioPosition => ({
@@ -37,6 +38,7 @@ const position = (overrides: Partial<PortfolioPosition>): PortfolioPosition => (
   currentPrice: 150,
   isFresh: true,
   priceDate: "2026-06-14T00:00:00Z",
+  changePct: null,
   costBasis: 1000,
   positionValue: 1500,
   weightPct: 100,
