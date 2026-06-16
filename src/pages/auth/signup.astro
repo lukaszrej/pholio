@@ -5,17 +5,42 @@ import SignUpForm from "@/components/auth/SignUpForm";
 const error = Astro.url.searchParams.get("error");
 ---
 
-<Layout title="Sign up">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 text-gray-900 shadow-md">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-center text-2xl font-bold text-transparent"
-      >
-        Sign up
-      </h1>
-      <SignUpForm serverError={error} client:load />
-      <p class="mt-4 text-center text-sm text-gray-500">
-        Already have an account? <a href="/auth/signin" class="text-purple-600 hover:underline">Sign in</a>
+<Layout title="Sign up — Pholio">
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-6">
+    <div class="w-full max-w-sm">
+      <div class="mb-[22px] flex flex-col items-center gap-3">
+        <span
+          class="inline-flex h-[46px] w-[46px] items-center justify-center rounded-md [box-shadow:var(--shadow-cta)] [background:var(--gradient-brand)]"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+            <polyline points="16 7 22 7 22 13"></polyline>
+          </svg>
+        </span>
+        <span class="font-sans text-[34px] font-bold tracking-[-0.02em] text-[var(--tl-tx)]">
+          Phol<span class="text-[var(--tl-cy)]">io</span>
+        </span>
+        <p class="text-sm text-[var(--tl-mut)]">Track every position, in one calm place.</p>
+      </div>
+      <div class="rounded-md border border-[var(--tl-line)] bg-white p-6 shadow-sm">
+        <h1 class="mb-1 text-xl font-semibold text-[var(--tl-tx)]">Create account</h1>
+        <p class="mb-5 text-sm text-[var(--tl-mut)]">Start tracking your portfolio.</p>
+        <SignUpForm serverError={error} client:load />
+      </div>
+      <p class="mt-5 text-center text-sm text-[var(--tl-mut)]">
+        Already have an account? <a href="/auth/signin" class="font-medium text-[var(--tl-cy)] hover:underline"
+          >Sign in</a
+        >
       </p>
     </div>
   </div>
