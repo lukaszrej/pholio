@@ -97,6 +97,42 @@ describe("Risk #5 — Finnhub outage fallback", () => {
     expect(pos?.currentPrice).toBe(seededPrice);
   });
 
+  it("(c) fresh fetch — change_pct upserted and propagated through computePositions", async () => {
+    const mockPrice = 150.25;
+    const mockDp = 1.23;
+
+    fetchSpy = vi.spyOn(global, "fetch").mockImplementation((url, opts) => {
+      if (toUrlString(url).includes("finnhub.io")) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ c: mockPrice, dp: mockDp }),
+        } as unknown as Response);
+      }
+      return realFetch(url, opts);
+    });
+
+    const result = await refreshPricesForTickers([ticker], admin);
+
+    expect(result[ticker]).toBeDefined();
+    expect(result[ticker].is_fresh).toBe(true);
+    expect(result[ticker].price).toBe(mockPrice);
+    expect(result[ticker].changePct).toBe(mockDp);
+
+    // DB row must have change_pct written by the upsert
+    const singleResult = await admin.from("prices").select("price, change_pct").eq("ticker", ticker).single();
+    const rowData = (singleResult as { data: { price: number | string; change_pct: number | null } | null }).data;
+    expect(rowData).not.toBeNull();
+    if (rowData) {
+      expect(Number(rowData.price)).toBe(mockPrice);
+      expect(rowData.change_pct).toBe(mockDp);
+    }
+
+    // changePct propagates through computePositions
+    const positions = computePositions([makeTransaction(ticker)], result);
+    const pos = positions.find((p) => p.ticker === ticker);
+    expect(pos?.changePct).toBe(mockDp);
+  });
+
   it("(b) no-cache fallback — ticker absent, no row written, computePositions currentPrice:null", async () => {
     fetchSpy = vi.spyOn(global, "fetch").mockImplementation((url, opts) => {
       if (toUrlString(url).includes("finnhub.io")) {

@@ -54,7 +54,7 @@ function TickerTape({ positions }: { positions: PortfolioPosition[] }) {
       <div style={{ display: "flex", gap: 34, animation: "ticker-slide 80s linear infinite" }}>
         {doubled.map((p, i) => (
           <span
-            key={i}
+            key={`${p.ticker}-${i}`}
             className="font-numeric"
             style={{ fontSize: 12, color: "#7A6E60", display: "inline-flex", gap: 8, alignItems: "center" }}
           >

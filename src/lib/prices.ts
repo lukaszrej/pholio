@@ -12,7 +12,9 @@ export async function refreshPricesForTickers(
 
   const today = new Date().toISOString().split("T")[0];
 
-  const { data: cachedRows } = await supabase.from("prices").select("*").in("ticker", tickers);
+  const { data: cachedRows, error: cacheErr } = await supabase.from("prices").select("*").in("ticker", tickers);
+  // eslint-disable-next-line no-console
+  if (cacheErr) console.error("[prices] cache read failed", cacheErr.message);
   const cacheMap = new Map<string, { price: number; fetched_at: string; change_pct: number | null }>();
   for (const row of (cachedRows ?? []) as {
     ticker: string;
@@ -28,7 +30,7 @@ export async function refreshPricesForTickers(
     tickers.map((ticker) =>
       limit(async () => {
         const cached = cacheMap.get(ticker);
-        if (cached?.fetched_at.split("T")[0] === today) {
+        if (cached && new Date(cached.fetched_at).toISOString().split("T")[0] === today) {
           prices[ticker] = {
             price: cached.price,
             fetched_at: cached.fetched_at,

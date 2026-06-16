@@ -1,7 +1,7 @@
 ---
 change_id: ticker-tape-daily-change
 title: Ticker tape daily % change instead of position gain/loss
-status: implemented
+status: impl_reviewed
 created: 2026-06-16
 updated: 2026-06-16
 archived_at: null

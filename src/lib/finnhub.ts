@@ -49,8 +49,8 @@ export async function fetchQuote(ticker: string): Promise<{ price: number; chang
 
     const json: unknown = await response.json();
     if (typeof json !== "object" || json === null) return null;
-    const data = json as { c: number; dp: number };
-    if (!data.c || data.c === 0) return null; // c === 0 means no market data for this symbol
+    const data = json as { c?: unknown; dp?: unknown };
+    if (typeof data.c !== "number" || data.c === 0) return null; // c === 0 means no market data for this symbol
 
     const changePct = typeof data.dp === "number" && isFinite(data.dp) ? data.dp : null;
     return { price: data.c, changePct };
