@@ -217,13 +217,13 @@ No new API calls; `dp` rides the existing `/quote` request. One extra nullable c
 
 #### Automated
 
-- [x] 2.1 Type checking passes
-- [x] 2.2 Linting passes
-- [x] 2.3 Unit tests pass
+- [x] 2.1 Type checking passes — 8a3ee1a
+- [x] 2.2 Linting passes — 8a3ee1a
+- [x] 2.3 Unit tests pass — 8a3ee1a
 
 #### Manual
 
-- [ ] 2.4 Tape percentages reflect the market's daily move, not cost-basis return
-- [ ] 2.5 Ticker with populated change_pct shows symbol · price · colored % badge
-- [ ] 2.6 Ticker with null change_pct shows price-only, no badge, layout intact
-- [ ] 2.7 No regression in PortfolioSection / TickerCard gain-loss columns
+- [x] 2.4 Tape percentages reflect the market's daily move, not cost-basis return — 8a3ee1a
+- [x] 2.5 Ticker with populated change_pct shows symbol · price · colored % badge — 8a3ee1a
+- [x] 2.6 Ticker with null change_pct shows price-only, no badge, layout intact — 8a3ee1a
+- [x] 2.7 No regression in PortfolioSection / TickerCard gain-loss columns — 8a3ee1a
