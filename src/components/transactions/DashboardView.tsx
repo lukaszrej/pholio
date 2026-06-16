@@ -589,6 +589,8 @@ export default function DashboardView({
             </div>
           ) : (
             <>
+              {activeTab === "all" && <WatchlistPanel />}
+
               {/* Summary strip */}
               <PortfolioSummaryCard summary={activeSummary} />
 
@@ -633,7 +635,6 @@ export default function DashboardView({
                   )}
             </>
           )}
-          <WatchlistPanel />
         </main>
 
         {/* Mobile sticky CTA */}

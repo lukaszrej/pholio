@@ -138,7 +138,7 @@ export default function WatchlistPanel() {
   }
 
   return (
-    <div style={{ marginTop: 22 }}>
+    <div style={{ marginTop: 22, marginBottom: 28 }}>
       <div className="wl-panel">
         <div className="wl-header">
           <span className="wl-title">Watchlist</span>
