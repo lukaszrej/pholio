@@ -202,24 +202,24 @@ No new API calls; `dp` rides the existing `/quote` request. One extra nullable c
 
 #### Automated
 
-- [x] 1.1 Type checking passes
-- [x] 1.2 Linting passes
-- [x] 1.3 Unit tests pass (portfolio + finnhub)
-- [x] 1.4 Integration tests pass (prices)
-- [x] 1.5 Migration is valid SQL and applies cleanly against a fresh DB
+- [x] 1.1 Type checking passes — b9d4470
+- [x] 1.2 Linting passes — b9d4470
+- [x] 1.3 Unit tests pass (portfolio + finnhub) — b9d4470
+- [x] 1.4 Integration tests pass (prices) — b9d4470
+- [x] 1.5 Migration is valid SQL and applies cleanly against a fresh DB — b9d4470
 
 #### Manual
 
-- [ ] 1.6 A refreshed `prices` row shows populated `change_pct` matching Finnhub `dp`
-- [ ] 1.7 Dashboard renders unchanged (tape still shows roiPct)
+- [x] 1.6 A refreshed `prices` row shows populated `change_pct` matching Finnhub `dp` — b9d4470
+- [x] 1.7 Dashboard renders unchanged (tape still shows roiPct) — b9d4470
 
 ### Phase 2: TickerTape UI swap
 
 #### Automated
 
-- [ ] 2.1 Type checking passes
-- [ ] 2.2 Linting passes
-- [ ] 2.3 Unit tests pass
+- [x] 2.1 Type checking passes
+- [x] 2.2 Linting passes
+- [x] 2.3 Unit tests pass
 
 #### Manual
 

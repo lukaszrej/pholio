@@ -33,10 +33,7 @@ interface Props {
 
 /* ── Ticker Tape ── */
 function TickerTape({ positions }: { positions: PortfolioPosition[] }) {
-  const items = positions.filter(
-    (p): p is PortfolioPosition & { currentPrice: number; roiPct: number } =>
-      p.currentPrice !== null && p.roiPct !== null,
-  );
+  const items = positions.filter((p): p is PortfolioPosition & { currentPrice: number } => p.currentPrice !== null);
   if (items.length === 0) return null;
 
   const doubled = [...items, ...items];
@@ -63,9 +60,11 @@ function TickerTape({ positions }: { positions: PortfolioPosition[] }) {
           >
             <b style={{ color: "#1A1A2E", fontWeight: 600 }}>{p.ticker}</b>
             {formatNum(p.currentPrice)}
-            <span style={{ color: p.roiPct >= 0 ? "#0a9d6e" : "#c41230" }}>
-              {p.roiPct >= 0 ? "▲" : "▼"} {formatNum(Math.abs(p.roiPct))}%
-            </span>
+            {p.changePct !== null && (
+              <span style={{ color: p.changePct >= 0 ? "#0a9d6e" : "#c41230" }}>
+                {p.changePct >= 0 ? "▲" : "▼"} {formatNum(Math.abs(p.changePct))}%
+              </span>
+            )}
           </span>
         ))}
       </div>
