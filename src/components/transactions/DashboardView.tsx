@@ -6,6 +6,7 @@ import { computePositions, computePortfolioSummary, type PriceData, type Portfol
 import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
 import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import CardSection from "@/components/portfolio/TickerCard";
+import WatchlistPanel from "@/components/portfolio/WatchlistPanel";
 import AddTransactionForm from "@/components/transactions/AddTransactionForm";
 import LotsModal from "@/components/transactions/LotsModal";
 import { Button } from "@/components/ui/button";
@@ -632,6 +633,7 @@ export default function DashboardView({
                   )}
             </>
           )}
+          <WatchlistPanel />
         </main>
 
         {/* Mobile sticky CTA */}
