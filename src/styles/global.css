@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -7,63 +7,67 @@
 :root {
   --radius: 0.625rem;
 
-  /* Terminal-Light ground palette */
-  --background: #eef1f6;
-  --foreground: #0f1825;
-  --card: #ffffff;
-  --card-foreground: #0f1825;
-  --popover: #ffffff;
-  --popover-foreground: #0f1825;
-  --primary: #0f1825;
+  /* Warm Parchment × Crimson palette */
+  --background: #f0f3f9;
+  --foreground: #1a1a2e;
+  --card: #f8fafb;
+  --card-foreground: #1a1a2e;
+  --popover: #f8fafb;
+  --popover-foreground: #1a1a2e;
+  --primary: #1a1a2e;
   --primary-foreground: #ffffff;
-  --secondary: #f4f7fb;
-  --secondary-foreground: #0f1825;
-  --muted: #f4f7fb;
-  --muted-foreground: #5e6e85;
-  --accent: #f4f7fb;
-  --accent-foreground: #0f1825;
+  --secondary: #eff2f8;
+  --secondary-foreground: #1a1a2e;
+  --muted: #eff2f8;
+  --muted-foreground: #7a6e60;
+  --accent: #eff2f8;
+  --accent-foreground: #1a1a2e;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #dde4ee;
-  --input: #dde4ee;
-  --ring: rgba(10, 134, 216, 0.25);
+  --border: #dde3ee;
+  --input: #dde3ee;
+  --ring: rgba(196, 18, 48, 0.25);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: #f4f7fb;
-  --sidebar-foreground: #0f1825;
-  --sidebar-primary: #0f1825;
+  --sidebar: #eff2f8;
+  --sidebar-foreground: #1a1a2e;
+  --sidebar-primary: #1a1a2e;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f4f7fb;
-  --sidebar-accent-foreground: #0f1825;
-  --sidebar-border: #dde4ee;
-  --sidebar-ring: rgba(10, 134, 216, 0.25);
+  --sidebar-accent: #eff2f8;
+  --sidebar-accent-foreground: #1a1a2e;
+  --sidebar-border: #dde3ee;
+  --sidebar-ring: rgba(196, 18, 48, 0.25);
 
   /* Pholio typography */
   --font-numeric: "Geist Mono", ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  --font-serif: "Playfair Display", Georgia, serif;
 
-  /* Financial semantic colors — Terminal-Light */
+  /* Financial semantic colors — Warm Parchment × Crimson */
   --gain: #0a9d6e;
-  --loss: #e23950;
-  --flat: #93a1b5;
+  --gain-soft: rgba(10, 157, 110, 0.12);
+  --loss: #c41230;
+  --loss-soft: rgba(196, 18, 48, 0.1);
+  --flat: #a89e90;
 
-  /* Terminal-Light design tokens */
-  --tl-bg: #eef1f6;
-  --tl-panel: #ffffff;
-  --tl-panel-2: #f4f7fb;
-  --tl-line: #dde4ee;
-  --tl-line-soft: #eaeff6;
-  --tl-tx: #0f1825;
-  --tl-mut: #5e6e85;
-  --tl-dim: #93a1b5;
-  --tl-cy: #0a86d8;
-  --tl-cy-ink: #0762a6;
+  /* Design tokens */
+  --tl-bg: #f0f3f9;
+  --tl-panel: #f8fafb;
+  --tl-panel-2: #eff2f8;
+  --tl-line: #dde3ee;
+  --tl-line-soft: #e6ebf5;
+  --tl-tx: #1a1a2e;
+  --tl-mut: #7a6e60;
+  --tl-dim: #a89e90;
+  --tl-cy: #c41230;
+  --tl-cy-ink: #9e0e26;
   --tl-amber: #d9890b;
 
-  /* Brand gradients */
-  --gradient-brand: linear-gradient(135deg, #0a86d8, #4f46e5);
-  --gradient-wordmark: linear-gradient(90deg, #0a86d8, #7c3aed);
+  /* Brand */
+  --gradient-brand: linear-gradient(135deg, #c41230, #8b0d21);
+  --gradient-wordmark: linear-gradient(90deg, #c41230, #8b0d21);
+  --shadow-cta: 0 8px 20px -8px rgba(196, 18, 48, 0.5);
 }
 
 @theme inline {
@@ -207,7 +211,7 @@
     right: 0;
     z-index: 50;
     padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
-    background: linear-gradient(180deg, rgba(238, 241, 246, 0), var(--tl-bg) 38%);
+    background: linear-gradient(180deg, rgba(240, 243, 249, 0), var(--tl-bg) 38%);
     pointer-events: none;
   }
   .mobile-cta-bar > * {
@@ -227,6 +231,18 @@
 @utility font-numeric {
   font-family: var(--font-numeric);
   font-variant-numeric: tabular-nums lining-nums;
+}
+
+@utility text-gain {
+  color: var(--gain);
+}
+
+@utility text-loss {
+  color: var(--loss);
+}
+
+@utility text-dim {
+  color: var(--tl-dim);
 }
 
 @layer base {

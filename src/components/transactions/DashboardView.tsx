@@ -5,6 +5,7 @@ import type { Portfolio } from "@/types/portfolio";
 import { computePositions, computePortfolioSummary, type PriceData, type PortfolioPosition } from "@/lib/portfolio";
 import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
 import PortfolioSection from "@/components/portfolio/PortfolioSection";
+import CardSection from "@/components/portfolio/TickerCard";
 import AddTransactionForm from "@/components/transactions/AddTransactionForm";
 import LotsModal from "@/components/transactions/LotsModal";
 import { Button } from "@/components/ui/button";
@@ -46,10 +47,10 @@ function TickerTape({ positions }: { positions: PortfolioPosition[] }) {
         alignItems: "center",
         height: 34,
         padding: "0 22px",
-        borderBottom: "1px solid #dde4ee",
+        borderBottom: "1px solid #DDE3EE",
         overflow: "hidden",
         whiteSpace: "nowrap",
-        background: "#fff",
+        background: "#F8FAFB",
         boxShadow: "0 1px 0 rgba(15,24,37,.03)",
       }}
     >
@@ -58,11 +59,11 @@ function TickerTape({ positions }: { positions: PortfolioPosition[] }) {
           <span
             key={i}
             className="font-numeric"
-            style={{ fontSize: 12, color: "#5e6e85", display: "inline-flex", gap: 8, alignItems: "center" }}
+            style={{ fontSize: 12, color: "#7A6E60", display: "inline-flex", gap: 8, alignItems: "center" }}
           >
-            <b style={{ color: "#0f1825", fontWeight: 600 }}>{p.ticker}</b>
+            <b style={{ color: "#1A1A2E", fontWeight: 600 }}>{p.ticker}</b>
             {formatNum(p.currentPrice)}
-            <span style={{ color: p.roiPct >= 0 ? "#0a9d6e" : "#e23950" }}>
+            <span style={{ color: p.roiPct >= 0 ? "#0a9d6e" : "#c41230" }}>
               {p.roiPct >= 0 ? "▲" : "▼"} {formatNum(Math.abs(p.roiPct))}%
             </span>
           </span>
@@ -85,7 +86,7 @@ function tabBtnStyle(isActive: boolean): React.CSSProperties {
     appearance: "none" as const,
     background: "none",
     border: 0,
-    color: isActive ? "#0f1825" : "#5e6e85",
+    color: isActive ? "#1A1A2E" : "#7A6E60",
     cursor: "pointer",
     fontFamily: "var(--font-sans)",
     fontSize: 13,
@@ -180,9 +181,9 @@ function NavTabs({ portfolios, activeTab, positionCounts, onTabChange }: NavTabs
                   fontSize: 11,
                   padding: "1px 7px",
                   borderRadius: 2,
-                  color: isActive ? "#fff" : "#93a1b5",
-                  background: isActive ? "#0a86d8" : "#f4f7fb",
-                  border: `1px solid ${isActive ? "#0a86d8" : "#eaeff6"}`,
+                  color: isActive ? "#fff" : "#A89E90",
+                  background: isActive ? "#c41230" : "#EFF2F8",
+                  border: `1px solid ${isActive ? "#c41230" : "#E6EBF5"}`,
                 }}
               >
                 {count}
@@ -197,9 +198,9 @@ function NavTabs({ portfolios, activeTab, positionCounts, onTabChange }: NavTabs
           position: "absolute",
           bottom: -1,
           height: 2,
-          background: "#0a86d8",
+          background: "#c41230",
           borderRadius: 2,
-          boxShadow: "0 0 10px rgba(10,134,216,.7)",
+          boxShadow: "0 0 10px rgba(196,18,48,.5)",
           width: inkStyle.width,
           transform: `translateX(${inkStyle.x}px)`,
           transition: "transform .34s cubic-bezier(.65,0,.35,1), width .34s cubic-bezier(.65,0,.35,1)",
@@ -265,23 +266,29 @@ export default function DashboardView({
     return map;
   }, [transactions]);
 
+  const portfolioPositionsMap = useMemo(() => {
+    const map = new Map<string, ReturnType<typeof computePositions>>();
+    for (const p of portfolios) {
+      map.set(p.id, computePositions(txByPortfolio.get(p.id) ?? [], prices));
+    }
+    return map;
+  }, [portfolios, txByPortfolio, prices]);
+
   const portfolioPositionCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const p of portfolios) {
-      const txns = txByPortfolio.get(p.id) ?? [];
-      counts[p.id] = computePositions(txns, prices).length;
+      counts[p.id] = portfolioPositionsMap.get(p.id)?.length ?? 0;
     }
     return counts;
-  }, [portfolios, txByPortfolio, prices]);
+  }, [portfolios, portfolioPositionsMap]);
 
   const activePortfolio = portfolios.find((p) => p.id === activeTab);
 
   const activeSummary = useMemo(() => {
     if (activeTab === "all") return combinedSummary;
-    const txns = txByPortfolio.get(activeTab) ?? [];
-    const pos = computePositions(txns, prices);
+    const pos = portfolioPositionsMap.get(activeTab) ?? [];
     return computePortfolioSummary(pos);
-  }, [activeTab, combinedSummary, txByPortfolio, prices]);
+  }, [activeTab, combinedSummary, portfolioPositionsMap]);
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
@@ -412,14 +419,14 @@ export default function DashboardView({
   const mobileCtaPortfolioId = activePortfolio?.id ?? portfolios[0]?.id;
 
   return (
-    <div style={{ background: "#eef1f6", minHeight: "100vh" }}>
+    <div style={{ background: "#F0F3F9", minHeight: "100vh" }}>
       {/* Ticker tape */}
       <TickerTape positions={allPositions} />
 
       {/* Constrained content — 16px side padding keeps everything visually the same width */}
       <div style={{ maxWidth: 1152, margin: "0 auto", padding: "0 16px" }}>
         {/* White app bar: header + nav share one white background */}
-        <div style={{ background: "#fff", paddingInline: 18 }}>
+        <div style={{ background: "#F8FAFB", paddingInline: 18 }}>
           {/* Header */}
           <header
             style={{
@@ -427,7 +434,7 @@ export default function DashboardView({
               alignItems: "center",
               justifyContent: "space-between",
               padding: "18px 0 0",
-              background: "#fff",
+              background: "#F8FAFB",
             }}
           >
             {/* Brand */}
@@ -438,31 +445,39 @@ export default function DashboardView({
                   height: 30,
                   borderRadius: 3,
                   flexShrink: 0,
-                  background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+                  background: "linear-gradient(135deg, #c41230, #8b0d21)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  boxShadow: "0 6px 16px -6px rgba(10,134,216,.6)",
+                  boxShadow: "0 6px 16px -6px rgba(196,18,48,.5)",
                 }}
               >
                 <TrendingUp size={16} color="#fff" strokeWidth={2.4} />
               </span>
-              <span style={{ fontWeight: 700, fontSize: 22, letterSpacing: "-.02em", color: "#0f1825" }}>
-                Phol<span style={{ color: "#0a86d8" }}>io</span>
+              <span
+                style={{
+                  fontWeight: 700,
+                  fontSize: 22,
+                  letterSpacing: 0,
+                  color: "#1A1A2E",
+                  fontFamily: "var(--font-serif)",
+                }}
+              >
+                Phol<span style={{ color: "#c41230", fontStyle: "italic", fontWeight: 400 }}>io</span>
               </span>
             </div>
 
             {/* Desktop: email + add portfolio + sign out */}
-            <div className="hidden items-center gap-3 sm:flex" style={{ color: "#5e6e85", fontSize: 12 }}>
+            <div className="hidden items-center gap-3 sm:flex" style={{ color: "#7A6E60", fontSize: 12 }}>
               {userEmail && <span className="font-numeric">{userEmail}</span>}
               <button
                 onClick={openAddPortfolio}
                 style={{
-                  border: "1px solid #dde4ee",
+                  border: "1px solid #DDE3EE",
                   padding: "6px 12px",
                   borderRadius: 3,
-                  color: "#0f1825",
-                  background: "#fff",
+                  color: "#1A1A2E",
+                  background: "#F8FAFB",
                   fontFamily: "var(--font-numeric)",
                   cursor: "pointer",
                   whiteSpace: "nowrap",
@@ -470,13 +485,13 @@ export default function DashboardView({
                   transition: "border-color .2s, color .2s, box-shadow .2s",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "#0a86d8";
-                  e.currentTarget.style.color = "#0a86d8";
-                  e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(10,134,216,.5)";
+                  e.currentTarget.style.borderColor = "#c41230";
+                  e.currentTarget.style.color = "#c41230";
+                  e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(196,18,48,.4)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "#dde4ee";
-                  e.currentTarget.style.color = "#0f1825";
+                  e.currentTarget.style.borderColor = "#DDE3EE";
+                  e.currentTarget.style.color = "#1A1A2E";
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
@@ -486,11 +501,11 @@ export default function DashboardView({
                 <button
                   type="submit"
                   style={{
-                    border: "1px solid #dde4ee",
+                    border: "1px solid #DDE3EE",
                     padding: "6px 12px",
                     borderRadius: 3,
-                    color: "#5e6e85",
-                    background: "#fff",
+                    color: "#7A6E60",
+                    background: "#F8FAFB",
                     fontFamily: "var(--font-sans)",
                     cursor: "pointer",
                     fontSize: 12,
@@ -510,12 +525,12 @@ export default function DashboardView({
               style={{
                 width: 44,
                 height: 44,
-                border: "1px solid #dde4ee",
+                border: "1px solid #DDE3EE",
                 borderRadius: 6,
-                background: "#fff",
+                background: "#F8FAFB",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#5e6e85",
+                color: "#7A6E60",
                 cursor: "pointer",
               }}
             >
@@ -524,7 +539,7 @@ export default function DashboardView({
           </header>
 
           {/* Nav tabs */}
-          <div style={{ borderBottom: "1px solid #dde4ee" }}>
+          <div style={{ borderBottom: "1px solid #DDE3EE" }}>
             <NavTabs
               portfolios={portfolios}
               activeTab={activeTab}
@@ -543,19 +558,19 @@ export default function DashboardView({
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                border: "1px solid #dde4ee",
-                background: "#fff",
+                border: "1px solid #DDE3EE",
+                background: "#F8FAFB",
                 padding: "80px 20px",
                 textAlign: "center",
               }}
             >
-              <p style={{ color: "#5e6e85", marginBottom: 16 }}>No portfolios yet.</p>
+              <p style={{ color: "#7A6E60", marginBottom: 16 }}>No portfolios yet.</p>
               <button
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 8,
-                  background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+                  background: "linear-gradient(135deg, #c41230, #8b0d21)",
                   color: "#fff",
                   border: 0,
                   borderRadius: 3,
@@ -564,7 +579,7 @@ export default function DashboardView({
                   fontSize: 13,
                   padding: "11px 18px",
                   cursor: "pointer",
-                  boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
+                  boxShadow: "0 8px 20px -8px rgba(196,18,48,.5)",
                 }}
                 onClick={openAddPortfolio}
               >
@@ -578,28 +593,18 @@ export default function DashboardView({
               <PortfolioSummaryCard summary={activeSummary} />
 
               {activeTab === "all"
-                ? /* All portfolios — stacked compact sections */
+                ? /* All portfolios — ticker card grid per portfolio */
                   portfolios.map((p) => (
-                    <PortfolioSection
+                    <CardSection
                       key={p.id}
-                      compact
                       portfolio={p}
-                      transactions={txByPortfolio.get(p.id) ?? []}
-                      prices={prices}
+                      positions={portfolioPositionsMap.get(p.id) ?? []}
                       sectors={sectors}
                       onAddTransaction={(id) => {
                         setAddTransactionPortfolioId(id);
                       }}
-                      onEditPortfolio={(portfolio) => {
-                        setEditPortfolio(portfolio);
-                        setEditPortfolioName(portfolio.name);
-                        setEditPortfolioError(null);
-                      }}
-                      onDeletePortfolio={(id) => {
-                        setDeletingPortfolio({ id, name: portfolios.find((port) => port.id === id)?.name ?? "" });
-                      }}
-                      onShowLots={(ticker, portfolioId) => {
-                        setLotsContext({ ticker, portfolioId });
+                      onNavigate={() => {
+                        setActiveTab(p.id);
                       }}
                     />
                   ))
@@ -640,7 +645,7 @@ export default function DashboardView({
                 gap: 8,
                 justifyContent: "center",
                 width: "100%",
-                background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+                background: "linear-gradient(135deg, #c41230, #8b0d21)",
                 color: "#fff",
                 border: 0,
                 borderRadius: 3,
@@ -649,7 +654,7 @@ export default function DashboardView({
                 fontSize: 13,
                 padding: 11,
                 cursor: "pointer",
-                boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
+                boxShadow: "0 8px 20px -8px rgba(196,18,48,.5)",
               }}
               onClick={() => {
                 setAddTransactionPortfolioId(mobileCtaPortfolioId);
@@ -906,7 +911,7 @@ export default function DashboardView({
           </DialogHeader>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {userEmail && (
-              <span style={{ fontSize: 13, color: "#5e6e85", fontFamily: "var(--font-numeric)" }}>{userEmail}</span>
+              <span style={{ fontSize: 13, color: "#7A6E60", fontFamily: "var(--font-numeric)" }}>{userEmail}</span>
             )}
             <button
               onClick={() => {
@@ -915,11 +920,11 @@ export default function DashboardView({
               }}
               style={{
                 width: "100%",
-                border: "1px solid #dde4ee",
+                border: "1px solid #DDE3EE",
                 padding: "6px 12px",
                 borderRadius: 3,
-                color: "#0f1825",
-                background: "#fff",
+                color: "#1A1A2E",
+                background: "#F8FAFB",
                 fontFamily: "var(--font-numeric)",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
@@ -927,13 +932,13 @@ export default function DashboardView({
                 transition: "border-color .2s, color .2s, box-shadow .2s",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#0a86d8";
-                e.currentTarget.style.color = "#0a86d8";
-                e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(10,134,216,.5)";
+                e.currentTarget.style.borderColor = "#c41230";
+                e.currentTarget.style.color = "#c41230";
+                e.currentTarget.style.boxShadow = "0 2px 10px -4px rgba(196,18,48,.4)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#dde4ee";
-                e.currentTarget.style.color = "#0f1825";
+                e.currentTarget.style.borderColor = "#DDE3EE";
+                e.currentTarget.style.color = "#1A1A2E";
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
@@ -944,11 +949,11 @@ export default function DashboardView({
                 type="submit"
                 style={{
                   width: "100%",
-                  border: "1px solid #dc2626",
+                  border: "1px solid #c41230",
                   padding: "6px 12px",
                   borderRadius: 3,
                   color: "#fff",
-                  background: "#dc2626",
+                  background: "#c41230",
                   fontFamily: "var(--font-sans)",
                   cursor: "pointer",
                   fontSize: 12,

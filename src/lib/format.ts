@@ -16,8 +16,8 @@ export function formatShares(n: number | null): string {
 }
 
 export function pnlClass(value: number | null): string {
-  if (value === null) return "text-gray-400";
-  return value >= 0 ? "text-emerald-600" : "text-red-600";
+  if (value === null) return "text-dim";
+  return value >= 0 ? "text-gain" : "text-loss";
 }
 
 export function formatSigned(value: number | null, decimals = 2, showPositiveSign = true): string {

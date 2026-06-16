@@ -30,20 +30,20 @@ const SECTOR_COLORS: Partial<Record<string, string>> = {
   Financials: "#7c3aed",
   Healthcare: "#0a9d6e",
   Energy: "#d9890b",
-  "Consumer Discretionary": "#e23950",
+  "Consumer Discretionary": "#c41230",
   Industrials: "#3B82F6",
   "Communication Services": "#8B5CF6",
   Materials: "#EC4899",
   Utilities: "#14B8A6",
   "Real Estate": "#84CC16",
-  Other: "#93a1b5",
+  Other: "#A89E90",
 };
 const FALLBACK_PALETTE = [
   "#0a86d8",
   "#7c3aed",
   "#0a9d6e",
   "#d9890b",
-  "#e23950",
+  "#c41230",
   "#3B82F6",
   "#8B5CF6",
   "#EC4899",
@@ -57,7 +57,7 @@ function getSectorColor(sector: string, index: number): string {
 
 function SectorAllocationBar({ slices }: { slices: SectorSlice[] }) {
   if (slices.length === 0) {
-    return <p style={{ fontSize: 12, color: "#93a1b5" }}>No data</p>;
+    return <p style={{ fontSize: 12, color: "#A89E90" }}>No data</p>;
   }
   return (
     <>
@@ -68,7 +68,7 @@ function SectorAllocationBar({ slices }: { slices: SectorSlice[] }) {
           borderRadius: 2,
           overflow: "hidden",
           marginBottom: 18,
-          boxShadow: "inset 0 0 0 1px #eaeff6",
+          boxShadow: "inset 0 0 0 1px #E6EBF5",
         }}
       >
         {slices.map((s, i) => (
@@ -84,7 +84,7 @@ function SectorAllocationBar({ slices }: { slices: SectorSlice[] }) {
             key={s.sector}
             style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12 }}
           >
-            <span style={{ display: "flex", alignItems: "center", gap: 9, color: "#33414f" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 9, color: "#2E2E44" }}>
               <span
                 style={{
                   width: 7,
@@ -96,7 +96,7 @@ function SectorAllocationBar({ slices }: { slices: SectorSlice[] }) {
               />
               {s.sector}
             </span>
-            <span className="font-numeric" style={{ color: "#5e6e85" }}>
+            <span className="font-numeric" style={{ color: "#7A6E60" }}>
               {s.percentage.toFixed(1)}%
             </span>
           </div>
@@ -175,7 +175,7 @@ export default function PortfolioSection({
 
   const sectionHeader = (
     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, paddingTop: 16 }}>
-      <h2 style={{ fontSize: 18, fontWeight: 600, color: "#0f1825", margin: 0 }}>{portfolio.name}</h2>
+      <h2 style={{ fontSize: 18, fontWeight: 600, color: "#1A1A2E", margin: 0 }}>{portfolio.name}</h2>
       <button
         type="button"
         style={{
@@ -183,7 +183,7 @@ export default function PortfolioSection({
           border: "none",
           padding: "4px",
           borderRadius: 4,
-          color: "#93a1b5",
+          color: "#A89E90",
           cursor: "pointer",
         }}
         onClick={() => {
@@ -191,12 +191,12 @@ export default function PortfolioSection({
         }}
         aria-label={`Rename ${portfolio.name}`}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = "#f4f7fb";
-          e.currentTarget.style.color = "#5e6e85";
+          e.currentTarget.style.background = "#EFF2F8";
+          e.currentTarget.style.color = "#7A6E60";
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.background = "none";
-          e.currentTarget.style.color = "#93a1b5";
+          e.currentTarget.style.color = "#A89E90";
         }}
       >
         <Pencil size={14} />
@@ -208,7 +208,7 @@ export default function PortfolioSection({
           border: "none",
           padding: "4px",
           borderRadius: 4,
-          color: "#93a1b5",
+          color: "#A89E90",
           cursor: "pointer",
         }}
         onClick={() => {
@@ -217,11 +217,11 @@ export default function PortfolioSection({
         aria-label={`Delete ${portfolio.name}`}
         onMouseEnter={(e) => {
           e.currentTarget.style.background = "rgba(226,57,80,.08)";
-          e.currentTarget.style.color = "#e23950";
+          e.currentTarget.style.color = "#c41230";
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.background = "none";
-          e.currentTarget.style.color = "#93a1b5";
+          e.currentTarget.style.color = "#A89E90";
         }}
       >
         <Trash2 size={14} />
@@ -233,14 +233,14 @@ export default function PortfolioSection({
     return (
       <div style={{ marginBottom: compact ? 24 : 0 }}>
         {compact && sectionHeader}
-        <div style={{ border: "1px solid #dde4ee", background: "#fff", padding: "48px 20px", textAlign: "center" }}>
-          <p style={{ color: "#5e6e85", marginBottom: 16 }}>No positions yet</p>
+        <div style={{ border: "1px solid #DDE3EE", background: "#F8FAFB", padding: "48px 20px", textAlign: "center" }}>
+          <p style={{ color: "#7A6E60", marginBottom: 16 }}>No positions yet</p>
           <button
             style={{
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
-              background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+              background: "linear-gradient(135deg, #c41230, #8b0d21)",
               color: "#fff",
               border: 0,
               borderRadius: 3,
@@ -249,7 +249,7 @@ export default function PortfolioSection({
               fontSize: 13,
               padding: "11px 18px",
               cursor: "pointer",
-              boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
+              boxShadow: "0 8px 20px -8px rgba(196,18,48,.5)",
             }}
             onClick={() => {
               onAddTransaction(portfolio.id);
@@ -270,11 +270,11 @@ export default function PortfolioSection({
         {sectionHeader}
         <PortfolioSummaryCard summary={summary} />
 
-        <div style={{ border: "1px solid #dde4ee", background: "#fff", boxShadow: "0 1px 2px rgba(15,24,37,.04)" }}>
+        <div style={{ border: "1px solid #DDE3EE", background: "#F8FAFB", boxShadow: "0 1px 2px rgba(15,24,37,.04)" }}>
           <div style={{ overflowX: "auto" }}>
             <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ borderBottom: "1px solid #dde4ee", textAlign: "left" }}>
+                <tr style={{ borderBottom: "1px solid #DDE3EE", textAlign: "left" }}>
                   <th
                     style={{
                       padding: "11px 14px",
@@ -282,8 +282,8 @@ export default function PortfolioSection({
                       fontSize: 10,
                       letterSpacing: ".1em",
                       textTransform: "uppercase",
-                      color: "#5e6e85",
-                      background: "#f4f7fb",
+                      color: "#7A6E60",
+                      background: "#EFF2F8",
                       position: "sticky",
                       left: 0,
                       zIndex: 10,
@@ -311,8 +311,8 @@ export default function PortfolioSection({
                         fontSize: 10,
                         letterSpacing: ".1em",
                         textTransform: "uppercase",
-                        color: "#5e6e85",
-                        background: "#f4f7fb",
+                        color: "#7A6E60",
+                        background: "#EFF2F8",
                         textAlign: "right",
                         cursor: "pointer",
                         whiteSpace: "nowrap",
@@ -349,9 +349,9 @@ export default function PortfolioSection({
                   return (
                     <tr
                       key={pos.ticker}
-                      style={{ borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
+                      style={{ borderBottom: "1px solid #E6EBF5", cursor: "pointer" }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "#f3f8fd";
+                        e.currentTarget.style.background = "#FBF4F5";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = "transparent";
@@ -364,11 +364,11 @@ export default function PortfolioSection({
                         style={{
                           padding: "10px 14px",
                           fontWeight: 600,
-                          color: "#0f1825",
+                          color: "#1A1A2E",
                           letterSpacing: ".02em",
                           position: "sticky",
                           left: 0,
-                          background: "#fff",
+                          background: "#F8FAFB",
                           zIndex: 10,
                         }}
                       >
@@ -397,7 +397,7 @@ export default function PortfolioSection({
                           padding: "10px 14px",
                           textAlign: "right",
                           fontSize: 12.5,
-                          color: !pos.isFresh ? "#93a1b5" : undefined,
+                          color: !pos.isFresh ? "#A89E90" : undefined,
                         }}
                       >
                         {formatCurrentPrice(pos)}
@@ -429,7 +429,11 @@ export default function PortfolioSection({
           </div>
           <div style={{ padding: "10px 14px 16px" }}>
             <Button
-              className="bg-gradient-to-r from-blue-600 to-violet-600 font-medium text-white shadow-sm transition-all duration-200 hover:from-blue-500 hover:to-violet-500 hover:shadow-md"
+              style={{
+                background: "linear-gradient(135deg, #c41230, #8b0d21)",
+                color: "#fff",
+                boxShadow: "0 8px 20px -8px rgba(196,18,48,.5)",
+              }}
               onClick={() => {
                 onAddTransaction(portfolio.id);
               }}
@@ -444,7 +448,7 @@ export default function PortfolioSection({
                 fontSize: 10,
                 letterSpacing: ".14em",
                 textTransform: "uppercase",
-                color: "#5e6e85",
+                color: "#7A6E60",
                 margin: "0 0 16px",
                 fontWeight: 600,
               }}
@@ -465,12 +469,12 @@ export default function PortfolioSection({
 
       <div className="portfolio-content">
         {/* Holdings panel */}
-        <div style={{ background: "#fff", border: "1px solid #dde4ee", overflow: "hidden" }}>
+        <div style={{ background: "#F8FAFB", border: "1px solid #DDE3EE", overflow: "hidden" }}>
           {/* Desktop table */}
           <div className="holdings-table" style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ background: "#f4f7fb", borderBottom: "1px solid #dde4ee" }}>
+                <tr style={{ background: "#EFF2F8", borderBottom: "1px solid #DDE3EE" }}>
                   <th
                     style={{
                       padding: "11px 14px",
@@ -479,7 +483,7 @@ export default function PortfolioSection({
                       fontSize: 10,
                       letterSpacing: ".1em",
                       textTransform: "uppercase",
-                      color: "#5e6e85",
+                      color: "#7A6E60",
                       cursor: "default",
                     }}
                   >
@@ -505,7 +509,7 @@ export default function PortfolioSection({
                         fontSize: 10,
                         letterSpacing: ".1em",
                         textTransform: "uppercase",
-                        color: "#5e6e85",
+                        color: "#7A6E60",
                         cursor: "pointer",
                         whiteSpace: "nowrap",
                         userSelect: "none",
@@ -530,7 +534,7 @@ export default function PortfolioSection({
                       {sortIcon(k, sortKey, sortDir)}
                     </th>
                   ))}
-                  <th style={{ width: 32, padding: "11px 8px", background: "#f4f7fb" }} />
+                  <th style={{ width: 32, padding: "11px 8px", background: "#EFF2F8" }} />
                 </tr>
               </thead>
               <tbody>
@@ -542,9 +546,9 @@ export default function PortfolioSection({
                   return (
                     <tr
                       key={pos.ticker}
-                      style={{ borderBottom: "1px solid #eaeff6", cursor: "pointer" }}
+                      style={{ borderBottom: "1px solid #E6EBF5", cursor: "pointer" }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "#f3f8fd";
+                        e.currentTarget.style.background = "#FBF4F5";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = "transparent";
@@ -553,7 +557,7 @@ export default function PortfolioSection({
                         onShowLots(pos.ticker, portfolio.id);
                       }}
                     >
-                      <td style={{ padding: "10px 14px", fontWeight: 600, color: "#0f1825", letterSpacing: ".02em" }}>
+                      <td style={{ padding: "10px 14px", fontWeight: 600, color: "#1A1A2E", letterSpacing: ".02em" }}>
                         <span
                           style={{
                             display: "inline-block",
@@ -579,7 +583,7 @@ export default function PortfolioSection({
                           padding: "10px 14px",
                           textAlign: "right",
                           fontSize: 12.5,
-                          color: !pos.isFresh ? "#93a1b5" : undefined,
+                          color: !pos.isFresh ? "#A89E90" : undefined,
                         }}
                       >
                         {formatCurrentPrice(pos)}
@@ -603,7 +607,7 @@ export default function PortfolioSection({
                         {formatSigned(pos.roiPct, 2, false)}
                         {pos.roiPct !== null && "%"}
                       </td>
-                      <td style={{ padding: "10px 8px", color: "#93a1b5" }}>
+                      <td style={{ padding: "10px 8px", color: "#A89E90" }}>
                         <ChevronRight size={14} />
                       </td>
                     </tr>
@@ -621,11 +625,11 @@ export default function PortfolioSection({
                 alignItems: "center",
                 justifyContent: "space-between",
                 padding: "13px 14px",
-                borderBottom: "1px solid #dde4ee",
+                borderBottom: "1px solid #DDE3EE",
               }}
             >
-              <h3 style={{ fontSize: 13, fontWeight: 600, margin: 0, color: "#0f1825" }}>{portfolio.name}</h3>
-              <span className="font-numeric" style={{ fontSize: 11, color: "#5e6e85" }}>
+              <h3 style={{ fontSize: 13, fontWeight: 600, margin: 0, color: "#1A1A2E" }}>{portfolio.name}</h3>
+              <span className="font-numeric" style={{ fontSize: 11, color: "#7A6E60" }}>
                 {positions.length} positions
               </span>
             </div>
@@ -642,14 +646,14 @@ export default function PortfolioSection({
                     alignItems: "center",
                     justifyContent: "space-between",
                     padding: "12px 14px",
-                    borderBottom: "1px solid #eaeff6",
+                    borderBottom: "1px solid #E6EBF5",
                     cursor: "pointer",
                   }}
                   onClick={() => {
                     onShowLots(pos.ticker, portfolio.id);
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "#f3f8fd";
+                    e.currentTarget.style.background = "#FBF4F5";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = "transparent";
@@ -658,16 +662,16 @@ export default function PortfolioSection({
                   <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
                     <span style={{ width: 8, height: 8, borderRadius: "50%", background: dotColor, flexShrink: 0 }} />
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: 14, letterSpacing: ".02em", color: "#0f1825" }}>
+                      <div style={{ fontWeight: 700, fontSize: 14, letterSpacing: ".02em", color: "#1A1A2E" }}>
                         {pos.ticker}
                       </div>
-                      <div className="font-numeric" style={{ fontSize: 11, color: "#5e6e85", marginTop: 2 }}>
+                      <div className="font-numeric" style={{ fontSize: 11, color: "#7A6E60", marginTop: 2 }}>
                         {formatShares(pos.totalShares)} sh · avg {formatNum(pos.avgCost)}
                       </div>
                     </div>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3 }}>
-                    <div className="font-numeric" style={{ fontSize: 13.5, fontWeight: 600, color: "#0f1825" }}>
+                    <div className="font-numeric" style={{ fontSize: 13.5, fontWeight: 600, color: "#1A1A2E" }}>
                       {pos.positionValue !== null ? formatNum(pos.positionValue) : "—"}
                     </div>
                     {pos.roiPct !== null && (
@@ -678,8 +682,8 @@ export default function PortfolioSection({
                           fontWeight: 600,
                           padding: "1px 7px",
                           borderRadius: 20,
-                          background: pos.roiPct >= 0 ? "rgba(10,157,110,.12)" : "rgba(226,57,80,.12)",
-                          color: pos.roiPct >= 0 ? "#0a9d6e" : "#e23950",
+                          background: pos.roiPct >= 0 ? "rgba(10,157,110,.12)" : "rgba(196,18,48,.10)",
+                          color: pos.roiPct >= 0 ? "#0a9d6e" : "#c41230",
                         }}
                       >
                         {formatSigned(pos.roiPct, 2, false)}%
@@ -693,13 +697,13 @@ export default function PortfolioSection({
         </div>
 
         {/* Sidebar */}
-        <div style={{ background: "#fff", border: "1px solid #dde4ee", padding: "16px 18px" }}>
+        <div style={{ background: "#F8FAFB", border: "1px solid #DDE3EE", padding: "16px 18px" }}>
           <h3
             style={{
               fontSize: 10,
               letterSpacing: ".14em",
               textTransform: "uppercase",
-              color: "#5e6e85",
+              color: "#7A6E60",
               margin: "0 0 16px",
               fontWeight: 600,
             }}
@@ -716,7 +720,7 @@ export default function PortfolioSection({
               gap: 8,
               justifyContent: "center",
               width: "100%",
-              background: "linear-gradient(135deg, #0a86d8, #4f46e5)",
+              background: "linear-gradient(135deg, #c41230, #8b0d21)",
               color: "#fff",
               border: 0,
               borderRadius: 3,
@@ -726,7 +730,7 @@ export default function PortfolioSection({
               padding: 11,
               cursor: "pointer",
               marginTop: 18,
-              boxShadow: "0 8px 20px -8px rgba(10,134,216,.7)",
+              boxShadow: "0 8px 20px -8px rgba(196,18,48,.5)",
               transition: "filter .2s, transform .1s, box-shadow .2s",
             }}
             onClick={() => {

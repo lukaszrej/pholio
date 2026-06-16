@@ -3,12 +3,11 @@ import { formatSigned, formatNum } from "@/lib/format";
 
 interface Props {
   summary: PortfolioSummary;
-  title?: string;
 }
 
 function pnlColor(value: number | null): string {
-  if (value === null) return "#5e6e85";
-  return value >= 0 ? "#0a9d6e" : "#e23950";
+  if (value === null) return "#7A6E60";
+  return value >= 0 ? "#0a9d6e" : "#c41230";
 }
 
 export default function PortfolioSummaryCard({ summary }: Props) {
@@ -23,7 +22,7 @@ export default function PortfolioSummaryCard({ summary }: Props) {
             fontSize: 10,
             letterSpacing: ".14em",
             textTransform: "uppercase",
-            color: "#5e6e85",
+            color: "#7A6E60",
             marginBottom: 9,
           }}
         >
@@ -31,10 +30,10 @@ export default function PortfolioSummaryCard({ summary }: Props) {
         </div>
         <div
           className="font-numeric"
-          style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: "#0f1825" }}
+          style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: "#1A1A2E" }}
         >
           {formatNum(totalInvested)}
-          {cur && <small style={{ fontSize: 12, color: "#5e6e85", fontWeight: 400, marginLeft: 6 }}>{cur}</small>}
+          {cur && <small style={{ fontSize: 12, color: "#7A6E60", fontWeight: 400, marginLeft: 6 }}>{cur}</small>}
         </div>
       </div>
 
@@ -44,7 +43,7 @@ export default function PortfolioSummaryCard({ summary }: Props) {
             fontSize: 10,
             letterSpacing: ".14em",
             textTransform: "uppercase",
-            color: "#5e6e85",
+            color: "#7A6E60",
             marginBottom: 9,
           }}
         >
@@ -52,11 +51,11 @@ export default function PortfolioSummaryCard({ summary }: Props) {
         </div>
         <div
           className="font-numeric"
-          style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: "#0f1825" }}
+          style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.01em", color: "#1A1A2E" }}
         >
           {currentValue !== null ? formatNum(currentValue) : "—"}
           {cur && currentValue !== null && (
-            <small style={{ fontSize: 12, color: "#5e6e85", fontWeight: 400, marginLeft: 6 }}>{cur}</small>
+            <small style={{ fontSize: 12, color: "#7A6E60", fontWeight: 400, marginLeft: 6 }}>{cur}</small>
           )}
         </div>
       </div>
@@ -67,7 +66,7 @@ export default function PortfolioSummaryCard({ summary }: Props) {
             fontSize: 10,
             letterSpacing: ".14em",
             textTransform: "uppercase",
-            color: "#5e6e85",
+            color: "#7A6E60",
             marginBottom: 9,
           }}
         >
@@ -81,7 +80,7 @@ export default function PortfolioSummaryCard({ summary }: Props) {
           {cur && totalPnL !== null && <small style={{ fontSize: 12, fontWeight: 400, marginLeft: 6 }}>{cur}</small>}
         </div>
         {excludedCount > 0 && (
-          <p style={{ marginTop: 4, fontSize: 11, color: "#93a1b5" }}>
+          <p style={{ marginTop: 4, fontSize: 11, color: "#A89E90" }}>
             Excludes {excludedCount} multi-currency {excludedCount === 1 ? "position" : "positions"}.
           </p>
         )}
@@ -93,7 +92,7 @@ export default function PortfolioSummaryCard({ summary }: Props) {
             fontSize: 10,
             letterSpacing: ".14em",
             textTransform: "uppercase",
-            color: "#5e6e85",
+            color: "#7A6E60",
             marginBottom: 9,
           }}
         >
