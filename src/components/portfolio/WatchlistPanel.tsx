@@ -1,55 +1,49 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 
 interface WatchItem {
   ticker: string;
   name: string;
   c: number;
-  d: number;
-  dp: number;
-  h: number;
-  l: number;
-  o: number;
-  pc: number;
+  d: number | null;
+  dp: number | null;
+  h: number | null;
+  l: number | null;
+  o: number | null;
+  pc: number | null;
+  unavailable?: boolean;
 }
 
-type QuoteData = Omit<WatchItem, "ticker">;
+type ApiQuoteEntry = Omit<WatchItem, "unavailable">;
+type ApiData = Partial<Record<string, ApiQuoteEntry>>;
 
-const MOCK_QUOTES: Record<string, QuoteData | undefined> = {
-  AAPL: { name: "Apple Inc.", c: 189.3, d: 1.24, dp: 0.66, h: 190.12, l: 187.45, o: 188.1, pc: 188.06 },
-  MSFT: { name: "Microsoft Corp.", c: 415.2, d: -2.1, dp: -0.5, h: 418.0, l: 413.2, o: 417.3, pc: 417.3 },
-  GOOGL: { name: "Alphabet Inc.", c: 178.9, d: 3.45, dp: 1.97, h: 179.5, l: 174.8, o: 175.4, pc: 175.45 },
-  NVDA: { name: "NVIDIA Corp.", c: 892.5, d: 15.3, dp: 1.74, h: 895.0, l: 876.2, o: 879.0, pc: 877.2 },
-  AMZN: { name: "Amazon.com Inc.", c: 186.4, d: -0.85, dp: -0.45, h: 188.5, l: 185.2, o: 187.5, pc: 187.25 },
-  META: { name: "Meta Platforms", c: 521.3, d: 7.8, dp: 1.52, h: 523.1, l: 513.4, o: 514.2, pc: 513.5 },
-  TSLA: { name: "Tesla Inc.", c: 248.5, d: -4.2, dp: -1.66, h: 254.0, l: 246.1, o: 253.8, pc: 252.7 },
-  JPM: { name: "JPMorgan Chase", c: 204.6, d: 1.05, dp: 0.52, h: 205.3, l: 202.8, o: 203.7, pc: 203.55 },
-  V: { name: "Visa Inc.", c: 278.9, d: -0.65, dp: -0.23, h: 280.1, l: 277.4, o: 279.5, pc: 279.55 },
-  BRKB: { name: "Berkshire Hathaway", c: 398.2, d: 2.15, dp: 0.54, h: 399.0, l: 396.1, o: 396.5, pc: 396.05 },
-};
-
+const DEFAULT_TICKERS = ["AAPL", "NVDA", "MSFT", "TSLA"];
 const STORAGE_KEY = "pholio_watchlist";
 const COL_TEMPLATE = "28px 1fr 110px 90px 104px 176px 96px 32px";
 
-function fetchQuote(ticker: string): Promise<WatchItem> {
-  const t = ticker.toUpperCase();
-  const q = MOCK_QUOTES[t];
-  if (q) return Promise.resolve({ ticker: t, ...q });
-  const pc = 50 + Math.random() * 500;
-  const d = (Math.random() - 0.48) * pc * 0.03;
-  const c = pc + d;
-  const dp = (d / pc) * 100;
-  return Promise.resolve({
-    ticker: t,
-    name: t,
-    c: +c.toFixed(2),
-    d: +d.toFixed(2),
-    dp: +dp.toFixed(2),
-    h: +(c + Math.random() * c * 0.014).toFixed(2),
-    l: +(c - Math.random() * c * 0.014).toFixed(2),
-    o: +(pc + (Math.random() - 0.5) * pc * 0.005).toFixed(2),
-    pc: +pc.toFixed(2),
-  });
+function readStoredTickers(): string[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return DEFAULT_TICKERS;
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed) || parsed.length === 0) return DEFAULT_TICKERS;
+    if (typeof parsed[0] === "object" && parsed[0] !== null && "ticker" in parsed[0]) {
+      return (parsed as { ticker: string }[]).map((i) => i.ticker);
+    }
+    return parsed as string[];
+  } catch {
+    return DEFAULT_TICKERS;
+  }
+}
+
+async function fetchQuotes(tickers: string[]): Promise<ApiData> {
+  const r = await fetch(`/api/watchlist/quotes?tickers=${tickers.join(",")}`);
+  const body = (await r.json()) as { data?: ApiData };
+  return body.data ?? {};
+}
+
+function makeUnavailable(ticker: string): WatchItem {
+  return { ticker, name: ticker, c: 0, d: null, dp: null, h: null, l: null, o: null, pc: null, unavailable: true };
 }
 
 function GripIcon() {
@@ -63,21 +57,10 @@ function GripIcon() {
 }
 
 export default function WatchlistPanel() {
-  const stored = useMemo<WatchItem[] | null>(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as WatchItem[]) : null;
-    } catch {
-      return null;
-    }
-  }, []);
-
-  const defaultItems: WatchItem[] = (["AAPL", "NVDA", "MSFT", "TSLA"] as const).flatMap((t) => {
-    const q = MOCK_QUOTES[t];
-    return q ? [{ ticker: t, ...q }] : [];
-  });
-
-  const [items, setItems] = useState<WatchItem[]>(stored ?? defaultItems);
+  const [items, setItems] = useState<WatchItem[]>([]);
+  // Start with DEFAULT_TICKERS so skeleton count is stable for SSR hydration.
+  // The actual stored tickers are read in the mount effect for the fetch.
+  const [skeletonTickers, setSkeletonTickers] = useState<string[]>(DEFAULT_TICKERS);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
@@ -85,12 +68,35 @@ export default function WatchlistPanel() {
 
   const dragRef = useRef<number | null>(null);
   const overRef = useRef<number | null>(null);
+  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    const tickers = readStoredTickers();
+
+    fetchQuotes(tickers)
+      .then((data) => {
+        setItems(
+          tickers.map((t) => {
+            const q = data[t];
+            return q ? { ...q } : makeUnavailable(t);
+          }),
+        );
+      })
+      .catch(() => {
+        setItems(tickers.map(makeUnavailable));
+      })
+      .finally(() => {
+        setSkeletonTickers([]);
+        hasLoadedRef.current = true;
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedRef.current) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items.map((i) => i.ticker)));
   }, [items]);
 
-  function addTicker(e: React.SyntheticEvent<HTMLFormElement>) {
+  async function addTicker(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     const t = input.trim().toUpperCase();
     if (!t) return;
@@ -100,11 +106,20 @@ export default function WatchlistPanel() {
     }
     setLoading(true);
     setErr("");
-    void fetchQuote(t).then((q) => {
-      setItems((prev) => [...prev, q]);
+    try {
+      const data = await fetchQuotes([t]);
+      const q = data[t];
+      if (q === undefined) {
+        setErr(`${t} not found`);
+        return;
+      }
+      setItems((prev) => [...prev, { ...q }]);
       setInput("");
+    } catch {
+      setErr("Failed to fetch quote");
+    } finally {
       setLoading(false);
-    });
+    }
   }
 
   function remove(ticker: string) {
@@ -137,6 +152,8 @@ export default function WatchlistPanel() {
     }
   }
 
+  const isInitialLoading = skeletonTickers.length > 0;
+
   return (
     <div style={{ marginBottom: 28 }}>
       <div className="wl-panel">
@@ -154,10 +171,10 @@ export default function WatchlistPanel() {
                 }}
                 placeholder="Ticker symbol…"
                 maxLength={10}
-                disabled={loading}
+                disabled={loading || isInitialLoading}
                 spellCheck={false}
               />
-              <button type="submit" className="wl-btn" disabled={loading || !input.trim()}>
+              <button type="submit" className="wl-btn" disabled={loading || isInitialLoading || !input.trim()}>
                 {loading ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
                 <span>{loading ? "Loading" : "Add"}</span>
               </button>
@@ -165,24 +182,107 @@ export default function WatchlistPanel() {
           </div>
         </div>
 
-        {items.length === 0 ? (
-          <div className="wl-empty">No symbols yet — add a ticker above.</div>
-        ) : (
+        {isInitialLoading ? (
           <div>
             <div className="wl-col-header" style={{ gridTemplateColumns: COL_TEMPLATE }}>
-              <span></span>
+              <span />
               <span style={{ textAlign: "left" }}>Symbol</span>
               <span>Price</span>
               <span>Change</span>
               <span>% Change</span>
               <span>Day Range</span>
               <span>Prev Close</span>
-              <span></span>
+              <span />
+            </div>
+            {skeletonTickers.map((t) => (
+              <div key={t} className="wl-row" style={{ gridTemplateColumns: COL_TEMPLATE, cursor: "default" }}>
+                <span className="wl-grip" />
+                <span className="wl-sym">
+                  <span className="wl-skeleton wl-skeleton-sym" />
+                </span>
+                <span className="wl-price">
+                  <span className="wl-skeleton wl-skeleton-num" />
+                </span>
+                <span className="wl-change">
+                  <span className="wl-skeleton wl-skeleton-num" />
+                </span>
+                <span className="wl-pct-pill">
+                  <span className="wl-skeleton wl-skeleton-pill" />
+                </span>
+                <span className="wl-range">
+                  <span className="wl-skeleton wl-skeleton-range" />
+                </span>
+                <span className="wl-prev-close">
+                  <span className="wl-skeleton wl-skeleton-num" />
+                </span>
+                <span />
+              </div>
+            ))}
+          </div>
+        ) : items.length === 0 ? (
+          <div className="wl-empty">No symbols yet — add a ticker above.</div>
+        ) : (
+          <div>
+            <div className="wl-col-header" style={{ gridTemplateColumns: COL_TEMPLATE }}>
+              <span />
+              <span style={{ textAlign: "left" }}>Symbol</span>
+              <span>Price</span>
+              <span>Change</span>
+              <span>% Change</span>
+              <span>Day Range</span>
+              <span>Prev Close</span>
+              <span />
             </div>
             {items.map((item, idx) => {
-              const gain = item.d >= 0;
+              if (item.unavailable) {
+                return (
+                  <div
+                    key={item.ticker}
+                    className={dragOverIdx === idx ? "wl-row wl-row-dragover" : "wl-row"}
+                    style={{ gridTemplateColumns: COL_TEMPLATE }}
+                    draggable
+                    onDragStart={() => {
+                      onDragStart(idx);
+                    }}
+                    onDragEnter={() => {
+                      onDragEnter(idx);
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                    }}
+                    onDragEnd={onDragEnd}
+                  >
+                    <span className="wl-grip">
+                      <GripIcon />
+                    </span>
+                    <span className="wl-sym">
+                      <span className="wl-ticker">{item.ticker}</span>
+                      <span className="wl-name wl-unavailable-label">unavailable</span>
+                    </span>
+                    <span className="wl-price">—</span>
+                    <span className="wl-change">—</span>
+                    <span className="wl-pct-pill">—</span>
+                    <span className="wl-range" />
+                    <span className="wl-prev-close">—</span>
+                    <button
+                      className="wl-remove"
+                      onClick={() => {
+                        remove(item.ticker);
+                      }}
+                      title="Remove"
+                    >
+                      <Trash2 size={13} strokeWidth={2} />
+                    </button>
+                  </div>
+                );
+              }
+
+              const gain = item.d !== null ? item.d >= 0 : null;
               const rangePct =
-                item.h > item.l ? Math.max(0, Math.min(100, ((item.c - item.l) / (item.h - item.l)) * 100)) : 50;
+                item.h !== null && item.l !== null && item.h > item.l
+                  ? Math.max(0, Math.min(100, ((item.c - item.l) / (item.h - item.l)) * 100))
+                  : 50;
+
               return (
                 <div
                   key={item.ticker}
@@ -211,26 +311,34 @@ export default function WatchlistPanel() {
 
                   <span className="wl-price">{item.c.toFixed(2)}</span>
 
-                  <span className={`wl-change ${gain ? "text-gain" : "text-loss"}`}>
-                    {gain ? "+" : ""}
-                    {item.d.toFixed(2)}
+                  <span className={`wl-change ${gain === true ? "text-gain" : gain === false ? "text-loss" : ""}`}>
+                    {item.d !== null ? `${gain === true ? "+" : ""}${item.d.toFixed(2)}` : "—"}
                   </span>
 
-                  <span className={`wl-pct-pill ${gain ? "gain" : "loss"}`}>
-                    {gain ? "▲" : "▼"} {Math.abs(item.dp).toFixed(2)}%
+                  <span className={`wl-pct-pill ${gain === true ? "gain" : gain === false ? "loss" : ""}`}>
+                    {item.dp !== null ? `${gain === true ? "▲" : "▼"} ${Math.abs(item.dp).toFixed(2)}%` : "—"}
                   </span>
 
                   <span className="wl-range">
-                    <span className="wl-range-nums">
-                      <span>{item.l.toFixed(2)}</span>
-                      <span>{item.h.toFixed(2)}</span>
-                    </span>
-                    <span className="wl-range-track">
-                      <span className="wl-range-dot" style={{ left: `${rangePct}%` }} />
-                    </span>
+                    {item.h !== null && item.l !== null ? (
+                      <>
+                        <span className="wl-range-nums">
+                          <span>{item.l.toFixed(2)}</span>
+                          <span>{item.h.toFixed(2)}</span>
+                        </span>
+                        <span className="wl-range-track">
+                          <span className="wl-range-dot" style={{ left: `${rangePct}%` }} />
+                        </span>
+                      </>
+                    ) : (
+                      <span className="wl-range-nums">
+                        <span>—</span>
+                        <span>—</span>
+                      </span>
+                    )}
                   </span>
 
-                  <span className="wl-prev-close">{item.pc.toFixed(2)}</span>
+                  <span className="wl-prev-close">{item.pc !== null ? item.pc.toFixed(2) : "—"}</span>
 
                   <button
                     className="wl-remove"

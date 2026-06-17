@@ -280,26 +280,26 @@ Steady-state 0–3 extra Finnhub calls per load for a typical user (portfolio/wa
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run typecheck`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Unit tests pass: `npm run test`
-- [x] 2.4 Integration tests pass: `npm run test:integration`
+- [x] 2.1 Type checking passes: `npm run typecheck` — b1415db
+- [x] 2.2 Linting passes: `npm run lint` — b1415db
+- [x] 2.3 Unit tests pass: `npm run test` — b1415db
+- [x] 2.4 Integration tests pass: `npm run test:integration` — b1415db
 
 #### Manual
 
-- [ ] 2.5 Authenticated `curl` returns live quotes; unauthenticated returns 401
-- [ ] 2.6 Bogus symbol omitted while valid tickers return
-- [ ] 2.7 Same-day repeated requests make no extra Finnhub calls
+- [x] 2.5 Authenticated `curl` returns live quotes; unauthenticated returns 401
+- [x] 2.6 Bogus symbol omitted while valid tickers return
+- [x] 2.7 Same-day repeated requests make no extra Finnhub calls
 
 ### Phase 3: WatchlistPanel Rewrite
 
 #### Automated
 
-- [ ] 3.1 Type checking passes: `npm run typecheck`
-- [ ] 3.2 Linting passes: `npm run lint`
-- [ ] 3.3 Unit tests pass: `npm run test`
-- [ ] 3.4 Build succeeds: `npm run build`
-- [ ] 3.5 No `MOCK_QUOTES` references remain: `! grep -rn "MOCK_QUOTES" src/`
+- [x] 3.1 Type checking passes: `npm run typecheck`
+- [x] 3.2 Linting passes: `npm run lint`
+- [x] 3.3 Unit tests pass: `npm run test`
+- [x] 3.4 Build succeeds: `npm run build`
+- [x] 3.5 No `MOCK_QUOTES` references remain: `! grep -rn "MOCK_QUOTES" src/`
 
 #### Manual
 
