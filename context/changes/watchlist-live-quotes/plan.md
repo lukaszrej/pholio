@@ -295,15 +295,15 @@ Steady-state 0–3 extra Finnhub calls per load for a typical user (portfolio/wa
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npm run typecheck`
-- [x] 3.2 Linting passes: `npm run lint`
-- [x] 3.3 Unit tests pass: `npm run test`
-- [x] 3.4 Build succeeds: `npm run build`
-- [x] 3.5 No `MOCK_QUOTES` references remain: `! grep -rn "MOCK_QUOTES" src/`
+- [x] 3.1 Type checking passes: `npm run typecheck` — 938ba2a
+- [x] 3.2 Linting passes: `npm run lint` — 938ba2a
+- [x] 3.3 Unit tests pass: `npm run test` — 938ba2a
+- [x] 3.4 Build succeeds: `npm run build` — 938ba2a
+- [x] 3.5 No `MOCK_QUOTES` references remain: `! grep -rn "MOCK_QUOTES" src/` — 938ba2a
 
 #### Manual
 
-- [ ] 3.6 "All" tab shows skeleton then live quotes for defaults
-- [ ] 3.7 Adding a real ticker appends with live data; bogus ticker errors
-- [ ] 3.8 Reload preserves tickers/order but re-fetches fresh quotes
-- [ ] 3.9 Day-range bar, % pill colors, prev-close render correctly
+- [x] 3.6 "All" tab shows skeleton then live quotes for defaults — 938ba2a
+- [x] 3.7 Adding a real ticker appends with live data; bogus ticker errors — 938ba2a
+- [x] 3.8 Reload preserves tickers/order but re-fetches fresh quotes — 938ba2a
+- [x] 3.9 Day-range bar, % pill colors, prev-close render correctly — 938ba2a
