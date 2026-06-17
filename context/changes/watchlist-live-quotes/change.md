@@ -1,9 +1,9 @@
 ---
 id: watchlist-live-quotes
 title: "WatchlistPanel: replace mocked quotes with live Finnhub data"
-status: implemented
+status: impl_reviewed
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-17 (phase 1 reviewed)
 ---
 
 ## Summary

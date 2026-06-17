@@ -11,10 +11,12 @@ export async function refreshSectorsForTickers(
   const result: Record<string, { sector: string | null; name: string | null }> = {};
   if (tickers.length === 0) return result;
 
-  const { data: cachedRows } = await supabase
+  const { data: cachedRows, error: cacheErr } = await supabase
     .from("sectors")
     .select("ticker, sector, name, fetched_at")
     .in("ticker", tickers);
+  // eslint-disable-next-line no-console
+  if (cacheErr) console.error("[sectors] cache read failed", cacheErr.message);
 
   const cacheMap = new Map<string, { sector: string; name: string | null; fetched_at: string }>();
   for (const row of (cachedRows ?? []) as {
