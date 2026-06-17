@@ -287,9 +287,9 @@ Steady-state 0–3 extra Finnhub calls per load for a typical user (portfolio/wa
 
 #### Manual
 
-- [x] 2.5 Authenticated `curl` returns live quotes; unauthenticated returns 401
-- [x] 2.6 Bogus symbol omitted while valid tickers return
-- [x] 2.7 Same-day repeated requests make no extra Finnhub calls
+- [x] 2.5 Authenticated `curl` returns live quotes; unauthenticated returns 401 — b1415db
+- [x] 2.6 Bogus symbol omitted while valid tickers return — b1415db
+- [x] 2.7 Same-day repeated requests make no extra Finnhub calls — b1415db
 
 ### Phase 3: WatchlistPanel Rewrite
 
