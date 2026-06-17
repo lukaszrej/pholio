@@ -427,5 +427,5 @@ clean their own rows on the global table using unique per-run tickers.
 
 #### Manual
 
-- [x] 3.3 §6.3 reads as a usable recipe for the next external-HTTP test author
-- [x] 3.4 §4 / Risk #5 wording no longer contradicts the implemented harness
+- [x] 3.3 §6.3 reads as a usable recipe for the next external-HTTP test author — ba0e41b
+- [x] 3.4 §4 / Risk #5 wording no longer contradicts the implemented harness — ba0e41b
