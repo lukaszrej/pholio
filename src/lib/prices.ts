@@ -12,7 +12,10 @@ export async function refreshPricesForTickers(
 
   const today = new Date().toISOString().split("T")[0];
 
-  const { data: cachedRows, error: cacheErr } = await supabase.from("prices").select("*").in("ticker", tickers);
+  const { data: cachedRows, error: cacheErr } = await supabase
+    .from("prices")
+    .select("ticker, price, fetched_at, change_pct")
+    .in("ticker", tickers);
   // eslint-disable-next-line no-console
   if (cacheErr) console.error("[prices] cache read failed", cacheErr.message);
   const cacheMap = new Map<string, { price: number; fetched_at: string; change_pct: number | null }>();

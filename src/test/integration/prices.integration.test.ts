@@ -82,7 +82,7 @@ describe("Risk #5 — Finnhub outage fallback", () => {
     expect(result[ticker].price).toBe(seededPrice);
 
     // Supabase row must be unchanged — no upsert occurred
-    const singleResult = await admin.from("prices").select("price, fetched_at").eq("ticker", ticker).single();
+    const singleResult = await admin.from("prices").select("price, fetched_at").eq("ticker", ticker).maybeSingle();
     const rowData = (singleResult as { data: PricesRow | null }).data;
     expect(rowData).not.toBeNull();
     if (rowData) {
@@ -95,6 +95,31 @@ describe("Risk #5 — Finnhub outage fallback", () => {
     const pos = positions.find((p) => p.ticker === ticker);
     expect(pos?.isFresh).toBe(false);
     expect(pos?.currentPrice).toBe(seededPrice);
+  });
+
+  it("(b) no-cache fallback — ticker absent, no row written, computePositions currentPrice:null", async () => {
+    fetchSpy = vi.spyOn(global, "fetch").mockImplementation((url, opts) => {
+      if (toUrlString(url).includes("finnhub.io")) {
+        return Promise.reject(new Error("Network error"));
+      }
+      return realFetch(url, opts);
+    });
+
+    const result = await refreshPricesForTickers([ticker], admin);
+
+    expect(result[ticker]).toBeUndefined();
+
+    // Confirm no row was written
+    const maybeResult = await admin.from("prices").select("price").eq("ticker", ticker).maybeSingle();
+    const rowData = (maybeResult as { data: PricesRow | null }).data;
+    expect(rowData).toBeNull();
+
+    // Data-layer signal through computePositions
+    const positions = computePositions([makeTransaction(ticker)], result);
+    const pos = positions.find((p) => p.ticker === ticker);
+    expect(pos?.currentPrice).toBeNull();
+    expect(pos?.isFresh).toBe(false);
+    expect(pos?.priceDate).toBeNull();
   });
 
   it("(c) fresh fetch — change_pct upserted and propagated through computePositions", async () => {
@@ -131,30 +156,5 @@ describe("Risk #5 — Finnhub outage fallback", () => {
     const positions = computePositions([makeTransaction(ticker)], result);
     const pos = positions.find((p) => p.ticker === ticker);
     expect(pos?.changePct).toBe(mockDp);
-  });
-
-  it("(b) no-cache fallback — ticker absent, no row written, computePositions currentPrice:null", async () => {
-    fetchSpy = vi.spyOn(global, "fetch").mockImplementation((url, opts) => {
-      if (toUrlString(url).includes("finnhub.io")) {
-        return Promise.reject(new Error("Network error"));
-      }
-      return realFetch(url, opts);
-    });
-
-    const result = await refreshPricesForTickers([ticker], admin);
-
-    expect(result[ticker]).toBeUndefined();
-
-    // Confirm no row was written
-    const maybeResult = await admin.from("prices").select("price").eq("ticker", ticker).maybeSingle();
-    const rowData = (maybeResult as { data: PricesRow | null }).data;
-    expect(rowData).toBeNull();
-
-    // Data-layer signal through computePositions
-    const positions = computePositions([makeTransaction(ticker)], result);
-    const pos = positions.find((p) => p.ticker === ticker);
-    expect(pos?.currentPrice).toBeNull();
-    expect(pos?.isFresh).toBe(false);
-    expect(pos?.priceDate).toBeNull();
   });
 });

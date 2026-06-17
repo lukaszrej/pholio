@@ -264,6 +264,7 @@ full data-layer signal, not just the raw price dict:
 
 - **Stale-cache fallback**: `result[ticker].is_fresh === false` + `result[ticker].price === seededPrice` + Supabase row unchanged (re-SELECT and compare). Then `computePositions(…).isFresh === false`, `currentPrice === seededPrice`.
 - **No-cache fallback**: `result[ticker] === undefined` + no row written (re-SELECT returns null). Then `computePositions(…).currentPrice === null`, `isFresh === false`.
+- **Happy-path / change_pct propagation** (case c in `prices.integration.test.ts`): mock Finnhub to return `{ c: price, dp: changePct }`, assert the upserted row has `change_pct` set, and that `computePositions(…).changePct` matches. Added during Phase 3 implementation to cover the `change_pct` field; was de-scoped from the original plan but retained for coverage value.
 
 #### Run command
 
