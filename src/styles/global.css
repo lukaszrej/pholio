@@ -335,7 +335,6 @@
   display: grid;
   align-items: center;
   padding: 8px 14px 8px 12px;
-  background: var(--tl-panel-2);
   border-bottom: 1px solid var(--tl-line);
   font-size: 9.5px;
   letter-spacing: 0.1em;

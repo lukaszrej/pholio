@@ -263,17 +263,17 @@ export default function CardSection({ portfolio, positions, sectors, onAddTransa
           borderBottom: "1px solid #DDE3EE",
         }}
       >
-        <span
-          style={{
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: ".06em",
-            textTransform: "uppercase",
-            color: "#7A6E60",
-          }}
-        >
-          {portfolio.name}{" "}
-          <span style={{ fontFamily: "var(--font-numeric)", fontWeight: 400, color: "#A89E90" }}>
+        <span style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+          <span
+            style={{
+              fontSize: 18,
+              fontWeight: 600,
+              color: "#1A1A2E",
+            }}
+          >
+            {portfolio.name}
+          </span>
+          <span style={{ fontFamily: "var(--font-numeric)", fontSize: 11, fontWeight: 400, color: "#A89E90" }}>
             {positions.length} position{positions.length !== 1 ? "s" : ""}
           </span>
         </span>

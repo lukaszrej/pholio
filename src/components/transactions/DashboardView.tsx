@@ -433,7 +433,7 @@ export default function DashboardView({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              padding: "18px 0 0",
+              padding: "18px 0 18px",
               background: "#F8FAFB",
             }}
           >
