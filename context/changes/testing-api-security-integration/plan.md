@@ -95,6 +95,11 @@ filled in.
   with permission-denied errors. The migration is additive only — no RLS or
   schema changes. This was not foreseen in the plan but is a necessary
   companion to the test infrastructure.)_
+  _(Discovered prerequisite: `src/test/stubs/astro-middleware.ts` was added
+  during implementation. `src/middleware.ts` imports `defineMiddleware` from
+  `astro:middleware`; without a virtual-module stub, Vitest cannot import the
+  middleware in Node mode. The stub exports `defineMiddleware` as a pass-through
+  and is aliased in `vitest.integration.config.ts`. Additive and test-only.)_
 - **Not adding an expired/revoked-JWT case** for Risk #3 (research Open-Q4
   option a): no-cookie + garbage token only.
 

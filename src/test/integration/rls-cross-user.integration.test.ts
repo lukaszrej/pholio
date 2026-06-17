@@ -54,5 +54,12 @@ describe("Risk #2 — cross-user read scope (RLS)", () => {
       expect(error).toBeNull();
       expect(data).toHaveLength(0);
     });
+
+    it("User A cannot INSERT a portfolio owned by User B — load-bearing", async () => {
+      const { error } = await fixture.userA.client
+        .from("portfolios")
+        .insert({ name: "Spoofed", user_id: fixture.userB.userId });
+      expect(error).not.toBeNull();
+    });
   });
 });

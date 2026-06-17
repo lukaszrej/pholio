@@ -132,10 +132,11 @@ export async function buildFixture(): Promise<Fixture> {
       admin.auth.admin.deleteUser(userAId),
       admin.auth.admin.deleteUser(userBId),
     ]);
-    for (const r of results) {
-      if (r.status === "rejected") {
-        console.error("[teardown] failed to delete test user:", r.reason);
-      }
+    const failures = results.filter((r) => r.status === "rejected");
+    if (failures.length > 0) {
+      throw new Error(
+        `[teardown] ${failures.length} test user(s) not deleted — check local Supabase for orphaned integration-user-* accounts`,
+      );
     }
   }
 
