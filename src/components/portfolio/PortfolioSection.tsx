@@ -295,8 +295,8 @@ export default function PortfolioSection({
                   {(
                     [
                       "totalShares",
-                      "avgCost",
                       "currentPrice",
+                      "avgCost",
                       "costBasis",
                       "positionValue",
                       "roiAbs",
@@ -324,10 +324,10 @@ export default function PortfolioSection({
                     >
                       {k === "totalShares"
                         ? "Shares"
-                        : k === "avgCost"
-                          ? "Avg"
-                          : k === "currentPrice"
-                            ? "Last"
+                        : k === "currentPrice"
+                          ? "Last"
+                          : k === "avgCost"
+                            ? "Avg"
                             : k === "costBasis"
                               ? "Cost basis"
                               : k === "positionValue"
@@ -388,9 +388,6 @@ export default function PortfolioSection({
                       <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
                         {formatShares(pos.totalShares)}
                       </td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
-                        {formatNum(pos.avgCost)}
-                      </td>
                       <td
                         className="font-numeric"
                         style={{
@@ -401,6 +398,14 @@ export default function PortfolioSection({
                         }}
                       >
                         {formatCurrentPrice(pos)}
+                        {pos.changePct !== null && (
+                          <span style={{ marginLeft: 4, color: pos.changePct >= 0 ? "#0a9d6e" : "#c41230" }}>
+                            {pos.changePct >= 0 ? "▲" : "▼"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {formatNum(pos.avgCost)}
                       </td>
                       <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
                         {formatNum(pos.costBasis)}
@@ -492,8 +497,8 @@ export default function PortfolioSection({
                   {(
                     [
                       "totalShares",
-                      "avgCost",
                       "currentPrice",
+                      "avgCost",
                       "costBasis",
                       "positionValue",
                       "roiAbs",
@@ -520,10 +525,10 @@ export default function PortfolioSection({
                     >
                       {k === "totalShares"
                         ? "Shares"
-                        : k === "avgCost"
-                          ? "Avg"
-                          : k === "currentPrice"
-                            ? "Last"
+                        : k === "currentPrice"
+                          ? "Last"
+                          : k === "avgCost"
+                            ? "Avg"
                             : k === "costBasis"
                               ? "Cost basis"
                               : k === "positionValue"
@@ -574,9 +579,6 @@ export default function PortfolioSection({
                       <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
                         {formatShares(pos.totalShares)}
                       </td>
-                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
-                        {formatNum(pos.avgCost)}
-                      </td>
                       <td
                         className="font-numeric"
                         style={{
@@ -587,6 +589,14 @@ export default function PortfolioSection({
                         }}
                       >
                         {formatCurrentPrice(pos)}
+                        {pos.changePct !== null && (
+                          <span style={{ marginLeft: 8, color: pos.changePct >= 0 ? "#0a9d6e" : "#c41230" }}>
+                            {pos.changePct >= 0 ? "▲" : "▼"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
+                        {formatNum(pos.avgCost)}
                       </td>
                       <td className="font-numeric" style={{ padding: "10px 14px", textAlign: "right", fontSize: 12.5 }}>
                         {formatNum(pos.costBasis)}
