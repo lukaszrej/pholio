@@ -38,12 +38,13 @@ function readStoredTickers(): string[] {
 
 async function fetchQuotes(tickers: string[]): Promise<ApiData> {
   const r = await fetch(`/api/watchlist/quotes?tickers=${tickers.join(",")}`);
+  if (!r.ok) throw new Error(String(r.status));
   const body = (await r.json()) as { data?: ApiData };
   return body.data ?? {};
 }
 
 function makeUnavailable(ticker: string): WatchItem {
-  return { ticker, name: ticker, c: 0, d: null, dp: null, h: null, l: null, o: null, pc: null, unavailable: true };
+  return { ticker, name: ticker, c: NaN, d: null, dp: null, h: null, l: null, o: null, pc: null, unavailable: true };
 }
 
 function GripIcon() {
@@ -277,7 +278,7 @@ export default function WatchlistPanel() {
                 );
               }
 
-              const gain = item.d !== null ? item.d >= 0 : null;
+              const gain = item.d !== null ? (item.d > 0 ? true : item.d < 0 ? false : null) : null;
               const rangePct =
                 item.h !== null && item.l !== null && item.h > item.l
                   ? Math.max(0, Math.min(100, ((item.c - item.l) / (item.h - item.l)) * 100))

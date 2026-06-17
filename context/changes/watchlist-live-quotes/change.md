@@ -3,7 +3,7 @@ id: watchlist-live-quotes
 title: "WatchlistPanel: replace mocked quotes with live Finnhub data"
 status: impl_reviewed
 created: 2026-06-17
-updated: 2026-06-17 (phase 2 reviewed)
+updated: 2026-06-17 (phase 3 reviewed)
 ---
 
 ## Summary
