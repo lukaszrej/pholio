@@ -265,25 +265,25 @@ Steady-state 0–3 extra Finnhub calls per load for a typical user (portfolio/wa
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Unit tests pass: `npm run test`
-- [x] 1.4 Build succeeds: `npm run build`
+- [x] 1.1 Type checking passes: `npm run typecheck` — 425f308
+- [x] 1.2 Linting passes: `npm run lint` — 425f308
+- [x] 1.3 Unit tests pass: `npm run test` — 425f308
+- [x] 1.4 Build succeeds: `npm run build` — 425f308
 
 #### Manual
 
-- [x] 1.5 Migration applies cleanly; new columns present on `prices` and `sectors`
-- [x] 1.6 Dashboard sector-allocation chart renders identically (no regression)
-- [x] 1.7 Portfolio ticker row shows populated OHLC + sector `name` after a load
+- [x] 1.5 Migration applies cleanly; new columns present on `prices` and `sectors` — 425f308
+- [x] 1.6 Dashboard sector-allocation chart renders identically (no regression) — 425f308
+- [x] 1.7 Portfolio ticker row shows populated OHLC + sector `name` after a load — 425f308
 
 ### Phase 2: Watchlist Quotes API Endpoint
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run typecheck`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Unit tests pass: `npm run test`
-- [ ] 2.4 Integration tests pass: `npm run test:integration`
+- [x] 2.1 Type checking passes: `npm run typecheck`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Unit tests pass: `npm run test`
+- [x] 2.4 Integration tests pass: `npm run test:integration`
 
 #### Manual
 
