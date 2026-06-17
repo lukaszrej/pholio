@@ -89,6 +89,12 @@ filled in.
   layer; handler-level 404 is left out by design.
 - **Not changing any production code** — `src/`, `supabase/migrations/` are
   untouched except the `astro:env/server` stub additions used by tests.
+  _(Discovered prerequisite: `supabase/migrations/20260615000000_grant_table_permissions.sql`
+  was added during implementation. Supabase CLI 2.x does not auto-grant table
+  permissions in local dev; without explicit GRANTs the integration tests fail
+  with permission-denied errors. The migration is additive only — no RLS or
+  schema changes. This was not foreseen in the plan but is a necessary
+  companion to the test infrastructure.)_
 - **Not adding an expired/revoked-JWT case** for Risk #3 (research Open-Q4
   option a): no-cookie + garbage token only.
 

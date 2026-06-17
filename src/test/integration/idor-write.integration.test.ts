@@ -59,6 +59,8 @@ describe("Risk #4 — IDOR on transaction writes", () => {
     expect(tx?.ticker).toBe(seed.ticker);
     expect(tx?.purchase_price).toBe(seed.purchase_price);
     expect(tx?.currency).toBe(seed.currency);
+    expect(tx?.purchase_date).toBe(seed.purchase_date);
+    expect(tx?.shares).toBe(seed.shares);
   });
 
   it("User A UPDATE on User B portfolio affects 0 rows; oracle confirms name unchanged", async () => {

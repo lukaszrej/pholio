@@ -128,7 +128,15 @@ export async function buildFixture(): Promise<Fixture> {
 
   async function teardown(): Promise<void> {
     // Deleting a user cascades to their portfolios and transactions (ON DELETE CASCADE)
-    await Promise.allSettled([admin.auth.admin.deleteUser(userAId), admin.auth.admin.deleteUser(userBId)]);
+    const results = await Promise.allSettled([
+      admin.auth.admin.deleteUser(userAId),
+      admin.auth.admin.deleteUser(userBId),
+    ]);
+    for (const r of results) {
+      if (r.status === "rejected") {
+        console.error("[teardown] failed to delete test user:", r.reason);
+      }
+    }
   }
 
   return {
