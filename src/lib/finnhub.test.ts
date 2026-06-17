@@ -14,12 +14,15 @@ vi.mock("astro:env/server", () => ({
 
 describe("fetchQuote", () => {
   const mockFetch = vi.fn();
+  let originalFetch: typeof global.fetch;
 
   beforeEach(() => {
+    originalFetch = global.fetch;
     global.fetch = mockFetch;
   });
 
   afterEach(() => {
+    global.fetch = originalFetch;
     mockFetch.mockReset();
     mockApiKey = "test-key";
     vi.useRealTimers();
@@ -69,7 +72,7 @@ describe("fetchQuote", () => {
     expect(result).toEqual({ price: 123.45, changePct: null });
   });
 
-  it("c === 0 — returns null (named guard at finnhub.ts:53)", async () => {
+  it("c === 0 — returns null (Finnhub no-data guard)", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ c: 0 }),

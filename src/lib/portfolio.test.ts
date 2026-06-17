@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import type { Transaction } from "@/types/transaction";
 import { computePositions, computePortfolioSummary } from "@/lib/portfolio";
 import type { PriceData, PortfolioPosition } from "@/lib/portfolio";
@@ -8,6 +8,10 @@ import type { PriceData, PortfolioPosition } from "@/lib/portfolio";
 // ---------------------------------------------------------------------------
 
 let _seq = 0;
+beforeEach(() => {
+  _seq = 0;
+});
+
 const txn = (overrides: Partial<Transaction>): Transaction => ({
   id: `t${++_seq}`,
   user_id: "u1",
