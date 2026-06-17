@@ -591,8 +591,8 @@ export default function DashboardView({
             <>
               {activeTab === "all" && <WatchlistPanel />}
 
-              {/* Summary strip */}
-              <PortfolioSummaryCard summary={activeSummary} />
+              {/* Summary strip — only on individual portfolio tabs */}
+              {activeTab !== "all" && <PortfolioSummaryCard summary={activeSummary} />}
 
               {activeTab === "all"
                 ? /* All portfolios — ticker card grid per portfolio */
