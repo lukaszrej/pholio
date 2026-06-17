@@ -499,22 +499,22 @@ it is never imported by a non-test module.
 
 #### Automated
 
-- [x] 3.1 Integration suite passes: `npm run test:integration`
-- [x] 3.2 Type checking passes: `npm run typecheck`
-- [x] 3.3 Linting passes: `npm run lint`
+- [x] 3.1 Integration suite passes: `npm run test:integration` — 7ce1735
+- [x] 3.2 Type checking passes: `npm run typecheck` — 7ce1735
+- [x] 3.3 Linting passes: `npm run lint` — 7ce1735
 
 #### Manual
 
-- [x] 3.4 Making `/api/` public breaks cases (a)/(b); reverted
+- [x] 3.4 Making `/api/` public breaks cases (a)/(b); reverted — 7ce1735
 
 ### Phase 4: Cookbook + Run-Command Docs
 
 #### Automated
 
-- [x] 4.1 Markdown lint/format passes if configured: `npm run lint`
-- [x] 4.2 §6.2 and §6.4 no longer contain "TBD"
+- [x] 4.1 Markdown lint/format passes if configured: `npm run lint` — 7ce1735
+- [x] 4.2 §6.2 and §6.4 no longer contain "TBD" — 7ce1735
 
 #### Manual
 
-- [x] 4.3 §6.2/§6.4 are followable by an unfamiliar reader
-- [x] 4.4 §3 Phase 2 status reads `complete`
+- [x] 4.3 §6.2/§6.4 are followable by an unfamiliar reader — 7ce1735
+- [x] 4.4 §3 Phase 2 status reads `complete` — 7ce1735
