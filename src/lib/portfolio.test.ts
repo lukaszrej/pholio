@@ -31,6 +31,11 @@ const priceData = (p: number, changePct: number | null = null): PriceData => ({
   fetched_at: "2026-06-14T00:00:00Z",
   is_fresh: true,
   changePct,
+  changeAbs: null,
+  high: null,
+  low: null,
+  open: null,
+  prevClose: null,
 });
 
 const position = (overrides: Partial<PortfolioPosition>): PortfolioPosition => ({

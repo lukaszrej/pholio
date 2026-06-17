@@ -5,6 +5,11 @@ export interface PriceData {
   fetched_at: string;
   is_fresh: boolean;
   changePct: number | null;
+  changeAbs: number | null;
+  high: number | null;
+  low: number | null;
+  open: number | null;
+  prevClose: number | null;
 }
 
 export interface PortfolioPosition {

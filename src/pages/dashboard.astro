@@ -2,10 +2,9 @@
 import Layout from "@/layouts/Layout.astro";
 import DashboardView from "@/components/transactions/DashboardView";
 import { createClient } from "@/lib/supabase";
-import { fetchSector } from "@/lib/finnhub";
 import { refreshPricesForTickers } from "@/lib/prices";
+import { refreshSectorsForTickers } from "@/lib/sectors";
 import type { PriceData } from "@/lib/portfolio";
-import pLimit from "p-limit";
 import type { Transaction } from "@/types/transaction";
 import type { Portfolio } from "@/types/portfolio";
 const { user } = Astro.locals;
@@ -23,46 +22,17 @@ const { data: portfoliosData, error: portfoliosError } = supabase
   ? await supabase.from("portfolios").select("*").order("created_at", { ascending: true })
   : { data: [], error: null };
 if (portfoliosError) {
+  // eslint-disable-next-line no-console
   console.error("[dashboard] failed to load portfolios", portfoliosError.message);
 }
 
 const uniqueTickers = [...new Set(transactions.map((t) => t.ticker.toUpperCase()))];
 const prices: Record<string, PriceData> = supabase ? await refreshPricesForTickers(uniqueTickers, supabase) : {};
 
+const sectorProfiles = supabase ? await refreshSectorsForTickers(uniqueTickers, supabase) : {};
 const sectors: Record<string, string> = {};
-const SECTOR_TTL_MS = 7 * 24 * 60 * 60 * 1000;
-
-if (supabase && uniqueTickers.length > 0) {
-  const sb = supabase;
-  const { data: cachedSectorRows } = await sb.from("sectors").select("*").in("ticker", uniqueTickers);
-  const sectorCacheMap = new Map<string, { sector: string; fetched_at: string }>();
-  for (const row of (cachedSectorRows ?? []) as { ticker: string; sector: string; fetched_at: string }[]) {
-    sectorCacheMap.set(row.ticker, { sector: row.sector, fetched_at: row.fetched_at });
-  }
-
-  const sectorLimit = pLimit(10);
-  await Promise.allSettled(
-    uniqueTickers.map((ticker) =>
-      sectorLimit(async () => {
-        const cached = sectorCacheMap.get(ticker);
-        if (cached && Date.now() - new Date(cached.fetched_at).getTime() < SECTOR_TTL_MS) {
-          sectors[ticker] = cached.sector;
-          return;
-        }
-
-        const sector = await fetchSector(ticker);
-        if (sector !== null) {
-          const fetched_at = new Date().toISOString();
-          const { error: upsertErr } = await sb.from("sectors").upsert({ ticker, sector, fetched_at });
-          // eslint-disable-next-line no-console
-          if (upsertErr) console.error("[sectors] upsert failed", ticker, upsertErr.message);
-          sectors[ticker] = sector;
-        } else if (cached) {
-          sectors[ticker] = cached.sector;
-        }
-      }),
-    ),
-  );
+for (const [ticker, profile] of Object.entries(sectorProfiles)) {
+  sectors[ticker] = profile.sector ?? "Other";
 }
 ---
 
