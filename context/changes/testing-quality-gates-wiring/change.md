@@ -1,9 +1,9 @@
 ---
 change_id: testing-quality-gates-wiring
 title: Wire CI quality gates for all test suites
-status: implemented
+status: impl_reviewed
 created: 2026-06-15
-updated: 2026-06-15
+updated: 2026-06-17
 archived_at: null
 ---
 

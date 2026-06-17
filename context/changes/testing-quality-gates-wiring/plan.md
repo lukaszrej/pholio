@@ -76,6 +76,13 @@ Revert → CI passes, deploy fires after CI success.
 - **Not** introducing a hosted/remote Supabase test project — CI stands up Supabase
   in-runner per the decision.
 - **Not** writing new application features or migrations.
+  _(Discovered prerequisite: `supabase/migrations/20260615000000_grant_table_permissions.sql`
+  was modified during implementation to add explicit `service_role` table-level GRANTs.
+  Without these, `supabase start` in CI allows service-role client operations to be blocked
+  by default Postgres permission checks even though RLS is configured. The additions are
+  non-destructive. Same root cause as the testing-api-security-integration change — the
+  grants migration consistently needs updating when a new Supabase integration test context
+  is introduced.)_
 - **Not** adding caching/matrix/parallelism optimizations beyond the two-job split.
 - **Not** authoring multi-environment (staging) pipelines.
 

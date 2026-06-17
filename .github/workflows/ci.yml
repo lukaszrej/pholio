@@ -33,10 +33,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@ab058987d8d6c725971f6cf9d0b5c98467e30bd1  # v1.7.1
         with:
           version: latest
       - run: supabase start
+        timeout-minutes: 10
       - name: Write .env.test from Supabase status
         run: |
           SB_ENV=$(supabase status -o env)
@@ -46,6 +47,10 @@ jobs:
           SUPABASE_URL_VAL=$(echo "$SB_ENV" | grep -E '^(export )?API_URL=' | sed 's/.*API_URL=//' | tr -d '"'"'" )
           SUPABASE_KEY_VAL=$(echo "$SB_ENV" | grep -E '^(export )?ANON_KEY=' | sed 's/.*ANON_KEY=//' | tr -d '"'"'")
           SERVICE_ROLE_VAL=$(echo "$SB_ENV" | grep -E '^(export )?SERVICE_ROLE_KEY=' | sed 's/.*SERVICE_ROLE_KEY=//' | tr -d '"'"'")
+          if [ -z "$SUPABASE_URL_VAL" ] || [ -z "$SERVICE_ROLE_VAL" ]; then
+            echo "ERROR: supabase status did not emit expected keys (API_URL or SERVICE_ROLE_KEY missing)"
+            exit 1
+          fi
           {
             echo "SUPABASE_URL=${SUPABASE_URL_VAL}"
             echo "SUPABASE_KEY=${SUPABASE_KEY_VAL}"

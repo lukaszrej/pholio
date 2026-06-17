@@ -62,3 +62,12 @@ If you connect a Cloudflare Worker to a GitHub repo via the Cloudflare dashboard
 - **Problem**: husky was listed in devDependencies and `.husky/` hook files existed, but `git config core.hooksPath` was never set — git silently skipped all hooks. Prettier and TypeScript-ESLint errors sailed through local commits undetected and broke the remote CI run.
 - **Rule**: After adding husky as a devDependency, always add `"prepare": "husky"` to `package.json` scripts AND verify `git config core.hooksPath` resolves to `.husky` before the first commit. Pair the pre-commit lint-staged hook with a pre-push full-lint hook as a second line of defence.
 - **Applies to**: all
+
+---
+
+## The `prices` table allows any authenticated user to INSERT/UPDATE prices
+
+- **Context**: `supabase/migrations/20260609000000_create_prices.sql` — RLS policies on `prices` table
+- **Problem**: The `prices` RLS policies deliberately allow any authenticated user to INSERT and UPDATE prices ("any authenticated user can read and upsert prices"). In practice, price writes flow through server-side code via the service-role key, but a regular authenticated user could write arbitrary price rows directly — affecting portfolio valuations across all users.
+- **Rule**: [TODO]
+- **Applies to**: [TODO]
