@@ -1,10 +1,10 @@
 ---
 change_id: testing-external-dependency-resilience
 title: External dependency resilience tests (Phase 3)
-status: impl_reviewed
+status: archived
 created: 2026-06-15
 updated: 2026-06-17
-archived_at: null
+archived_at: 2026-06-17T16:51:21Z
 ---
 
 ## Notes
