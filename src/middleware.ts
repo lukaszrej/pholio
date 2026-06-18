@@ -45,7 +45,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // "/" renders the landing page for visitors; authenticated users redirect to /dashboard.
-  if (context.url.pathname === "/") {
+  if (/^\/+$/.test(context.url.pathname)) {
     if (context.locals.user) {
       return context.redirect("/dashboard");
     }

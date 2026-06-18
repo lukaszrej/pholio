@@ -1,7 +1,7 @@
 ---
 id: landing-page
 title: Pholio Landing Page
-status: implementing
+status: impl_reviewed
 created: 2026-06-18
 updated: 2026-06-18
 ---
