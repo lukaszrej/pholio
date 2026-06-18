@@ -65,6 +65,15 @@ If you connect a Cloudflare Worker to a GitHub repo via the Cloudflare dashboard
 
 ---
 
+## Every secret referenced in a deploy workflow must exist in GitHub Secrets — or be removed
+
+- **Context**: `.github/workflows/deploy.yml` — any `secrets:` block in the wrangler-action or `env:` block referencing `${{ secrets.* }}`
+- **Problem**: `FINNHUB_API_KEY` was added to the deploy workflow during a CI/deploy fix pass, but the corresponding GitHub repository secret was never set. The wrangler-action treats an empty env var as a fatal error when uploading secrets to Cloudflare, so the entire deploy job failed. The feature that used the key (watchlist-live-quotes) had already been archived, making the reference dead but still breaking.
+- **Rule**: Before adding any `${{ secrets.FOO }}` reference to a workflow file, verify the secret exists in **Settings → Secrets and variables → Actions** for the repo. Conversely, when archiving a feature that owns an API key, remove every reference to that key from all workflow files in the same PR — not as a follow-up. A missing secret in a deploy workflow is a silent blocker that only surfaces on the next push to main.
+- **Applies to**: 10x-implement, 10x-impl-review, 10x-archive — any task that touches `.github/workflows/` or archives a feature with external API credentials
+
+---
+
 ## The `prices` table allows any authenticated user to INSERT/UPDATE prices
 
 - **Context**: `supabase/migrations/20260609000000_create_prices.sql` — RLS policies on `prices` table
