@@ -203,30 +203,30 @@ None — additive route. `signout.ts` already targets `/` and now resolves to a 
 
 #### Automated
 
-- [x] 1.1 Build succeeds: `npm run build`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Type checking passes: `npm run typecheck`
+- [x] 1.1 Build succeeds: `npm run build` — 2fd0280
+- [x] 1.2 Linting passes: `npm run lint` — 2fd0280
+- [x] 1.3 Type checking passes: `npm run typecheck` — 2fd0280
 
 #### Manual
 
-- [x] 1.4 `/` logged in still redirects to `/dashboard`
-- [x] 1.5 `/` logged out no longer redirects (404 expected pre-Phase 2)
-- [x] 1.6 Protected/auth routes unchanged
+- [x] 1.4 `/` logged in still redirects to `/dashboard` — 2fd0280
+- [x] 1.5 `/` logged out no longer redirects (404 expected pre-Phase 2) — 2fd0280
+- [x] 1.6 Protected/auth routes unchanged — 2fd0280
 
 ### Phase 2: Landing Page
 
 #### Automated
 
-- [ ] 2.1 Build succeeds: `npm run build`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Type checking passes: `npm run typecheck`
+- [x] 2.1 Build succeeds: `npm run build`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Type checking passes: `npm run typecheck`
 
 #### Manual
 
-- [ ] 2.4 `/` logged out renders all 6 sections with correct palette/fonts
-- [ ] 2.5 Ticker tape loops seamlessly
-- [ ] 2.6 CTA links navigate to `/auth/signin` and `/auth/signup`
-- [ ] 2.7 No dev config banners on the page
-- [ ] 2.8 Responsive collapse works (<700px)
-- [ ] 2.9 Logged-in redirect + post-signout landing verified
-- [ ] 2.10 Visual parity with design HTML acceptable (desktop + mobile)
+- [x] 2.4 `/` logged out renders all 6 sections with correct palette/fonts
+- [x] 2.5 Ticker tape loops seamlessly
+- [x] 2.6 CTA links navigate to `/auth/signin` and `/auth/signup`
+- [x] 2.7 No dev config banners on the page
+- [x] 2.8 Responsive collapse works (<700px)
+- [x] 2.9 Logged-in redirect + post-signout landing verified
+- [x] 2.10 Visual parity with design HTML acceptable (desktop + mobile)

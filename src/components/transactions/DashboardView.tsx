@@ -22,7 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Plus, TrendingUp, User } from "lucide-react";
+import { Loader2, Plus, User } from "lucide-react";
 
 interface Props {
   initialTransactions: Transaction[];
@@ -438,32 +438,31 @@ export default function DashboardView({
             }}
           >
             {/* Brand */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 3,
-                  flexShrink: 0,
-                  background: "linear-gradient(135deg, #c41230, #8b0d21)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 6px 16px -6px rgba(196,18,48,.5)",
-                }}
-              >
-                <TrendingUp size={16} color="#fff" strokeWidth={2.4} />
-              </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <svg width="30" height="30" viewBox="0 0 22 22" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+                <rect width="22" height="22" rx="5" fill="url(#dash-logo-grad)" />
+                <rect x="5" y="5" width="5" height="12" rx="1.5" fill="rgba(255,255,255,0.9)" />
+                <rect x="12" y="9" width="5" height="8" rx="1.5" fill="rgba(255,255,255,0.6)" />
+                <defs>
+                  <linearGradient id="dash-logo-grad" x1="0" y1="0" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#c41230" />
+                    <stop offset="1" stopColor="#8b0d21" />
+                  </linearGradient>
+                </defs>
+              </svg>
               <span
                 style={{
                   fontWeight: 700,
                   fontSize: 22,
-                  letterSpacing: 0,
-                  color: "#1A1A2E",
+                  letterSpacing: "-0.01em",
                   fontFamily: "var(--font-serif)",
+                  background: "var(--gradient-wordmark)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
                 }}
               >
-                Phol<span style={{ color: "#c41230", fontStyle: "italic", fontWeight: 400 }}>io</span>
+                Pholio
               </span>
             </div>
 

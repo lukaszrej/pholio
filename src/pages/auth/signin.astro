@@ -9,26 +9,22 @@ const error = Astro.url.searchParams.get("error");
   <div class="bg-cosmic flex min-h-screen items-center justify-center p-6">
     <div class="w-full max-w-sm">
       <div class="mb-[22px] flex flex-col items-center gap-3">
+        <svg width="48" height="48" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+          <rect width="22" height="22" rx="5" fill="url(#logo-grad-signin)"></rect>
+          <rect x="5" y="5" width="5" height="12" rx="1.5" fill="rgba(255,255,255,0.9)"></rect>
+          <rect x="12" y="9" width="5" height="8" rx="1.5" fill="rgba(255,255,255,0.6)"></rect>
+          <defs>
+            <linearGradient id="logo-grad-signin" x1="0" y1="0" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#c41230"></stop>
+              <stop offset="1" stop-color="#8b0d21"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
         <span
-          class="inline-flex h-[46px] w-[46px] items-center justify-center rounded-md [box-shadow:var(--shadow-cta)] [background:var(--gradient-brand)]"
+          class="text-[30px] font-bold tracking-[-0.01em]"
+          style="font-family: var(--font-serif); background: var(--gradient-wordmark); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="26"
-            height="26"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            stroke-width="2.4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-            <polyline points="16 7 22 7 22 13"></polyline>
-          </svg>
-        </span>
-        <span class="font-sans text-[34px] font-bold tracking-[-0.02em] text-[var(--tl-tx)]">
-          Phol<span class="text-[var(--tl-cy)]">io</span>
+          Pholio
         </span>
         <p class="text-sm text-[var(--tl-mut)]">Track every position, in one calm place.</p>
       </div>

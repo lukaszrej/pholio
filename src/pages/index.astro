@@ -1,0 +1,1172 @@
+---
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Pholio — Track every position, in one calm place.</title>
+    <meta
+      name="description"
+      content="Pholio helps you track every investment position across multiple portfolios in one calm, focused place. Real-time prices, clean P&L, no noise."
+    />
+    <meta property="og:title" content="Pholio — Track every position, in one calm place." />
+    <meta
+      property="og:description"
+      content="Pholio helps you track every investment position across multiple portfolios in one calm, focused place."
+    />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <!-- Nav -->
+    <nav class="lp-nav">
+      <div class="lp-nav-inner">
+        <a href="/" class="lp-wordmark">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <rect width="22" height="22" rx="5" fill="url(#logo-grad)"></rect>
+            <rect x="5" y="5" width="5" height="12" rx="1.5" fill="rgba(255,255,255,0.9)"></rect>
+            <rect x="12" y="9" width="5" height="8" rx="1.5" fill="rgba(255,255,255,0.6)"></rect>
+            <defs>
+              <linearGradient id="logo-grad" x1="0" y1="0" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#c41230"></stop>
+                <stop offset="1" stop-color="#8b0d21"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="lp-wordmark-text">Pholio</span>
+        </a>
+        <div class="lp-nav-actions">
+          <a href="/auth/signin" class="lp-btn-ghost">Sign in</a>
+          <a href="/auth/signup" class="lp-btn-primary">Get started</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="lp-hero">
+      <div class="lp-hero-inner">
+        <div class="lp-badge">
+          <span class="lp-pulse"></span>
+          Live portfolio tracking
+        </div>
+        <h1 class="lp-headline">
+          Track every position,<br /><em style="color:var(--tl-cy);font-weight:400;">in one calm place.</em>
+        </h1>
+        <p class="lp-subtext">
+          Pholio brings all your investment portfolios together — real-time prices, clean P&amp;L, and a watchlist that
+          keeps you informed without the noise.
+        </p>
+        <div class="lp-hero-actions">
+          <a href="/auth/signup" class="lp-btn-primary lp-btn-lg">Start tracking free</a>
+          <a href="/auth/signin" class="lp-btn-ghost lp-btn-lg">Sign in</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- App Preview -->
+    <section class="lp-preview-wrap">
+      <div class="lp-preview-inner">
+        <!-- Dashboard mockup (ticker tape is the topmost element inside the frame) -->
+        <div class="lp-mockup">
+          <!-- Ticker tape -->
+          <div class="lp-ticker-outer">
+            <div class="lp-ticker-track">
+              <!-- list duplicated for seamless loop -->
+              <span class="lp-ticker-item gain"
+                >AAPL <span class="lp-ticker-val">$189.42</span> <span class="lp-ticker-chg">+1.24%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item loss"
+                >TSLA <span class="lp-ticker-val">$242.80</span> <span class="lp-ticker-chg">−2.11%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >MSFT <span class="lp-ticker-val">$415.30</span> <span class="lp-ticker-chg">+0.87%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >NVDA <span class="lp-ticker-val">$875.60</span> <span class="lp-ticker-chg">+3.52%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item loss"
+                >GOOGL <span class="lp-ticker-val">$172.14</span> <span class="lp-ticker-chg">−0.43%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >AMZN <span class="lp-ticker-val">$186.55</span> <span class="lp-ticker-chg">+1.68%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >META <span class="lp-ticker-val">$503.25</span> <span class="lp-ticker-chg">+2.04%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item loss"
+                >NFLX <span class="lp-ticker-val">$628.90</span> <span class="lp-ticker-chg">−0.75%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >JPM <span class="lp-ticker-val">$198.40</span> <span class="lp-ticker-chg">+0.32%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item loss"
+                >BRK.B <span class="lp-ticker-val">$368.70</span> <span class="lp-ticker-chg">−0.18%</span></span
+              >
+              <!-- duplicate for seamless loop -->
+              <span class="lp-ticker-item gain"
+                >AAPL <span class="lp-ticker-val">$189.42</span> <span class="lp-ticker-chg">+1.24%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item loss"
+                >TSLA <span class="lp-ticker-val">$242.80</span> <span class="lp-ticker-chg">−2.11%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >MSFT <span class="lp-ticker-val">$415.30</span> <span class="lp-ticker-chg">+0.87%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >NVDA <span class="lp-ticker-val">$875.60</span> <span class="lp-ticker-chg">+3.52%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item loss"
+                >GOOGL <span class="lp-ticker-val">$172.14</span> <span class="lp-ticker-chg">−0.43%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >AMZN <span class="lp-ticker-val">$186.55</span> <span class="lp-ticker-chg">+1.68%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >META <span class="lp-ticker-val">$503.25</span> <span class="lp-ticker-chg">+2.04%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item loss"
+                >NFLX <span class="lp-ticker-val">$628.90</span> <span class="lp-ticker-chg">−0.75%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item gain"
+                >JPM <span class="lp-ticker-val">$198.40</span> <span class="lp-ticker-chg">+0.32%</span></span
+              >
+              <span class="lp-ticker-sep">·</span>
+              <span class="lp-ticker-item loss"
+                >BRK.B <span class="lp-ticker-val">$368.70</span> <span class="lp-ticker-chg">−0.18%</span></span
+              >
+            </div>
+          </div>
+
+          <!-- Portfolio tabs -->
+          <div class="lp-tabs">
+            <div class="lp-tab lp-tab-active">Dashboard</div>
+            <div class="lp-tab">Tech Growth</div>
+            <div class="lp-tab">Dividend</div>
+            <div class="lp-tab">Retirement</div>
+          </div>
+
+          <!-- Summary strip -->
+          <div class="summary-grid">
+            <div class="summary-cell">
+              <div class="lp-cell-label">Total Invested</div>
+              <div class="lp-cell-value">$42,850.00</div>
+            </div>
+            <div class="summary-cell">
+              <div class="lp-cell-label">Market Value</div>
+              <div class="lp-cell-value">$51,240.85</div>
+            </div>
+            <div class="summary-cell">
+              <div class="lp-cell-label">P&amp;L</div>
+              <div class="lp-cell-value lp-gain">+$8,390.85</div>
+            </div>
+            <div class="summary-cell">
+              <div class="lp-cell-label">P&amp;L %</div>
+              <div class="lp-cell-value lp-gain">+19.58%</div>
+            </div>
+          </div>
+
+          <!-- Holdings table -->
+          <div class="lp-holdings">
+            <div class="lp-holdings-header">
+              <span>Symbol</span>
+              <span>Shares</span>
+              <span>Avg Cost</span>
+              <span>Market Value</span>
+              <span>P&amp;L</span>
+              <span>P&amp;L %</span>
+            </div>
+            <div class="lp-holdings-row">
+              <span class="lp-sym"><span class="lp-dot" style="background:var(--chart-1)"></span>AAPL</span>
+              <span>25</span>
+              <span>$152.40</span>
+              <span>$4,735.50</span>
+              <span class="lp-gain">+$926.50</span>
+              <span class="lp-gain">+24.33%</span>
+            </div>
+            <div class="lp-holdings-row">
+              <span class="lp-sym"><span class="lp-dot" style="background:var(--chart-2)"></span>MSFT</span>
+              <span>18</span>
+              <span>$310.20</span>
+              <span>$7,475.40</span>
+              <span class="lp-gain">+$691.80</span>
+              <span class="lp-gain">+10.23%</span>
+            </div>
+            <div class="lp-holdings-row">
+              <span class="lp-sym"><span class="lp-dot" style="background:var(--chart-3)"></span>NVDA</span>
+              <span>10</span>
+              <span>$620.00</span>
+              <span>$8,756.00</span>
+              <span class="lp-gain">+$2,556.00</span>
+              <span class="lp-gain">+41.23%</span>
+            </div>
+            <div class="lp-holdings-row">
+              <span class="lp-sym"><span class="lp-dot" style="background:var(--chart-4)"></span>GOOGL</span>
+              <span>30</span>
+              <span>$178.50</span>
+              <span>$5,164.20</span>
+              <span class="lp-loss">−$190.80</span>
+              <span class="lp-loss">−3.56%</span>
+            </div>
+            <div class="lp-holdings-row">
+              <span class="lp-sym"><span class="lp-dot" style="background:var(--chart-5)"></span>AMZN</span>
+              <span>22</span>
+              <span>$174.30</span>
+              <span>$4,104.10</span>
+              <span class="lp-gain">+$269.50</span>
+              <span class="lp-gain">+7.04%</span>
+            </div>
+          </div>
+
+          <!-- Bottom fade overlay -->
+          <div class="lp-mockup-fade"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features grid -->
+    <section class="lp-features" id="features">
+      <div class="lp-section-inner">
+        <h2 class="lp-section-title">Everything you need to stay on top</h2>
+        <div class="lp-features-grid">
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <rect x="2" y="3" width="7" height="14" rx="2" fill="var(--tl-cy)" opacity="0.15"></rect>
+                <rect x="2" y="3" width="7" height="14" rx="2" stroke="var(--tl-cy)" stroke-width="1.5"></rect>
+                <rect x="11" y="7" width="7" height="10" rx="2" fill="var(--tl-cy)" opacity="0.15"></rect>
+                <rect x="11" y="7" width="7" height="10" rx="2" stroke="var(--tl-cy)" stroke-width="1.5"></rect>
+              </svg>
+            </div>
+            <h3 class="lp-feature-title">Multiple portfolios</h3>
+            <p class="lp-feature-desc">
+              Organise holdings across different strategies — growth, dividend, retirement — each with its own P&amp;L
+              view.
+            </p>
+          </div>
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <polyline
+                  points="2,14 7,8 11,11 18,4"
+                  stroke="var(--gain)"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"></polyline>
+                <circle cx="18" cy="4" r="2" fill="var(--gain)"></circle>
+              </svg>
+            </div>
+            <h3 class="lp-feature-title">Live market prices</h3>
+            <p class="lp-feature-desc">
+              Your holdings update with real-time market data so you always see the actual value of every position.
+            </p>
+          </div>
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <rect
+                  x="2"
+                  y="5"
+                  width="16"
+                  height="11"
+                  rx="2"
+                  stroke="var(--tl-cy)"
+                  stroke-width="1.5"
+                  fill="var(--tl-cy)"
+                  opacity="0"></rect>
+                <rect x="2" y="5" width="16" height="11" rx="2" stroke="var(--tl-cy)" stroke-width="1.5"></rect>
+                <line x1="2" y1="9" x2="18" y2="9" stroke="var(--tl-cy)" stroke-width="1" opacity="0.4"></line>
+                <line x1="2" y1="12" x2="18" y2="12" stroke="var(--tl-cy)" stroke-width="1" opacity="0.4"></line>
+                <line x1="7" y1="5" x2="7" y2="16" stroke="var(--tl-cy)" stroke-width="1" opacity="0.4"></line>
+              </svg>
+            </div>
+            <h3 class="lp-feature-title">Watchlist</h3>
+            <p class="lp-feature-desc">
+              Monitor any symbol alongside your holdings — track potential buys or sector benchmarks in the same view.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="lp-how">
+      <div class="lp-section-inner">
+        <h2 class="lp-section-title">Up and running in minutes</h2>
+
+        <!-- Step 1 -->
+        <div class="lp-step">
+          <div class="lp-step-copy">
+            <div class="lp-step-num">1</div>
+            <div>
+              <h3 class="lp-step-title">Create a portfolio</h3>
+              <p class="lp-step-desc">
+                Name it anything — "Tech Growth", "Retirement", "Speculative". Add as many as you need.
+              </p>
+            </div>
+          </div>
+          <div class="lp-step-widget">
+            <div class="lp-widget-card">
+              <div class="lp-widget-title">New Portfolio</div>
+              <div class="lp-widget-field">
+                <div class="lp-widget-label">Name</div>
+                <div class="lp-widget-input">Tech Growth</div>
+              </div>
+              <div class="lp-widget-field">
+                <div class="lp-widget-label">Description</div>
+                <div class="lp-widget-input lp-widget-input-muted">Optional notes…</div>
+              </div>
+              <div class="lp-widget-btn">Create Portfolio</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="lp-step">
+          <div class="lp-step-copy">
+            <div class="lp-step-num">2</div>
+            <div>
+              <h3 class="lp-step-title">Log your transactions</h3>
+              <p class="lp-step-desc">
+                Add buys and sells with the date, price, and quantity. Pholio calculates average cost and P&amp;L
+                automatically.
+              </p>
+            </div>
+          </div>
+          <div class="lp-step-widget">
+            <div class="lp-widget-card">
+              <div class="lp-widget-title">Add Transaction</div>
+              <div class="lp-widget-row">
+                <div class="lp-widget-field lp-widget-field-half">
+                  <div class="lp-widget-label">Symbol</div>
+                  <div class="lp-widget-input lp-widget-input-mono">AAPL</div>
+                </div>
+                <div class="lp-widget-field lp-widget-field-half">
+                  <div class="lp-widget-label">Type</div>
+                  <div class="lp-widget-input">Buy</div>
+                </div>
+              </div>
+              <div class="lp-widget-row">
+                <div class="lp-widget-field lp-widget-field-half">
+                  <div class="lp-widget-label">Shares</div>
+                  <div class="lp-widget-input lp-widget-input-mono">25</div>
+                </div>
+                <div class="lp-widget-field lp-widget-field-half">
+                  <div class="lp-widget-label">Price</div>
+                  <div class="lp-widget-input lp-widget-input-mono">$152.40</div>
+                </div>
+              </div>
+              <div class="lp-widget-btn">Add Transaction</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="lp-step">
+          <div class="lp-step-copy">
+            <div class="lp-step-num">3</div>
+            <div>
+              <h3 class="lp-step-title">See the full picture</h3>
+              <p class="lp-step-desc">
+                Your dashboard updates live — total value, unrealised gains, per-position breakdown, and your watchlist
+                all in one view.
+              </p>
+            </div>
+          </div>
+          <div class="lp-step-widget">
+            <div class="lp-widget-card lp-widget-card-sm">
+              <div class="lp-mini-summary">
+                <div class="lp-mini-cell">
+                  <div class="lp-widget-label">Market Value</div>
+                  <div class="lp-widget-input-mono lp-gain" style="font-size:15px;font-weight:700;">$51,240.85</div>
+                </div>
+                <div class="lp-mini-cell">
+                  <div class="lp-widget-label">P&amp;L</div>
+                  <div class="lp-widget-input-mono lp-gain" style="font-size:15px;font-weight:700;">+19.58%</div>
+                </div>
+              </div>
+              <div class="lp-mini-watchlist">
+                <div class="lp-mini-wl-row">
+                  <span class="lp-widget-input-mono" style="font-weight:700;">AAPL</span>
+                  <span class="lp-gain lp-widget-input-mono">$189.42</span>
+                </div>
+                <div class="lp-mini-wl-row">
+                  <span class="lp-widget-input-mono" style="font-weight:700;">NVDA</span>
+                  <span class="lp-gain lp-widget-input-mono">$875.60</span>
+                </div>
+                <div class="lp-mini-wl-row">
+                  <span class="lp-widget-input-mono" style="font-weight:700;">TSLA</span>
+                  <span class="lp-loss lp-widget-input-mono">$242.80</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="lp-footer">
+      <div class="lp-section-inner">
+        <div class="lp-footer-cta">
+          <h2 class="lp-footer-headline">Start tracking today</h2>
+          <p class="lp-footer-sub">Free to use. No credit card required.</p>
+          <a href="/auth/signup" class="lp-btn-primary lp-btn-lg">Create your account</a>
+        </div>
+        <div class="lp-footer-strip">
+          <a href="/" class="lp-wordmark lp-wordmark-sm">
+            <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <rect width="22" height="22" rx="5" fill="url(#logo-grad-f)"></rect>
+              <rect x="5" y="5" width="5" height="12" rx="1.5" fill="rgba(255,255,255,0.9)"></rect>
+              <rect x="12" y="9" width="5" height="8" rx="1.5" fill="rgba(255,255,255,0.6)"></rect>
+              <defs>
+                <linearGradient id="logo-grad-f" x1="0" y1="0" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#c41230"></stop>
+                  <stop offset="1" stop-color="#8b0d21"></stop>
+                </linearGradient>
+              </defs>
+            </svg>
+            <span class="lp-wordmark-text">Pholio</span>
+          </a>
+          <span class="lp-footer-copy">&copy; {new Date().getFullYear()} Pholio. All rights reserved.</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  /* ── Reset ── */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    background: var(--tl-bg);
+    color: var(--tl-tx);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100%;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ── Nav ── */
+  .lp-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--tl-line);
+  }
+
+  .lp-nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .lp-wordmark {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .lp-wordmark-text {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 18px;
+    background: var(--gradient-wordmark);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.01em;
+  }
+
+  .lp-wordmark-sm .lp-wordmark-text {
+    font-size: 16px;
+  }
+
+  .lp-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Buttons ── */
+  .lp-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--tl-mut);
+    border: 1px solid var(--tl-line);
+    background: transparent;
+    transition:
+      color 0.15s,
+      border-color 0.15s,
+      background 0.15s;
+    cursor: pointer;
+  }
+
+  .lp-btn-ghost:hover {
+    color: var(--tl-tx);
+    border-color: var(--tl-line);
+    background: var(--tl-panel-2);
+  }
+
+  .lp-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--gradient-brand);
+    box-shadow: var(--shadow-cta);
+    transition: filter 0.15s;
+    cursor: pointer;
+  }
+
+  .lp-btn-primary:hover {
+    filter: brightness(1.08);
+  }
+
+  .lp-btn-lg {
+    height: 42px;
+    padding: 0 22px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  /* ── Hero ── */
+  .lp-hero {
+    padding: 80px 24px 64px;
+    text-align: center;
+  }
+
+  .lp-hero-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .lp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+    padding: 0 14px 0 10px;
+    border-radius: 100px;
+    background: var(--tl-panel);
+    border: 1px solid var(--tl-line);
+    color: var(--tl-mut);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .lp-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gain);
+    box-shadow: 0 0 0 3px var(--gain-soft);
+    display: inline-block;
+    flex-shrink: 0;
+    animation: lp-pulse 2s ease infinite;
+  }
+
+  @keyframes lp-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.3);
+    }
+  }
+
+  .lp-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--tl-tx);
+    letter-spacing: -0.02em;
+  }
+
+  .lp-subtext {
+    max-width: 560px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--tl-mut);
+  }
+
+  .lp-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* ── App Preview ── */
+  .lp-preview-wrap {
+    overflow: hidden;
+  }
+
+  .lp-preview-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 0 40px;
+  }
+
+  /* Ticker outer clips overflow; inner track animates */
+  .lp-ticker-outer {
+    overflow: hidden;
+    border-bottom: 1px solid var(--tl-line);
+    background: #fff;
+  }
+
+  .lp-ticker-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    white-space: nowrap;
+    padding: 8px 0;
+    animation: ticker-slide 55s linear infinite;
+  }
+
+  .lp-ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 16px;
+    font-family: var(--font-numeric);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--tl-tx);
+  }
+
+  .lp-ticker-item.gain .lp-ticker-chg {
+    color: var(--gain);
+  }
+
+  .lp-ticker-item.loss .lp-ticker-chg {
+    color: var(--loss);
+  }
+
+  .lp-ticker-val {
+    color: var(--tl-mut);
+    font-weight: 500;
+  }
+
+  .lp-ticker-sep {
+    color: var(--tl-line);
+    font-size: 14px;
+    user-select: none;
+  }
+
+  /* Mockup frame */
+  .lp-mockup {
+    position: relative;
+    margin: 32px 24px 0;
+    border: 1px solid var(--tl-line);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--tl-panel);
+    box-shadow: 0 4px 24px rgba(15, 24, 37, 0.07);
+  }
+
+  /* Portfolio tabs */
+  .lp-tabs {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--tl-line);
+    padding: 0 16px;
+    overflow-x: auto;
+    gap: 0;
+    background: var(--tl-panel);
+  }
+
+  .lp-tab {
+    height: 40px;
+    padding: 0 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--tl-mut);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+
+  .lp-tab-active {
+    color: var(--tl-cy);
+    border-bottom-color: var(--tl-cy);
+    font-weight: 600;
+  }
+
+  /* Summary cells (reuses global .summary-grid / .summary-cell) */
+  .lp-cell-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tl-mut);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .lp-cell-value {
+    font-family: var(--font-numeric);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--tl-tx);
+    letter-spacing: -0.01em;
+  }
+
+  /* Holdings */
+  .lp-holdings {
+    font-family: var(--font-numeric);
+    font-size: 12px;
+  }
+
+  .lp-holdings-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr 1.5fr 1.5fr;
+    padding: 8px 16px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tl-mut);
+    font-weight: 500;
+    border-bottom: 1px solid var(--tl-line);
+  }
+
+  .lp-holdings-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr 1.5fr 1.5fr;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--tl-line-soft);
+    align-items: center;
+    font-size: 12.5px;
+    color: var(--tl-tx);
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  .lp-holdings-row:last-child {
+    border-bottom: 0;
+  }
+
+  .lp-sym {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .lp-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .lp-gain {
+    color: var(--gain);
+  }
+
+  .lp-loss {
+    color: var(--loss);
+  }
+
+  /* Fade overlay */
+  .lp-mockup-fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--tl-panel));
+    pointer-events: none;
+  }
+
+  /* ── Features ── */
+  .lp-features {
+    padding: 80px 24px;
+  }
+
+  .lp-section-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .lp-section-title {
+    font-family: var(--font-serif);
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 700;
+    color: var(--tl-tx);
+    text-align: center;
+    margin-bottom: 48px;
+    letter-spacing: -0.01em;
+  }
+
+  .lp-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 700px) {
+    .lp-features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .lp-feature-card {
+    padding: 28px 24px;
+    border: 1px solid var(--tl-line);
+    border-radius: 10px;
+    background: var(--tl-panel);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .lp-feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--tl-panel-2);
+    border: 1px solid var(--tl-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .lp-feature-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--tl-tx);
+  }
+
+  .lp-feature-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--tl-mut);
+  }
+
+  /* ── How it works ── */
+  .lp-how {
+    padding: 0 24px 80px;
+    border-top: 1px solid var(--tl-line);
+    background: var(--tl-panel-2);
+    padding-top: 80px;
+  }
+
+  .lp-step {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    margin-bottom: 56px;
+    flex-wrap: wrap;
+  }
+
+  .lp-step:last-child {
+    margin-bottom: 0;
+  }
+
+  .lp-step-copy {
+    flex: 1;
+    min-width: 240px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .lp-step-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--gradient-brand);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-cta);
+  }
+
+  .lp-step-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--tl-tx);
+    margin-bottom: 8px;
+  }
+
+  .lp-step-desc {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--tl-mut);
+  }
+
+  .lp-step-widget {
+    flex: 1;
+    min-width: 240px;
+    max-width: 320px;
+    width: 100%;
+  }
+
+  @media (max-width: 700px) {
+    .lp-step {
+      align-items: flex-start;
+    }
+
+    .lp-step-widget {
+      max-width: 100%;
+    }
+  }
+
+  .lp-widget-card {
+    border: 1px solid var(--tl-line);
+    border-radius: 8px;
+    background: var(--tl-panel);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(15, 24, 37, 0.05);
+  }
+
+  .lp-widget-card-sm {
+    gap: 10px;
+  }
+
+  .lp-widget-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tl-mut);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--tl-line-soft);
+  }
+
+  .lp-widget-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .lp-widget-field-half {
+    flex: 1;
+  }
+
+  .lp-widget-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .lp-widget-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tl-dim);
+  }
+
+  .lp-widget-input {
+    height: 32px;
+    border: 1px solid var(--tl-line);
+    border-radius: 4px;
+    background: var(--tl-panel-2);
+    color: var(--tl-tx);
+    font-size: 12.5px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .lp-widget-input-muted {
+    color: var(--tl-dim);
+  }
+
+  .lp-widget-input-mono {
+    font-family: var(--font-numeric);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--tl-tx);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lp-widget-btn {
+    height: 34px;
+    border-radius: 5px;
+    background: var(--gradient-brand);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-cta);
+    cursor: default;
+    letter-spacing: 0.01em;
+  }
+
+  /* Step 3 mini-widgets */
+  .lp-mini-summary {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--tl-line-soft);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .lp-mini-cell {
+    flex: 1;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--tl-panel-2);
+  }
+
+  .lp-mini-cell:first-child {
+    border-right: 1px solid var(--tl-line-soft);
+  }
+
+  .lp-mini-watchlist {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .lp-mini-wl-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--tl-line-soft);
+    font-size: 12px;
+  }
+
+  .lp-mini-wl-row:last-child {
+    border-bottom: 0;
+  }
+
+  /* ── Footer ── */
+  .lp-footer {
+    background: var(--tl-panel);
+    border-top: 1px solid var(--tl-line);
+    padding: 72px 24px 40px;
+  }
+
+  .lp-footer .lp-section-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .lp-footer-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .lp-footer-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    color: var(--tl-tx);
+    letter-spacing: -0.01em;
+  }
+
+  .lp-footer-sub {
+    font-size: 14px;
+    color: var(--tl-mut);
+  }
+
+  .lp-footer-strip {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 24px;
+    border-top: 1px solid var(--tl-line);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .lp-footer-copy {
+    font-size: 12px;
+    color: var(--tl-dim);
+  }
+
+  /* ── Holdings responsive: hide columns on small screens ── */
+  @media (max-width: 700px) {
+    .lp-holdings-header,
+    .lp-holdings-row {
+      grid-template-columns: 2fr 1fr 1.5fr;
+    }
+
+    .lp-holdings-header span:nth-child(3),
+    .lp-holdings-header span:nth-child(4),
+    .lp-holdings-row span:nth-child(3),
+    .lp-holdings-row span:nth-child(4) {
+      display: none;
+    }
+  }
+</style>
