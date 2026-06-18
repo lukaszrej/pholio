@@ -1,30 +1,41 @@
-# 10x Astro Starter
+# Pholio
 
-![](./public/template.png)
+A broker-agnostic personal investment portfolio tracker for long-term individual investors. Add your stock transactions manually and get a clear view of your current portfolio value, ROI per position, and sector allocation — all in one place.
 
-A modern, opinionated starter template for building fast, accessible web applications.
+## Features
+
+- Track stock purchases across multiple portfolios
+- EOD (end-of-day) price updates via [Finnhub](https://finnhub.io/)
+- ROI per position — gain/loss in % and absolute value
+- Sector allocation chart
+- Per-user data isolation enforced at the database level (Supabase RLS)
+- Email/password authentication
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
-- [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
+- [Astro](https://astro.build/) v6 — server-side rendered web framework
+- [React](https://react.dev/) v19 — interactive UI components
+- [TypeScript](https://www.typescriptlang.org/) v5 — type-safe throughout
+- [Tailwind CSS](https://tailwindcss.com/) v4 — utility-first styling
+- [Supabase](https://supabase.com/) — authentication + PostgreSQL with RLS
+- [Cloudflare Workers](https://workers.cloudflare.com/) — edge deployment runtime
+- [Finnhub](https://finnhub.io/) — stock quotes and company profiles
+- [Vitest](https://vitest.dev/) — unit and integration tests
 
 ## Prerequisites
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
+- Node.js v22.14.0 (see `.nvmrc`)
 - npm (comes with Node.js)
+- [Docker](https://www.docker.com/) and ~7 GB RAM (for local Supabase)
+- A free [Finnhub API key](https://finnhub.io/register)
 
 ## Getting Started
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
+git clone <repo-url>
+cd pholio
 ```
 
 2. Install dependencies:
@@ -33,77 +44,106 @@ cd 10x-astro-starter
 npm install
 ```
 
-3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
+3. Set up environment variables — see [Environment Variables](#environment-variables) below.
 
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
+4. Set up Supabase — see [Supabase Configuration](#supabase-configuration) below.
+
+5. Create a `.dev.vars` file for local Cloudflare dev secrets (same values as `.env`):
 
 ```bash
-cp .env.example .dev.vars
+cp .env .dev.vars
 ```
 
-5. Run the development server:
+6. Run the development server:
 
 ```bash
 npm run dev
 ```
 
+## Environment Variables
+
+Create a `.env` file at the project root with the following variables:
+
+| Variable          | Description                                                              |
+| ----------------- | ------------------------------------------------------------------------ |
+| `SUPABASE_URL`    | Supabase project URL (local: `http://127.0.0.1:54321`)                   |
+| `SUPABASE_KEY`    | Supabase `anon` public key                                               |
+| `FINNHUB_API_KEY` | Finnhub API key — free tier at [finnhub.io](https://finnhub.io/register) |
+
+```
+SUPABASE_URL=http://127.0.0.1:54321
+SUPABASE_KEY=<anon key>
+FINNHUB_API_KEY=<finnhub key>
+```
+
+These variables are declared as **server-only secrets** via Astro's `astro:env` schema — they are never exposed to the client.
+
 ## Available Scripts
 
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
+- `npm run dev` — start development server
+- `npm run build` — build for production
+- `npm run preview` — preview production build
+- `npm run typecheck` — TypeScript / Astro type check
+- `npm run lint` — run ESLint with type-checked rules
+- `npm run lint:fix` — auto-fix ESLint issues
+- `npm run format` — run Prettier
+- `npm run test` — run unit tests
+- `npm run test:watch` — unit tests in watch mode
+- `npm run test:integration` — integration tests (requires local Supabase running)
 
 ## Project Structure
 
-```md
-.
-├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
-├── wrangler.jsonc # Cloudflare Workers config
+```
+src/
+├── components/
+│   ├── auth/           # Sign-in / sign-up forms
+│   ├── portfolio/      # Portfolio table, watchlist, sector chart
+│   ├── transactions/   # Dashboard view, add/edit transaction form
+│   └── ui/             # shadcn/Radix UI primitives
+├── lib/                # Business logic (portfolio math, prices, Finnhub, Supabase)
+├── pages/
+│   ├── api/
+│   │   ├── auth/       # Auth endpoints (sign-in, sign-up, sign-out, callback)
+│   │   ├── portfolios/ # Portfolio CRUD
+│   │   ├── transactions/ # Transaction CRUD
+│   │   └── watchlist/  # Live quote endpoint
+│   ├── auth/           # Auth pages (sign-in, sign-up, confirm-email)
+│   └── dashboard.astro # Protected dashboard
+├── types/              # Shared TypeScript types
+└── middleware.ts        # Route protection
+public/
+supabase/
+├── config.toml         # Local Supabase configuration
+└── migrations/         # Database schema migrations
+wrangler.jsonc          # Cloudflare Workers configuration
 ```
 
 ## Supabase Configuration
 
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
+### Local development (recommended)
 
-### First-time setup (local, no cloud project needed)
+Requires [Docker](https://www.docker.com/) with ~7 GB RAM available.
 
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
-
-1. Create your `.env` file:
-
-```bash
-cp .env.example .env
-```
-
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
-
-```bash
-npx supabase init
-```
-
-3. Start the local stack (downloads Docker images on first run):
+1. Start the local Supabase stack (downloads Docker images on first run):
 
 ```bash
 npx supabase start
 ```
 
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
+2. Copy the printed credentials into your `.env` and `.dev.vars`:
 
 ```
 SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_KEY=<anon key from CLI output>
 ```
 
-5. To stop the stack when done:
+3. Apply migrations:
+
+```bash
+npx supabase db reset
+```
+
+4. To stop the stack when done:
 
 ```bash
 npx supabase stop
@@ -111,42 +151,32 @@ npx supabase stop
 
 The local Studio UI is available at `http://localhost:54323`.
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
+### Using a cloud Supabase project
 
-### Using a cloud Supabase project instead
+If you prefer a hosted project, create one at [supabase.com](https://supabase.com) and push the migrations:
 
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
+```bash
+npx supabase link --project-ref <project-ref>
+npx supabase db push
+```
 
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
+Then set the credentials in your `.env` and `.dev.vars`:
 
 ```
 SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<anon-key>
+SUPABASE_KEY=<anon key from Supabase dashboard → Settings → API>
 ```
-
-### Email confirmation in local development
-
-By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
-
-1. Open the Supabase dashboard for your project
-2. Go to **Authentication → Email → Confirm email**
-3. Toggle it **off**
-
-Users can then sign in immediately after sign-up without clicking a confirmation link.
 
 ### Auth routes
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+| Route                 | Description                                                     |
+| --------------------- | --------------------------------------------------------------- |
+| `/auth/signin`        | Email/password sign-in form                                     |
+| `/auth/signup`        | Email/password sign-up form                                     |
+| `/auth/confirm-email` | Post-signup "check your inbox" page                             |
+| `/dashboard`          | Protected dashboard (redirects to sign-in if not authenticated) |
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+Route protection is configured in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
 
 ## Deployment
 
@@ -164,11 +194,17 @@ npm run build
 npx wrangler deploy
 ```
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
+Set `SUPABASE_URL`, `SUPABASE_KEY`, and `FINNHUB_API_KEY` as secrets in your Cloudflare dashboard or via:
+
+```bash
+npx wrangler secret put SUPABASE_URL
+npx wrangler secret put SUPABASE_KEY
+npx wrangler secret put FINNHUB_API_KEY
+```
 
 ## CI
 
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+GitHub Actions runs lint + typecheck + build on every push and PR to `main`. Configure `SUPABASE_URL`, `SUPABASE_KEY`, and `FINNHUB_API_KEY` as repository secrets in GitHub for the build step.
 
 ## License
 
