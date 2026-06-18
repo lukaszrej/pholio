@@ -44,9 +44,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  // "/" needs two redirect targets depending on auth state, so it can't use the single-direction arrays above.
+  // "/" renders the landing page for visitors; authenticated users redirect to /dashboard.
   if (context.url.pathname === "/") {
-    return context.locals.user ? context.redirect("/dashboard") : context.redirect("/auth/signin");
+    if (context.locals.user) {
+      return context.redirect("/dashboard");
+    }
   }
 
   return next();
