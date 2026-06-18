@@ -19,7 +19,8 @@
       "Bash(echo \"exit:$?\")",
       "Bash(echo \"staged_exit:$?\")",
       "Read(//tmp/**)",
-      "mcp__exa__web_search_exa"
+      "mcp__exa__web_search_exa",
+      "Bash(pbcopy)"
     ],
     "deny": ["Bash(rm -rf *)"],
     "ask": ["Bash(curl *)", "Bash(wget *)", "Bash(git push *)", "Bash(git push)"]
