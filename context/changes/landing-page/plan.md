@@ -217,16 +217,16 @@ None — additive route. `signout.ts` already targets `/` and now resolves to a 
 
 #### Automated
 
-- [x] 2.1 Build succeeds: `npm run build`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Type checking passes: `npm run typecheck`
+- [x] 2.1 Build succeeds: `npm run build` — d102471
+- [x] 2.2 Linting passes: `npm run lint` — d102471
+- [x] 2.3 Type checking passes: `npm run typecheck` — d102471
 
 #### Manual
 
-- [x] 2.4 `/` logged out renders all 6 sections with correct palette/fonts
-- [x] 2.5 Ticker tape loops seamlessly
-- [x] 2.6 CTA links navigate to `/auth/signin` and `/auth/signup`
-- [x] 2.7 No dev config banners on the page
-- [x] 2.8 Responsive collapse works (<700px)
-- [x] 2.9 Logged-in redirect + post-signout landing verified
-- [x] 2.10 Visual parity with design HTML acceptable (desktop + mobile)
+- [x] 2.4 `/` logged out renders all 6 sections with correct palette/fonts — d102471
+- [x] 2.5 Ticker tape loops seamlessly — d102471
+- [x] 2.6 CTA links navigate to `/auth/signin` and `/auth/signup` — d102471
+- [x] 2.7 No dev config banners on the page — d102471
+- [x] 2.8 Responsive collapse works (<700px) — d102471
+- [x] 2.9 Logged-in redirect + post-signout landing verified — d102471
+- [x] 2.10 Visual parity with design HTML acceptable (desktop + mobile) — d102471
