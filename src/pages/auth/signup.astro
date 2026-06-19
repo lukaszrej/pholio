@@ -8,7 +8,7 @@ const error = Astro.url.searchParams.get("error");
 <Layout title="Sign up — Pholio">
   <div class="bg-cosmic flex min-h-screen items-center justify-center p-6">
     <div class="w-full max-w-sm">
-      <div class="mb-[22px] flex flex-col items-center gap-3">
+      <div class="mb-10 flex flex-col items-center gap-3 text-center">
         <svg width="48" height="48" viewBox="0 0 22 22" fill="none" aria-hidden="true">
           <rect width="22" height="22" rx="5" fill="url(#logo-grad-signup)"></rect>
           <rect x="5" y="5" width="5" height="12" rx="1.5" fill="rgba(255,255,255,0.9)"></rect>
@@ -26,11 +26,21 @@ const error = Astro.url.searchParams.get("error");
         >
           Pholio
         </span>
-        <p class="text-sm text-[var(--tl-mut)]">Track every position, in one calm place.</p>
+        <h1
+          class="text-[clamp(26px,3.5vw,40px)] leading-snug font-bold tracking-[-0.02em] text-[var(--tl-tx)]"
+          style="font-family: var(--font-serif);"
+        >
+          Track every position,<br />
+          <em class="font-normal text-[var(--tl-cy)]">in one calm place.</em>
+        </h1>
+        <p class="text-sm leading-relaxed text-[var(--tl-mut)]">
+          Multi-portfolio tracking with live P&L and a watchlist that moves with the market.
+        </p>
       </div>
       <div class="rounded-md border border-[var(--tl-line)] bg-white p-6 shadow-sm">
-        <h1 class="mb-1 text-xl font-semibold text-[var(--tl-tx)]">Create account</h1>
-        <p class="mb-5 text-sm text-[var(--tl-mut)]">Start tracking your portfolio.</p>
+        <h2 class="mb-1 text-xl font-semibold text-[var(--tl-tx)]">Create account</h2>
+        <p class="mb-4 text-sm text-[var(--tl-mut)]">Start tracking your portfolio.</p>
+        <div class="-mx-6 mb-5 h-px bg-[var(--tl-line)]"></div>
         <SignUpForm serverError={error} client:load />
       </div>
       <p class="mt-5 text-center text-sm text-[var(--tl-mut)]">
