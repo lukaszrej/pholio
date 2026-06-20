@@ -115,11 +115,11 @@ Extend the existing Risk #3 integration suite with the watchlist route and recor
 
 #### Automated
 
-- [x] 1.1 Integration suite passes: `npm run test:integration`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Typecheck passes: `npm run typecheck`
+- [x] 1.1 Integration suite passes: `npm run test:integration` — 0606d0d
+- [x] 1.2 Lint passes: `npm run lint` — 0606d0d
+- [x] 1.3 Typecheck passes: `npm run typecheck` — 0606d0d
 
 #### Manual
 
-- [x] 1.4 New cases appear under the Risk #3 suite and reference `/api/watchlist/quotes`
-- [x] 1.5 Assertion is load-bearing (would fail if the route were unprotected)
+- [x] 1.4 New cases appear under the Risk #3 suite and reference `/api/watchlist/quotes` — 0606d0d
+- [x] 1.5 Assertion is load-bearing (would fail if the route were unprotected) — 0606d0d
