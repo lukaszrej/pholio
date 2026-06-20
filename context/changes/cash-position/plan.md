@@ -295,35 +295,35 @@ Additive, non-breaking: `transaction_type` defaults to `'equity'`, so all existi
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Unit tests pass: `npm run test`
+- [x] 1.1 Type checking passes: `npm run typecheck` — c031cb6
+- [x] 1.2 Linting passes: `npm run lint` — c031cb6
+- [x] 1.3 Unit tests pass: `npm run test` — c031cb6
 
 #### Manual
 
-- [x] 1.4 Migration applies cleanly; existing rows show `transaction_type = 'equity'`
+- [x] 1.4 Migration applies cleanly; existing rows show `transaction_type = 'equity'` — c031cb6
 
 ### Phase 2: Cash Entry in AddTransactionForm
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run typecheck`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Type checking passes: `npm run typecheck`
+- [x] 2.2 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Stock/Cash toggle swaps field set; Stock default unchanged
-- [ ] 2.4 Cash deposit creates correct row (`cash_deposit`, `ticker="CASH"`, `shares=1`, `purchase_price=amount`)
-- [ ] 2.5 Cash withdrawal records `cash_withdrawal`
-- [ ] 2.6 Validation errors render in both modes
+- [x] 2.3 Stock/Cash toggle swaps field set; Stock default unchanged
+- [x] 2.4 Cash deposit creates correct row (`cash_deposit`, `ticker="CASH"`, `shares=1`, `purchase_price=amount`)
+- [x] 2.5 Cash withdrawal records `cash_withdrawal`
+- [x] 2.6 Validation errors render in both modes
 
 ### Phase 3: Display Wiring & Empty-State
 
 #### Automated
 
-- [ ] 3.1 Type checking passes: `npm run typecheck`
-- [ ] 3.2 Linting passes: `npm run lint`
-- [ ] 3.3 Unit tests pass: `npm run test`
+- [x] 3.1 Type checking passes: `npm run typecheck`
+- [x] 3.2 Linting passes: `npm run lint`
+- [x] 3.3 Unit tests pass: `npm run test`
 
 #### Manual
 
@@ -336,8 +336,8 @@ Additive, non-breaking: `transaction_type` defaults to `'equity'`, so all existi
 
 #### Automated
 
-- [ ] 4.1 Type checking passes: `npm run typecheck`
-- [ ] 4.2 Linting passes: `npm run lint`
+- [x] 4.1 Type checking passes: `npm run typecheck`
+- [x] 4.2 Linting passes: `npm run lint`
 
 #### Manual
 

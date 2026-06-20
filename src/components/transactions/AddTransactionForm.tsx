@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm, Controller, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleAlert, Loader2 } from "lucide-react";
@@ -8,6 +9,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+
+type Mode = "stock" | "cash";
+type CashDirection = "deposit" | "withdrawal";
+
+function deriveModeFromTransaction(t?: Transaction): Mode {
+  if (!t) return "stock";
+  return t.transaction_type === "equity" ? "stock" : "cash";
+}
+
+function deriveDirectionFromTransaction(t?: Transaction): CashDirection {
+  if (!t) return "deposit";
+  return t.transaction_type === "cash_withdrawal" ? "withdrawal" : "deposit";
+}
 
 interface Props {
   onSuccess: (transaction: Transaction) => void;
@@ -24,6 +38,9 @@ export default function AddTransactionForm({
   portfolios,
   defaultPortfolioId,
 }: Props) {
+  const [mode, setMode] = useState<Mode>(() => deriveModeFromTransaction(transaction));
+  const [cashDirection, setCashDirection] = useState<CashDirection>(() => deriveDirectionFromTransaction(transaction));
+
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionSchema) as Resolver<TransactionFormValues>,
     defaultValues: transaction
@@ -34,12 +51,14 @@ export default function AddTransactionForm({
           currency: transaction.currency,
           shares: transaction.shares,
           portfolio_id: transaction.portfolio_id,
+          transaction_type: transaction.transaction_type,
         }
       : {
           ticker: "",
           purchase_date: "",
           currency: "USD",
           portfolio_id: defaultPortfolioId ?? portfolios.at(0)?.id ?? "",
+          transaction_type: "equity",
         },
   });
 
@@ -48,10 +67,33 @@ export default function AddTransactionForm({
     control,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors, isSubmitting },
   } = form;
 
+  function switchMode(next: Mode) {
+    if (next === "cash") {
+      setValue("ticker", "CASH", { shouldValidate: false });
+      setValue("shares", 1, { shouldValidate: false });
+    } else {
+      setValue("ticker", "", { shouldValidate: false });
+      // shares resets to undefined so the user must re-enter it
+      setValue("shares", undefined as unknown as number, { shouldValidate: false });
+    }
+    setMode(next);
+  }
+
   async function onSubmit(values: TransactionFormValues) {
+    const payload: TransactionFormValues =
+      mode === "cash"
+        ? {
+            ...values,
+            ticker: "CASH",
+            shares: 1,
+            transaction_type: cashDirection === "deposit" ? "cash_deposit" : "cash_withdrawal",
+          }
+        : { ...values, transaction_type: "equity" };
+
     const url = transaction ? `/api/transactions/${transaction.id}` : "/api/transactions";
     const method = transaction ? "PUT" : "POST";
     let response: Response;
@@ -59,7 +101,7 @@ export default function AddTransactionForm({
       response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
     } catch {
       setError("root", { message: "Network error. Please check your connection and try again." });
@@ -82,8 +124,36 @@ export default function AddTransactionForm({
     onSuccess(json.data);
   }
 
+  const isCash = mode === "cash";
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      {/* Mode toggle */}
+      <div className="border-border flex overflow-hidden rounded-md border">
+        <button
+          type="button"
+          onClick={() => {
+            switchMode("stock");
+          }}
+          className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
+            !isCash ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground hover:bg-muted"
+          }`}
+        >
+          Stock
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            switchMode("cash");
+          }}
+          className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
+            isCash ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground hover:bg-muted"
+          }`}
+        >
+          Cash
+        </button>
+      </div>
+
       {/* Portfolio */}
       <div className="space-y-1">
         <Label htmlFor="portfolio_id">Portfolio</Label>
@@ -113,28 +183,30 @@ export default function AddTransactionForm({
         )}
       </div>
 
-      {/* Ticker */}
-      <div className="space-y-1">
-        <Label htmlFor="ticker">Ticker</Label>
-        <Input
-          id="ticker"
-          type="text"
-          placeholder="AAPL"
-          {...register("ticker")}
-          aria-invalid={!!errors.ticker}
-          disabled={!!transaction}
-        />
-        {errors.ticker && (
-          <p className="flex items-center gap-1 text-xs text-red-400">
-            <CircleAlert className="size-3" />
-            {errors.ticker.message}
-          </p>
-        )}
-      </div>
+      {/* Stock-only: Ticker */}
+      {!isCash && (
+        <div className="space-y-1">
+          <Label htmlFor="ticker">Ticker</Label>
+          <Input
+            id="ticker"
+            type="text"
+            placeholder="AAPL"
+            {...register("ticker")}
+            aria-invalid={!!errors.ticker}
+            disabled={!!transaction}
+          />
+          {errors.ticker && (
+            <p className="flex items-center gap-1 text-xs text-red-400">
+              <CircleAlert className="size-3" />
+              {errors.ticker.message}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Purchase date */}
       <div className="space-y-1">
-        <Label htmlFor="purchase_date">Purchase date</Label>
+        <Label htmlFor="purchase_date">{isCash ? "Date" : "Purchase date"}</Label>
         <Input id="purchase_date" type="date" {...register("purchase_date")} aria-invalid={!!errors.purchase_date} />
         {errors.purchase_date && (
           <p className="flex items-center gap-1 text-xs text-red-400">
@@ -144,13 +216,48 @@ export default function AddTransactionForm({
         )}
       </div>
 
-      {/* Purchase price */}
+      {/* Cash-only: Deposit/Withdrawal toggle */}
+      {isCash && (
+        <div className="space-y-1">
+          <Label>Type</Label>
+          <div className="border-border flex overflow-hidden rounded-md border">
+            <button
+              type="button"
+              onClick={() => {
+                setCashDirection("deposit");
+              }}
+              className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
+                cashDirection === "deposit"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background text-muted-foreground hover:bg-muted"
+              }`}
+            >
+              Deposit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setCashDirection("withdrawal");
+              }}
+              className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
+                cashDirection === "withdrawal"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background text-muted-foreground hover:bg-muted"
+              }`}
+            >
+              Withdrawal
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Purchase price (Stock) / Amount (Cash) */}
       <div className="space-y-1">
-        <Label htmlFor="purchase_price">Purchase price</Label>
+        <Label htmlFor="purchase_price">{isCash ? "Amount" : "Purchase price"}</Label>
         <Input
           id="purchase_price"
           type="number"
-          step="0.0001"
+          step={isCash ? "0.01" : "0.0001"}
           min="0"
           placeholder="0.00"
           {...register("purchase_price")}
@@ -164,25 +271,27 @@ export default function AddTransactionForm({
         )}
       </div>
 
-      {/* Shares */}
-      <div className="space-y-1">
-        <Label htmlFor="shares">Shares</Label>
-        <Input
-          id="shares"
-          type="number"
-          step="0.0001"
-          min="0"
-          placeholder="0.0000"
-          {...register("shares")}
-          aria-invalid={!!errors.shares}
-        />
-        {errors.shares && (
-          <p className="flex items-center gap-1 text-xs text-red-400">
-            <CircleAlert className="size-3" />
-            {errors.shares.message}
-          </p>
-        )}
-      </div>
+      {/* Stock-only: Shares */}
+      {!isCash && (
+        <div className="space-y-1">
+          <Label htmlFor="shares">Shares</Label>
+          <Input
+            id="shares"
+            type="number"
+            step="0.0001"
+            min="0"
+            placeholder="0.0000"
+            {...register("shares")}
+            aria-invalid={!!errors.shares}
+          />
+          {errors.shares && (
+            <p className="flex items-center gap-1 text-xs text-red-400">
+              <CircleAlert className="size-3" />
+              {errors.shares.message}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Currency */}
       <div className="space-y-1">
