@@ -1,16 +1,20 @@
 import { useState } from "react";
 import type { PortfolioPosition } from "@/lib/portfolio";
 import type { Portfolio } from "@/types/portfolio";
-import { formatNum } from "@/lib/format";
+// inlined from src/lib/format.ts — path aliases can't resolve in the browser bundler
+function _applyPolishFormat(formatted: string): string {
+  const dotIdx = formatted.indexOf(".");
+  if (dotIdx === -1) return formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const int = formatted.slice(0, dotIdx).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return `${int},${formatted.slice(dotIdx + 1)}`;
+}
+function formatNum(value: number, decimals = 2): string {
+  return _applyPolishFormat(value.toFixed(decimals));
+}
 
 type CardSize = "xl" | "lg" | "md" | "sm";
 
-function heatBg(roiPct: number | null): string {
-  if (roiPct === null) return "#F8FAFB";
-  const intensity = Math.min(Math.abs(roiPct) / 14, 1);
-  const alpha = (0.035 + intensity * 0.095).toFixed(3);
-  return roiPct >= 0 ? `rgba(10,157,110,${alpha})` : `rgba(196,18,48,${alpha})`;
-}
+// Cards are always clean white — colour lives in the P&L badge only.
 
 function getSize(weightPct: number): CardSize {
   if (weightPct >= 24) return "xl";
@@ -56,8 +60,16 @@ export function TickerCard({ pos, sector, size = "sm", onClick }: TickerCardProp
         setHovered(false);
       }}
       style={{
-        background: heatBg(pos.roiPct),
-        border: `1px solid ${hovered ? (gain ? "rgba(10,157,110,.35)" : "rgba(196,18,48,.35)") : "#DDE3EE"}`,
+        background: "#F8FAFB",
+        border: `1px solid ${
+          hovered
+            ? pos.roiPct !== null
+              ? gain
+                ? "rgba(10,157,110,.30)"
+                : "rgba(196,18,48,.28)"
+              : "#C8D0E0"
+            : "#DDE3EE"
+        }`,
         borderRadius: 5,
         padding: isXL ? "18px 20px" : isBig ? "14px 16px" : isMD ? "11px 14px" : "10px 12px",
         display: "flex",
@@ -276,14 +288,7 @@ export default function CardSection({ portfolio, positions, sectors, onNavigate 
         </span>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(6, 1fr)",
-          gridAutoRows: "92px",
-          gap: 8,
-        }}
-      >
+      <div className="card-section-grid">
         {sorted.map((pos) => {
           const size = getSize(pos.weightPct ?? 0);
           const { col, row } = SPANS[size];

@@ -533,16 +533,103 @@
   height: 10px;
 }
 
+/* ─── CardSection tile grid ─── */
+.card-section-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-auto-rows: 92px;
+  gap: 8px;
+}
+
 @media (max-width: 767px) {
-  .wl-col-header,
-  .wl-row {
-    grid-template-columns: 1fr auto auto !important;
+  /* ── Watchlist header: stack title above a full-width form ── */
+  .wl-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 12px 14px;
   }
-  .wl-grip,
-  .wl-change,
-  .wl-range,
+  /* inner div that wraps error + form */
+  .wl-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+  .wl-form {
+    order: 0;
+    width: 100%;
+  }
+  .wl-error {
+    order: 1;
+    white-space: normal;
+  }
+  .wl-input {
+    flex: 1;
+    width: 0;
+    min-width: 0;
+  }
+
+  /* ── Hide the column-header label row — too cramped ── */
+  .wl-col-header {
+    display: none;
+  }
+
+  /* ── Watchlist data rows: flex instead of CSS grid ── */
+  /* (inline gridTemplateColumns is ignored when display:flex) */
+  .wl-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+  }
+  .wl-grip {
+    display: none;
+  }
+  .wl-sym {
+    flex: 1;
+    min-width: 0;
+    padding: 0 10px 0 0;
+  }
+  .wl-price {
+    flex-shrink: 0;
+    padding: 0;
+    margin-right: 8px;
+    white-space: nowrap;
+  }
+  .wl-change {
+    display: none;
+  }
+  .wl-pct-pill {
+    flex-shrink: 0;
+    min-width: 68px;
+    justify-content: center;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-right: 6px;
+  }
+  .wl-pct-pill.gain {
+    background: rgba(10, 157, 110, 0.12);
+  }
+  .wl-pct-pill.loss {
+    background: rgba(196, 18, 48, 0.1);
+  }
+  .wl-range {
+    display: none;
+  }
   .wl-prev-close {
     display: none;
+  }
+  .wl-remove {
+    opacity: 1;
+    flex-shrink: 0;
+  }
+
+  /* ── CardSection tile grid: 3-column on mobile ── */
+  /* dense packing fills the 1-col gaps left by span-2 items */
+  .card-section-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 80px;
+    grid-auto-flow: dense;
   }
 }
 
