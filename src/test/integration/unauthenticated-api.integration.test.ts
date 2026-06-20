@@ -40,6 +40,28 @@ describe("Risk #3 — unauthenticated API guard (middleware)", () => {
     });
   });
 
+  describe("/api/watchlist/quotes — no valid session → 401", () => {
+    it("(e) GET /api/watchlist/quotes with no Cookie → 401 Unauthorized; next not called", async () => {
+      const { context, next } = makeContext("GET", "/api/watchlist/quotes");
+
+      const response = await invoke(context, next);
+
+      expect(next).not.toHaveBeenCalled();
+      expect(response.status).toBe(401);
+      const body = (await response.json()) as { error: string };
+      expect(body).toEqual({ error: "Unauthorized" });
+    });
+
+    it("(f) GET /api/watchlist/quotes with garbage Cookie → 401; next not called", async () => {
+      const { context, next } = makeContext("GET", "/api/watchlist/quotes", "garbage-session=not-a-real-token");
+
+      const response = await invoke(context, next);
+
+      expect(next).not.toHaveBeenCalled();
+      expect(response.status).toBe(401);
+    });
+  });
+
   describe("PUBLIC_API_ROUTES are exempt from the 401 guard", () => {
     it("(d) GET /api/auth/callback → next IS called (not 401)", async () => {
       const { context, next } = makeContext("GET", "/api/auth/callback");

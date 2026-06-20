@@ -290,6 +290,7 @@ context — no running server or build needed. The helper at
 context and a `next` spy. Test at minimum: no Cookie → 401 JSON; garbage
 Cookie → 401; `/api/auth/*` path → `next` IS called. Reference:
 `src/test/integration/unauthenticated-api.integration.test.ts`.
+Routes with middleware auth-guard coverage: `/api/portfolios`, `/api/transactions`, `/api/watchlist/quotes`.
 
 **Ownership / IDOR pattern:** Prove at the Supabase-client layer using the
 two-user fixture (see §6.2). The negative assertion (User A cannot read or
