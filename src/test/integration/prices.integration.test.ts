@@ -31,6 +31,7 @@ function makeTransaction(ticker: string): Transaction {
     purchase_date: "2026-01-01",
     currency: "USD",
     shares: 10,
+    transaction_type: "equity",
     created_at: "2026-01-01T00:00:00.000Z",
     updated_at: "2026-01-01T00:00:00.000Z",
   };

@@ -101,10 +101,18 @@ export function computeSectorAllocation(
   return slices;
 }
 
+export function computeCashBalance(transactions: Transaction[]): number {
+  return transactions.reduce((sum, t) => {
+    if (t.transaction_type === "cash_deposit") return sum + t.purchase_price;
+    if (t.transaction_type === "cash_withdrawal") return sum - t.purchase_price;
+    return sum;
+  }, 0);
+}
+
 export function computePositions(transactions: Transaction[], prices: Record<string, PriceData>): PortfolioPosition[] {
   const groups = new Map<string, Transaction[]>();
 
-  for (const t of transactions) {
+  for (const t of transactions.filter((t) => t.transaction_type === "equity")) {
     const ticker = t.ticker.toUpperCase();
     const existing = groups.get(ticker);
     if (existing) {

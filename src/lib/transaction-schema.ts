@@ -16,6 +16,7 @@ export const transactionSchema = z.object({
   currency: z.enum(CURRENCIES),
   shares: z.coerce.number().positive("Shares must be positive"),
   portfolio_id: z.uuid({ message: "Invalid portfolio ID" }),
+  transaction_type: z.enum(["equity", "cash_deposit", "cash_withdrawal"]).default("equity"),
 });
 
 export type TransactionFormValues = z.infer<typeof transactionSchema>;

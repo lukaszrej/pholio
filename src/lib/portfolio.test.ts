@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import type { Transaction } from "@/types/transaction";
-import { computePositions, computePortfolioSummary } from "@/lib/portfolio";
+import { computePositions, computePortfolioSummary, computeCashBalance } from "@/lib/portfolio";
 import type { PriceData, PortfolioPosition } from "@/lib/portfolio";
 
 // ---------------------------------------------------------------------------
@@ -21,6 +21,7 @@ const txn = (overrides: Partial<Transaction>): Transaction => ({
   currency: "USD",
   shares: 10,
   portfolio_id: "p1",
+  transaction_type: "equity",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
   ...overrides,
@@ -351,5 +352,81 @@ describe("computePortfolioSummary", () => {
     expect(summary.totalPnLPct).toBeNull();
     expect(summary.currency).toBeNull();
     expect(summary.excludedCount).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// computeCashBalance
+// ---------------------------------------------------------------------------
+
+describe("computeCashBalance", () => {
+  it("deposits only — sums all deposit amounts", () => {
+    const txns = [
+      txn({ transaction_type: "cash_deposit", purchase_price: 500 }),
+      txn({ transaction_type: "cash_deposit", purchase_price: 300 }),
+    ];
+    expect(computeCashBalance(txns)).toBe(800);
+  });
+
+  it("deposit + withdrawal — nets correctly", () => {
+    const txns = [
+      txn({ transaction_type: "cash_deposit", purchase_price: 1000 }),
+      txn({ transaction_type: "cash_withdrawal", purchase_price: 200 }),
+    ];
+    expect(computeCashBalance(txns)).toBe(800);
+  });
+
+  it("withdrawal exceeding deposits — returns negative balance", () => {
+    const txns = [
+      txn({ transaction_type: "cash_deposit", purchase_price: 100 }),
+      txn({ transaction_type: "cash_withdrawal", purchase_price: 300 }),
+    ];
+    expect(computeCashBalance(txns)).toBe(-200);
+  });
+
+  it("no cash rows — returns 0", () => {
+    const txns = [
+      txn({ transaction_type: "equity", purchase_price: 500 }),
+      txn({ transaction_type: "equity", purchase_price: 200 }),
+    ];
+    expect(computeCashBalance(txns)).toBe(0);
+  });
+
+  it("empty array — returns 0", () => {
+    expect(computeCashBalance([])).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// computePositions — cash row exclusion
+// ---------------------------------------------------------------------------
+
+describe("computePositions — cash row exclusion", () => {
+  it("cash_deposit rows are excluded from positions", () => {
+    const txns = [
+      txn({ ticker: "AAPL", transaction_type: "equity", purchase_price: 100, shares: 10 }),
+      txn({ ticker: "CASH", transaction_type: "cash_deposit", purchase_price: 500, shares: 1 }),
+    ];
+    const positions = computePositions(txns, { AAPL: priceData(150) });
+    expect(positions).toHaveLength(1);
+    expect(positions[0].ticker).toBe("AAPL");
+  });
+
+  it("cash_withdrawal rows are excluded from positions", () => {
+    const txns = [
+      txn({ ticker: "AAPL", transaction_type: "equity", purchase_price: 100, shares: 10 }),
+      txn({ ticker: "CASH", transaction_type: "cash_withdrawal", purchase_price: 200, shares: 1 }),
+    ];
+    const positions = computePositions(txns, { AAPL: priceData(150) });
+    expect(positions).toHaveLength(1);
+    expect(positions[0].ticker).toBe("AAPL");
+  });
+
+  it("only cash rows — returns empty positions array", () => {
+    const txns = [
+      txn({ ticker: "CASH", transaction_type: "cash_deposit", purchase_price: 1000, shares: 1 }),
+      txn({ ticker: "CASH", transaction_type: "cash_withdrawal", purchase_price: 200, shares: 1 }),
+    ];
+    expect(computePositions(txns, {})).toEqual([]);
   });
 });
