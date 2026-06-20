@@ -242,11 +242,10 @@ interface CardSectionProps {
   portfolio: Portfolio;
   positions: PortfolioPosition[];
   sectors: Record<string, string>;
-  onAddTransaction: (portfolioId: string) => void;
   onNavigate?: () => void;
 }
 
-export default function CardSection({ portfolio, positions, sectors, onAddTransaction, onNavigate }: CardSectionProps) {
+export default function CardSection({ portfolio, positions, sectors, onNavigate }: CardSectionProps) {
   if (positions.length === 0) return null;
 
   const sorted = [...positions].sort((a, b) => (b.weightPct ?? 0) - (a.weightPct ?? 0));
@@ -257,51 +256,24 @@ export default function CardSection({ portfolio, positions, sectors, onAddTransa
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          gap: 10,
           marginBottom: 14,
           paddingBottom: 10,
           borderBottom: "1px solid #DDE3EE",
         }}
       >
-        <span style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-          <span
-            style={{
-              fontSize: 18,
-              fontWeight: 600,
-              color: "#1A1A2E",
-            }}
-          >
-            {portfolio.name}
-          </span>
-          <span style={{ fontFamily: "var(--font-numeric)", fontSize: 11, fontWeight: 400, color: "#A89E90" }}>
-            {positions.length} position{positions.length !== 1 ? "s" : ""}
-          </span>
-        </span>
-        <button
-          onClick={() => {
-            onAddTransaction(portfolio.id);
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = "1";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = "0.85";
-          }}
+        <span
           style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: 11,
-            fontWeight: 500,
-            color: "#c41230",
-            background: "transparent",
-            border: "1px solid #c41230",
-            borderRadius: 3,
-            padding: "3px 11px",
-            cursor: "pointer",
-            opacity: 0.85,
+            fontSize: 18,
+            fontWeight: 600,
+            color: "#1A1A2E",
           }}
         >
-          + Add
-        </button>
+          {portfolio.name}
+        </span>
+        <span style={{ fontFamily: "var(--font-numeric)", fontSize: 11, fontWeight: 400, color: "#A89E90" }}>
+          {positions.length} position{positions.length !== 1 ? "s" : ""}
+        </span>
       </div>
 
       <div

@@ -268,7 +268,7 @@ export default function PortfolioSection({
     return (
       <div style={{ marginBottom: 32 }}>
         {sectionHeader}
-        <PortfolioSummaryCard summary={summary} />
+        <PortfolioSummaryCard summary={summary} positions={positions} prices={prices} />
 
         <div style={{ border: "1px solid #DDE3EE", background: "#F8FAFB", boxShadow: "0 1px 2px rgba(15,24,37,.04)" }}>
           <div style={{ overflowX: "auto" }}>

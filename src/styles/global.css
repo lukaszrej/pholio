@@ -546,6 +546,207 @@
   }
 }
 
+/* ─── Portfolio Summary Card ─── */
+.ps-primary {
+  padding: 20px 24px 18px;
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  row-gap: 16px;
+}
+.ps-main-value {
+  padding-right: 36px;
+  border-right: 1px solid #e6ebf5;
+  margin-right: 36px;
+  flex-shrink: 0;
+}
+.ps-main-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6b7c96;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+.ps-main-number {
+  font-size: 38px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: #1a1a2e;
+  line-height: 1;
+}
+.ps-two-col {
+  display: contents;
+}
+.ps-day {
+  padding-right: 36px;
+  border-right: 1px solid #e6ebf5;
+  margin-right: 36px;
+  flex-shrink: 0;
+}
+.ps-day-value {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.ps-day-pct {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.85;
+}
+.ps-basis {
+  flex-shrink: 0;
+}
+.ps-basis-value {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #1a1a2e;
+}
+.ps-meta {
+  margin-left: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+.ps-secondary {
+  border-top: 1px solid rgba(196, 18, 48, 0.14);
+  background: rgba(196, 18, 48, 0.045);
+  padding: 0 24px;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+}
+.ps-sec-stat {
+  padding: 11px 28px 11px 0;
+  margin-right: 28px;
+  border-right: 1px solid #e6ebf5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.ps-secondary .ps-sec-stat:last-child {
+  border-right: 0;
+  margin-right: 0;
+}
+.ps-excluded {
+  padding: 6px 24px 8px;
+  font-size: 11px;
+  color: #9aaabb;
+  background: rgba(196, 18, 48, 0.045);
+  border-top: 1px solid rgba(196, 18, 48, 0.14);
+}
+
+/* Tablet: 3 + 2 grid */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .ps-secondary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow-x: initial;
+  }
+  .ps-sec-stat {
+    padding: 12px 16px 12px 0;
+    margin-right: 0;
+    border-right: 1px solid #e6ebf5;
+    border-bottom: 1px solid #e6ebf5;
+    flex-shrink: initial;
+  }
+  .ps-secondary .ps-sec-stat:nth-child(3n),
+  .ps-secondary .ps-sec-stat:last-child {
+    border-right: 0;
+  }
+  .ps-secondary .ps-sec-stat:nth-child(n + 4) {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .ps-primary {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 16px 14px;
+    row-gap: 0;
+  }
+  .ps-main-value {
+    width: 100%;
+    padding-right: 0;
+    border-right: 0;
+    margin-right: 0;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #e6ebf5;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ps-main-label {
+    margin-bottom: 0;
+  }
+  .ps-main-number {
+    font-size: 30px;
+  }
+  .ps-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+  .ps-day {
+    padding-right: 16px;
+    margin-right: 0;
+    border-right: 1px solid #e6ebf5;
+    flex-shrink: initial;
+  }
+  .ps-day-value {
+    font-size: 18px;
+  }
+  .ps-day-pct {
+    font-size: 13px;
+  }
+  .ps-basis {
+    padding-left: 16px;
+    flex-shrink: initial;
+  }
+  .ps-basis-value {
+    font-size: 18px;
+  }
+  .ps-meta {
+    margin-left: 0;
+    margin-top: 12px;
+    width: 100%;
+    padding-top: 12px;
+    border-top: 1px solid #e6ebf5;
+    flex-shrink: initial;
+  }
+  .ps-secondary {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+    overflow-x: initial;
+  }
+  .ps-sec-stat {
+    padding: 10px 0;
+    margin-right: 0;
+    border-right: 0;
+    border-bottom: 1px solid #e6ebf5;
+    flex-shrink: initial;
+  }
+  .ps-secondary .ps-sec-stat:last-child {
+    border-right: 0;
+    border-bottom: 0;
+    margin-right: 0;
+  }
+  .ps-excluded {
+    padding: 6px 16px 8px;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

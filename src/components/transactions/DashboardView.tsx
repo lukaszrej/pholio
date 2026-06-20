@@ -416,8 +416,6 @@ export default function DashboardView({
     setIsAddPortfolioDialogOpen(true);
   }, []);
 
-  const mobileCtaPortfolioId = activePortfolio?.id ?? portfolios[0]?.id;
-
   return (
     <div style={{ background: "#F0F3F9", minHeight: "100vh" }}>
       {/* Ticker tape */}
@@ -591,7 +589,13 @@ export default function DashboardView({
               {activeTab === "all" && <WatchlistPanel />}
 
               {/* Summary strip — only on individual portfolio tabs */}
-              {activeTab !== "all" && <PortfolioSummaryCard summary={activeSummary} />}
+              {activeTab !== "all" && (
+                <PortfolioSummaryCard
+                  summary={activeSummary}
+                  positions={portfolioPositionsMap.get(activeTab) ?? []}
+                  prices={prices}
+                />
+              )}
 
               {activeTab === "all"
                 ? /* All portfolios — ticker card grid per portfolio */
@@ -601,9 +605,6 @@ export default function DashboardView({
                       portfolio={p}
                       positions={portfolioPositionsMap.get(p.id) ?? []}
                       sectors={sectors}
-                      onAddTransaction={(id) => {
-                        setAddTransactionPortfolioId(id);
-                      }}
                       onNavigate={() => {
                         setActiveTab(p.id);
                       }}
@@ -635,37 +636,6 @@ export default function DashboardView({
             </>
           )}
         </main>
-
-        {/* Mobile sticky CTA */}
-        {portfolios.length > 0 && (
-          <div className="mobile-cta-bar">
-            <button
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                justifyContent: "center",
-                width: "100%",
-                background: "linear-gradient(135deg, #c41230, #8b0d21)",
-                color: "#fff",
-                border: 0,
-                borderRadius: 3,
-                fontFamily: "var(--font-sans)",
-                fontWeight: 600,
-                fontSize: 13,
-                padding: 11,
-                cursor: "pointer",
-                boxShadow: "0 8px 20px -8px rgba(196,18,48,.5)",
-              }}
-              onClick={() => {
-                setAddTransactionPortfolioId(mobileCtaPortfolioId);
-              }}
-            >
-              <Plus size={16} color="#fff" strokeWidth={2.4} />
-              Add transaction
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Lots modal */}
