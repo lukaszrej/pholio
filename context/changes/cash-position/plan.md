@@ -336,12 +336,12 @@ Additive, non-breaking: `transaction_type` defaults to `'equity'`, so all existi
 
 #### Automated
 
-- [x] 4.1 Type checking passes: `npm run typecheck`
-- [x] 4.2 Linting passes: `npm run lint`
+- [x] 4.1 Type checking passes: `npm run typecheck` — a1e4fe6
+- [x] 4.2 Linting passes: `npm run lint` — a1e4fe6
 
 #### Manual
 
-- [x] 4.3 Cash Position block opens modal listing cash movements (Date/Type/Amount/Currency)
-- [x] 4.4 Editing a cash row reopens form in Cash mode; save updates Balance
-- [x] 4.5 Deleting cash rows updates Balance and re-applies empty-state correctly
-- [x] 4.6 Equity LotsModal behavior unchanged
+- [x] 4.3 Cash Position block opens modal listing cash movements (Date/Type/Amount/Currency) — a1e4fe6
+- [x] 4.4 Editing a cash row reopens form in Cash mode; save updates Balance — a1e4fe6
+- [x] 4.5 Deleting cash rows updates Balance and re-applies empty-state correctly — a1e4fe6
+- [x] 4.6 Equity LotsModal behavior unchanged — a1e4fe6
