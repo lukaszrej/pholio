@@ -7,8 +7,9 @@ repository: Pholio
 topic: "How to add cash position tracking to the Pholio app"
 tags: [research, cash, transactions, portfolio, supabase, forms]
 status: complete
-last_updated: 2026-06-20
+last_updated: 2026-06-21
 last_updated_by: Claude Sonnet 4.6
+last_updated_note: "Added follow-up research — does cash position affect portfolio summary total value?"
 ---
 
 # Research: Cash Position Tracking
@@ -357,3 +358,100 @@ The `watchlist-skeleton-height` change in `context/changes/` is unrelated.
 2. **Negative balance UI**: Should a withdrawal that exceeds the deposited balance be allowed? No DB-level enforcement is proposed; the UI could warn but not block.
 3. **Editing cash transactions**: Should the LotsModal support editing cash rows? Initial implementation can exclude them (cash rows don't appear in holdings table).
 4. **Cash in "All portfolios" / Dashboard tab**: The `PortfolioSection` compact mode (currently unused in DashboardView) and the ticker-card grid don't show cash. Out of scope for this change.
+
+---
+
+## Follow-up Research 2026-06-21
+
+### Question
+
+After the cash-position change shipped, does adding a cash deposit increase the portfolio total value shown in `PortfolioSummaryCard`?
+
+### Answer: No — cash is deliberately excluded from portfolio total value
+
+**Commit researched**: `128340e75938f9efdb8c18a5d7be43bc39a40268` (branch: `main`)
+
+Cash balance is computed and displayed in the sidebar (`PortfolioSection`), but it is **never merged into the `currentValue` figure** shown in `PortfolioSummaryCard`. The two values live in separate silos with no bridge.
+
+---
+
+### Data-flow trace
+
+#### 1. Where "Portfolio value" comes from
+
+`PortfolioSummaryCard` (`src/components/portfolio/PortfolioSummaryCard.tsx:73`) destructures a `summary: PortfolioSummary` prop and renders `summary.currentValue` as **"Portfolio value"** (line 125).
+
+`currentValue` is produced by `computePortfolioSummary()` (`src/lib/portfolio.ts:48–70`):
+
+```typescript
+// portfolio.ts:56
+const currentValue = valuedPositions.reduce((sum, p) => sum + p.positionValue, 0);
+```
+
+`valuedPositions` comes from `computePositions()`, which hard-filters to equity only:
+
+```typescript
+// portfolio.ts:115
+for (const t of transactions.filter((t) => t.transaction_type === "equity")) {
+```
+
+`cash_deposit` and `cash_withdrawal` rows never enter this loop. `computePortfolioSummary()` never calls `computeCashBalance()`. **Cash is zero in `currentValue`.**
+
+#### 2. Where cash balance goes instead
+
+`computeCashBalance()` (`src/lib/portfolio.ts:104–110`) is called inside `DashboardView` (`src/components/transactions/DashboardView.tsx:283–291`) to build `portfolioCashMap`. That map is passed only to `PortfolioSection`:
+
+```tsx
+// DashboardView.tsx:636
+cashBalance={portfolioCashMap.get(activePortfolio.id) ?? null}
+```
+
+`PortfolioSummaryCard` is rendered at `DashboardView.tsx:609–613` with no cash prop at all:
+
+```tsx
+<PortfolioSummaryCard
+  summary={activeSummary}      // currentValue = equity only
+  positions={...}
+  prices={prices}
+  // no cashBalance prop — not in the interface
+/>
+```
+
+#### 3. Confirmed exclusion points
+
+| Location                                            | Line    | What it does                                                                      |
+| --------------------------------------------------- | ------- | --------------------------------------------------------------------------------- |
+| `src/lib/portfolio.ts`                              | 115     | Filters transactions to `transaction_type === "equity"` before grouping positions |
+| `src/lib/portfolio.ts`                              | 56      | `currentValue` sums only valued equity positions                                  |
+| `src/lib/portfolio.ts`                              | 51      | `totalInvested` sums only equity cost basis                                       |
+| `src/lib/portfolio.ts`                              | 59      | `totalPnL` sums only equity P&L                                                   |
+| `src/components/transactions/DashboardView.tsx`     | 609–613 | `PortfolioSummaryCard` rendered without any cash prop                             |
+| `src/components/portfolio/PortfolioSummaryCard.tsx` | 6–10    | Props interface has no `cashBalance` field                                        |
+
+#### 4. Where cash IS visible
+
+Cash balance is shown in the **`PortfolioSection` sidebar** only — formatted value + % of (equity) portfolio — at `src/components/portfolio/PortfolioSection.tsx:773–782`. It is a separate display section, not additive to `currentValue`.
+
+---
+
+### Gap assessment
+
+The user's expectation is correct: after depositing cash, total portfolio value should be larger. The current implementation does not satisfy this expectation. The fix requires:
+
+1. **`computePortfolioSummary()`** to accept (or compute internally) a `cashBalance` parameter and add it to `currentValue`.
+   - Alternatively: a new wrapper that calls both functions and sums the results before passing to `PortfolioSummaryCard`.
+2. **`DashboardView`** to pass `cashBalance` through to `computePortfolioSummary` (or the wrapper) so the summary card's `currentValue` includes cash.
+3. **`PortfolioSummaryCard`** needs no change — it renders whatever `currentValue` it receives.
+
+Whether cash should also be included in `totalInvested` (cost basis) and `totalPnL` (P&L) is a product decision:
+
+- Including cash in `totalInvested` but not in `currentValue` would distort ROI.
+- Cleanest: add cash to `currentValue` only, keep cost basis and P&L equity-only, and display cash as a separate line in the card (similar to how it appears in the sidebar).
+
+### Related files for the fix
+
+- `src/lib/portfolio.ts:48–70` — `computePortfolioSummary()` — add cash parameter
+- `src/lib/portfolio.ts:104–110` — `computeCashBalance()` — already correct, just needs to be wired in
+- `src/components/transactions/DashboardView.tsx:283–291` — `portfolioCashMap` already computed here
+- `src/components/transactions/DashboardView.tsx:303–307` — where `activeSummary` is produced — add cash here
+- `src/components/portfolio/PortfolioSummaryCard.tsx` — no change needed to props if cash is folded into `currentValue`

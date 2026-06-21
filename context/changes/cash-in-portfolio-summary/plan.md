@@ -171,21 +171,21 @@ None — no schema, data, or API changes.
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm test`
-- [x] 1.2 Type checking passes
-- [x] 1.3 Linting passes
+- [x] 1.1 Unit tests pass: `npm test` — dc2da0e
+- [x] 1.2 Type checking passes — dc2da0e
+- [x] 1.3 Linting passes — dc2da0e
 
 #### Manual
 
-- [x] 1.4 New test names clearly describe the deposit/withdrawal/cash-only/ROI-isolation oracles
+- [x] 1.4 New test names clearly describe the deposit/withdrawal/cash-only/ROI-isolation oracles — dc2da0e
 
 ### Phase 2: Wire cash through DashboardView + manual verification
 
 #### Automated
 
-- [ ] 2.1 Type checking passes
-- [ ] 2.2 Linting passes
-- [ ] 2.3 Unit tests still pass: `npm test`
+- [x] 2.1 Type checking passes
+- [x] 2.2 Linting passes
+- [x] 2.3 Unit tests still pass: `npm test`
 
 #### Manual
 

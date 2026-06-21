@@ -303,8 +303,12 @@ export default function DashboardView({
   const activeSummary = useMemo(() => {
     if (activeTab === "all") return combinedSummary;
     const pos = portfolioPositionsMap.get(activeTab) ?? [];
-    return computePortfolioSummary(pos);
-  }, [activeTab, combinedSummary, portfolioPositionsMap]);
+    const cashBalance = portfolioCashMap.get(activeTab) ?? 0;
+    const cashTxns = (txByPortfolio.get(activeTab) ?? []).filter((t) => t.transaction_type !== "equity");
+    const cashCurrencies = new Set(cashTxns.map((t) => t.currency));
+    const cashCurrency = cashCurrencies.size === 1 ? [...cashCurrencies][0] : null;
+    return computePortfolioSummary(pos, cashBalance, cashCurrency);
+  }, [activeTab, combinedSummary, portfolioPositionsMap, portfolioCashMap, txByPortfolio]);
 
   function handleAddSuccess(transaction: Transaction) {
     setTransactions((prev) => [transaction, ...prev]);
