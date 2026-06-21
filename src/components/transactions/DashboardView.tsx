@@ -2,7 +2,13 @@ import { useState, useMemo, useRef, useLayoutEffect, useEffect, useCallback } fr
 import { formatNum } from "@/lib/format";
 import type { Transaction } from "@/types/transaction";
 import type { Portfolio } from "@/types/portfolio";
-import { computePositions, computePortfolioSummary, type PriceData, type PortfolioPosition } from "@/lib/portfolio";
+import {
+  computePositions,
+  computePortfolioSummary,
+  computeCashBalance,
+  type PriceData,
+  type PortfolioPosition,
+} from "@/lib/portfolio";
 import PortfolioSummaryCard from "@/components/portfolio/PortfolioSummaryCard";
 import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import CardSection from "@/components/portfolio/TickerCard";
@@ -273,6 +279,14 @@ export default function DashboardView({
     }
     return map;
   }, [portfolios, txByPortfolio, prices]);
+
+  const portfolioCashMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const p of portfolios) {
+      map.set(p.id, computeCashBalance(txByPortfolio.get(p.id) ?? []));
+    }
+    return map;
+  }, [portfolios, txByPortfolio]);
 
   const portfolioPositionCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -617,6 +631,7 @@ export default function DashboardView({
                       transactions={txByPortfolio.get(activePortfolio.id) ?? []}
                       prices={prices}
                       sectors={sectors}
+                      cashBalance={portfolioCashMap.get(activePortfolio.id) ?? null}
                       onAddTransaction={(id) => {
                         setAddTransactionPortfolioId(id);
                       }}

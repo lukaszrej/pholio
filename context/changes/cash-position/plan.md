@@ -307,15 +307,15 @@ Additive, non-breaking: `transaction_type` defaults to `'equity'`, so all existi
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run typecheck`
-- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Type checking passes: `npm run typecheck` — f544927
+- [x] 2.2 Linting passes: `npm run lint` — f544927
 
 #### Manual
 
-- [x] 2.3 Stock/Cash toggle swaps field set; Stock default unchanged
-- [x] 2.4 Cash deposit creates correct row (`cash_deposit`, `ticker="CASH"`, `shares=1`, `purchase_price=amount`)
-- [x] 2.5 Cash withdrawal records `cash_withdrawal`
-- [x] 2.6 Validation errors render in both modes
+- [x] 2.3 Stock/Cash toggle swaps field set; Stock default unchanged — f544927
+- [x] 2.4 Cash deposit creates correct row (`cash_deposit`, `ticker="CASH"`, `shares=1`, `purchase_price=amount`) — f544927
+- [x] 2.5 Cash withdrawal records `cash_withdrawal` — f544927
+- [x] 2.6 Validation errors render in both modes — f544927
 
 ### Phase 3: Display Wiring & Empty-State
 
@@ -327,10 +327,10 @@ Additive, non-breaking: `transaction_type` defaults to `'equity'`, so all existi
 
 #### Manual
 
-- [ ] 3.4 Equity + cash portfolio shows correct Balance and % of Portfolio
-- [ ] 3.5 Cash-only portfolio renders layout with empty holdings + populated Cash Position
-- [ ] 3.6 Portfolio with neither shows "No positions yet"
-- [ ] 3.7 Currency suffix and % math correct
+- [x] 3.4 Equity + cash portfolio shows correct Balance and % of Portfolio
+- [x] 3.5 Cash-only portfolio renders layout with empty holdings + populated Cash Position
+- [x] 3.6 Portfolio with neither shows "No positions yet"
+- [x] 3.7 Currency suffix and % math correct
 
 ### Phase 4: Cash CRUD via LotsModal
 
@@ -341,7 +341,7 @@ Additive, non-breaking: `transaction_type` defaults to `'equity'`, so all existi
 
 #### Manual
 
-- [ ] 4.3 Cash Position block opens modal listing cash movements (Date/Type/Amount/Currency)
-- [ ] 4.4 Editing a cash row reopens form in Cash mode; save updates Balance
-- [ ] 4.5 Deleting cash rows updates Balance and re-applies empty-state correctly
-- [ ] 4.6 Equity LotsModal behavior unchanged
+- [x] 4.3 Cash Position block opens modal listing cash movements (Date/Type/Amount/Currency)
+- [x] 4.4 Editing a cash row reopens form in Cash mode; save updates Balance
+- [x] 4.5 Deleting cash rows updates Balance and re-applies empty-state correctly
+- [x] 4.6 Equity LotsModal behavior unchanged

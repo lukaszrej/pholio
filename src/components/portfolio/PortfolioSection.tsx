@@ -130,6 +130,7 @@ interface Props {
   onDeletePortfolio: (portfolioId: string) => void;
   onShowLots: (ticker: string, portfolioId: string) => void;
   compact?: boolean;
+  cashBalance?: number | null;
 }
 
 export default function PortfolioSection({
@@ -142,6 +143,7 @@ export default function PortfolioSection({
   onDeletePortfolio,
   onShowLots,
   compact = false,
+  cashBalance = null,
 }: Props) {
   const [sortKey, setSortKey] = useState<SortKey>("weightPct");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
@@ -229,7 +231,7 @@ export default function PortfolioSection({
     </div>
   );
 
-  if (transactions.length === 0) {
+  if (positions.length === 0 && (cashBalance == null || cashBalance === 0)) {
     return (
       <div style={{ marginBottom: compact ? 24 : 0 }}>
         {compact && sectionHeader}
@@ -721,6 +723,69 @@ export default function PortfolioSection({
             Sector Allocation
           </h3>
           <SectorAllocationBar slices={sectorSlices} />
+
+          {/* Cash Position */}
+          <div
+            style={{
+              marginTop: 28,
+              paddingTop: 18,
+              borderTop: "1px solid #E6EBF5",
+              borderRadius: 4,
+              ...(cashBalance != null ? { cursor: "pointer" } : {}),
+            }}
+            onClick={
+              cashBalance != null
+                ? () => {
+                    onShowLots("CASH", portfolio.id);
+                  }
+                : undefined
+            }
+            onMouseEnter={
+              cashBalance != null
+                ? (e) => {
+                    e.currentTarget.style.background = "#FBF4F5";
+                  }
+                : undefined
+            }
+            onMouseLeave={
+              cashBalance != null
+                ? (e) => {
+                    e.currentTarget.style.background = "";
+                  }
+                : undefined
+            }
+          >
+            <h3
+              style={{
+                fontSize: 10,
+                letterSpacing: ".14em",
+                textTransform: "uppercase",
+                color: "#7A6E60",
+                margin: "0 0 14px",
+                fontWeight: 600,
+              }}
+            >
+              Cash Position
+            </h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 12, color: "#7A6E60" }}>Balance</span>
+                <span className="font-numeric" style={{ fontSize: 13, fontWeight: 600, color: "#1A1A2E" }}>
+                  {cashBalance != null
+                    ? `${formatNum(cashBalance)}${summary.currency ? ` ${summary.currency}` : ""}`
+                    : "—"}
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 12, color: "#7A6E60" }}>% of Portfolio</span>
+                <span className="font-numeric" style={{ fontSize: 13, fontWeight: 600, color: "#1A1A2E" }}>
+                  {cashBalance != null && summary.currentValue != null && summary.currentValue + cashBalance > 0
+                    ? `${((cashBalance / (summary.currentValue + cashBalance)) * 100).toFixed(1)}%`
+                    : "—"}
+                </span>
+              </div>
+            </div>
+          </div>
 
           {/* Desktop CTA */}
           <button
