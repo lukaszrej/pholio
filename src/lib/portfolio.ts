@@ -45,7 +45,11 @@ export interface PortfolioSummary {
   excludedCount: number;
 }
 
-export function computePortfolioSummary(positions: PortfolioPosition[]): PortfolioSummary {
+export function computePortfolioSummary(
+  positions: PortfolioPosition[],
+  cashBalance = 0,
+  cashCurrency: string | null = null,
+): PortfolioSummary {
   const positionCount = positions.length;
 
   const totalInvested = positions.reduce((sum, p) => sum + p.avgCost * p.totalShares, 0);
@@ -53,7 +57,8 @@ export function computePortfolioSummary(positions: PortfolioPosition[]): Portfol
   const valuedPositions = positions.filter(
     (p): p is PortfolioPosition & { positionValue: number } => p.positionValue !== null,
   );
-  const currentValue = valuedPositions.length > 0 ? valuedPositions.reduce((sum, p) => sum + p.positionValue, 0) : null;
+  const equityValue = valuedPositions.length > 0 ? valuedPositions.reduce((sum, p) => sum + p.positionValue, 0) : null;
+  const currentValue = equityValue !== null || cashBalance !== 0 ? (equityValue ?? 0) + cashBalance : null;
 
   const pnlPositions = positions.filter((p): p is PortfolioPosition & { roiAbs: number } => p.roiAbs !== null);
   const totalPnL = pnlPositions.length > 0 ? pnlPositions.reduce((sum, p) => sum + p.roiAbs, 0) : null;
@@ -62,7 +67,8 @@ export function computePortfolioSummary(positions: PortfolioPosition[]): Portfol
   const totalPnLPct = totalPnL !== null && pnlCostBasis > 0 ? (totalPnL / pnlCostBasis) * 100 : null;
 
   const currencies = new Set(positions.filter((p) => !p.hasMultipleCurrencies).map((p) => p.currency));
-  const currency = currencies.size === 1 ? [...currencies][0] : null;
+  const equityCurrency = currencies.size === 1 ? [...currencies][0] : null;
+  const currency = equityCurrency ?? (positionCount === 0 ? cashCurrency : null);
 
   const excludedCount = positions.filter((p) => p.hasMultipleCurrencies).length;
 

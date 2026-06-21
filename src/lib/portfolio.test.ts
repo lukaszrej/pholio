@@ -356,6 +356,76 @@ describe("computePortfolioSummary", () => {
 });
 
 // ---------------------------------------------------------------------------
+// computePortfolioSummary — cash parameter
+// ---------------------------------------------------------------------------
+
+describe("computePortfolioSummary — cash parameter", () => {
+  it("deposit raises currentValue by exactly the cash balance over equity-only value", () => {
+    // equity: 10sh @ $100 cost, price $150 → equityValue = 1500
+    // cashBalance = 500
+    // currentValue = 1500 + 500 = 2000
+    // totalInvested = 100 × 10 = 1000 (equity only, unchanged)
+    const pos = position({ avgCost: 100, totalShares: 10, positionValue: 1500 });
+    const summary = computePortfolioSummary([pos], 500);
+
+    expect(summary.currentValue).toBe(2000);
+    expect(summary.totalInvested).toBe(1000);
+  });
+
+  it("net withdrawal (negative cash) lowers currentValue accordingly", () => {
+    // equity: positionValue = 1500
+    // cashBalance = -200 (net withdrawal exceeds deposits)
+    // currentValue = 1500 + (-200) = 1300
+    const pos = position({ positionValue: 1500 });
+    const summary = computePortfolioSummary([pos], -200);
+
+    expect(summary.currentValue).toBe(1300);
+  });
+
+  it("cash-only: currentValue equals cashBalance, currency falls back to cashCurrency, ROI fields at no-equity values", () => {
+    // no equity positions, cashBalance = 1000, cashCurrency = "USD"
+    // currentValue = 1000, currency = "USD"
+    // totalInvested = 0, totalPnL = null, totalPnLPct = null
+    const summary = computePortfolioSummary([], 1000, "USD");
+
+    expect(summary.currentValue).toBe(1000);
+    expect(summary.currency).toBe("USD");
+    expect(summary.totalInvested).toBe(0);
+    expect(summary.totalPnL).toBeNull();
+    expect(summary.totalPnLPct).toBeNull();
+  });
+
+  it("no equity prices and zero cash — currentValue remains null", () => {
+    // position with no price, cashBalance = 0
+    // equityValue = null, cashBalance = 0 → currentValue = null
+    const pos = position({ currentPrice: null, positionValue: null, roiAbs: null, roiPct: null, weightPct: null });
+    const summary = computePortfolioSummary([pos], 0);
+
+    expect(summary.currentValue).toBeNull();
+  });
+
+  it("ROI isolation: totalInvested, totalPnL, totalPnLPct are identical with and without cash", () => {
+    // equity: 10sh @ $100, positionValue = 1500, roiAbs = 500
+    // totalInvested = 1000, totalPnL = 500, totalPnLPct = 50
+    const pos = position({ avgCost: 100, totalShares: 10, positionValue: 1500, roiAbs: 500, roiPct: 50 });
+    const withoutCash = computePortfolioSummary([pos]);
+    const withCash = computePortfolioSummary([pos], 2000, "USD");
+
+    expect(withCash.totalInvested).toBe(withoutCash.totalInvested);
+    expect(withCash.totalPnL).toBe(withoutCash.totalPnL);
+    expect(withCash.totalPnLPct).toBe(withoutCash.totalPnLPct);
+  });
+
+  it("backward-compat: no-arg call returns same result as explicit zero-cash call", () => {
+    const pos = position({ avgCost: 100, totalShares: 10, positionValue: 1500, roiAbs: 500, roiPct: 50 });
+    const noArgResult = computePortfolioSummary([pos]);
+    const zeroArgResult = computePortfolioSummary([pos], 0, null);
+
+    expect(noArgResult).toEqual(zeroArgResult);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // computeCashBalance
 // ---------------------------------------------------------------------------
 
