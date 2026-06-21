@@ -1,7 +1,7 @@
 ---
 change_id: cash-in-portfolio-summary
 title: Cash in portfolio summary
-status: impl_reviewed
+status: implemented
 created: 2026-06-21
 updated: 2026-06-21
 archived_at: null

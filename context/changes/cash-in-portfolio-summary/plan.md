@@ -189,8 +189,8 @@ None — no schema, data, or API changes.
 
 #### Manual
 
-- [x] 2.4 Deposit increases "Portfolio value" by exactly the deposit; withdrawal decreases it
-- [x] 2.5 Cost basis, Unrealized P&L, Total return, Return multiple unchanged after a cash movement
-- [x] 2.6 Cash-only portfolio tab shows cash balance (with currency) as "Portfolio value", not "—"
-- [x] 2.7 Sidebar Balance and "% of Portfolio" unchanged (no double-count)
-- [x] 2.8 "All portfolios" tab visually unchanged
+- [x] 2.4 Deposit increases "Portfolio value" by exactly the deposit; withdrawal decreases it — b415773
+- [x] 2.5 Cost basis, Unrealized P&L, Total return, Return multiple unchanged after a cash movement — b415773
+- [x] 2.6 Cash-only portfolio tab shows cash balance (with currency) as "Portfolio value", not "—" — b415773
+- [x] 2.7 Sidebar Balance and "% of Portfolio" unchanged (no double-count) — b415773
+- [x] 2.8 "All portfolios" tab visually unchanged — b415773
