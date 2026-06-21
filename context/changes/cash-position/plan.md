@@ -321,16 +321,16 @@ Additive, non-breaking: `transaction_type` defaults to `'equity'`, so all existi
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npm run typecheck`
-- [x] 3.2 Linting passes: `npm run lint`
-- [x] 3.3 Unit tests pass: `npm run test`
+- [x] 3.1 Type checking passes: `npm run typecheck` — 354e549
+- [x] 3.2 Linting passes: `npm run lint` — 354e549
+- [x] 3.3 Unit tests pass: `npm run test` — 354e549
 
 #### Manual
 
-- [x] 3.4 Equity + cash portfolio shows correct Balance and % of Portfolio
-- [x] 3.5 Cash-only portfolio renders layout with empty holdings + populated Cash Position
-- [x] 3.6 Portfolio with neither shows "No positions yet"
-- [x] 3.7 Currency suffix and % math correct
+- [x] 3.4 Equity + cash portfolio shows correct Balance and % of Portfolio — 354e549
+- [x] 3.5 Cash-only portfolio renders layout with empty holdings + populated Cash Position — 354e549
+- [x] 3.6 Portfolio with neither shows "No positions yet" — 354e549
+- [x] 3.7 Currency suffix and % math correct — 354e549
 
 ### Phase 4: Cash CRUD via LotsModal
 

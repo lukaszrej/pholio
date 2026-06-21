@@ -13,6 +13,8 @@ interface Props {
 }
 
 export default function LotsModal({ ticker, open, onOpenChange, transactions, onEditRequest, onDeleteRequest }: Props) {
+  const isCash = ticker.toUpperCase() === "CASH";
+
   const lots = transactions
     .filter((t) => t.ticker.toUpperCase() === ticker.toUpperCase())
     .sort((a, b) => a.purchase_date.localeCompare(b.purchase_date));
@@ -21,14 +23,18 @@ export default function LotsModal({ ticker, open, onOpenChange, transactions, on
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{ticker} — Lots</DialogTitle>
+          <DialogTitle>{isCash ? "Cash — Deposits & Withdrawals" : `${ticker} — Lots`}</DialogTitle>
         </DialogHeader>
         <table className="w-full text-xs">
           <thead>
             <tr className="text-gray-400">
               <th className="py-1 text-left font-normal">Date</th>
-              <th className="py-1 text-left font-normal">Shares</th>
-              <th className="py-1 text-left font-normal">Price</th>
+              {isCash ? (
+                <th className="py-1 text-left font-normal">Type</th>
+              ) : (
+                <th className="py-1 text-left font-normal">Shares</th>
+              )}
+              <th className="py-1 text-left font-normal">{isCash ? "Amount" : "Price"}</th>
               <th className="py-1 text-left font-normal">Currency</th>
               <th></th>
               <th></th>
@@ -38,7 +44,11 @@ export default function LotsModal({ ticker, open, onOpenChange, transactions, on
             {lots.map((t) => (
               <tr key={t.id} className="border-t border-gray-100">
                 <td className="py-1.5">{t.purchase_date}</td>
-                <td className="py-1.5">{formatShares(t.shares)}</td>
+                {isCash ? (
+                  <td className="py-1.5">{t.transaction_type === "cash_deposit" ? "Deposit" : "Withdrawal"}</td>
+                ) : (
+                  <td className="py-1.5">{formatShares(t.shares)}</td>
+                )}
                 <td className="py-1.5">{t.purchase_price.toFixed(2)}</td>
                 <td className="py-1.5">{t.currency}</td>
                 <td className="py-1.5">
