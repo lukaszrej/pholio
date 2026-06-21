@@ -77,13 +77,16 @@ export default function AddTransactionForm({
       setValue("shares", 1, { shouldValidate: false });
     } else {
       setValue("ticker", "", { shouldValidate: false });
-      // shares resets to undefined so the user must re-enter it
+      // shares and purchase_price reset to undefined so the user must re-enter them
       setValue("shares", undefined as unknown as number, { shouldValidate: false });
+      setValue("purchase_price", undefined as unknown as number, { shouldValidate: false });
     }
     setMode(next);
   }
 
   async function onSubmit(values: TransactionFormValues) {
+    // transaction_type is always overridden here from mode/cashDirection;
+    // the RHF field value is not authoritative in Cash mode.
     const payload: TransactionFormValues =
       mode === "cash"
         ? {
@@ -116,7 +119,7 @@ export default function AddTransactionForm({
       return;
     }
 
-    const json = (await response.json()) as { data: Transaction | null };
+    const json = (await response.json().catch(() => ({ data: null }))) as { data: Transaction | null };
     if (!json.data) {
       setError("root", { message: "Unexpected server error" });
       return;
@@ -135,6 +138,7 @@ export default function AddTransactionForm({
           onClick={() => {
             switchMode("stock");
           }}
+          disabled={isSubmitting}
           className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
             !isCash ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground hover:bg-muted"
           }`}
@@ -146,6 +150,7 @@ export default function AddTransactionForm({
           onClick={() => {
             switchMode("cash");
           }}
+          disabled={isSubmitting}
           className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
             isCash ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground hover:bg-muted"
           }`}
@@ -226,6 +231,7 @@ export default function AddTransactionForm({
               onClick={() => {
                 setCashDirection("deposit");
               }}
+              disabled={isSubmitting}
               className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
                 cashDirection === "deposit"
                   ? "bg-primary text-primary-foreground"
@@ -239,6 +245,7 @@ export default function AddTransactionForm({
               onClick={() => {
                 setCashDirection("withdrawal");
               }}
+              disabled={isSubmitting}
               className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
                 cashDirection === "withdrawal"
                   ? "bg-primary text-primary-foreground"

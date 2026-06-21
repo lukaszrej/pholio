@@ -134,7 +134,7 @@ Add a Stock/Cash mode toggle to the transaction form. In Cash mode, collect Amou
 **Contract**: Add local state for mode (`"stock" | "cash"`, default `"stock"`) rendered as a two-button toggle above the Portfolio field, and a Deposit/Withdrawal sub-toggle shown only in Cash mode.
 
 - **Stock mode:** all six existing fields render unchanged.
-- **Cash mode:** render Amount (number, `step="0.01"`, bound to the `purchase_price` field), the Deposit/Withdrawal toggle, Date, and Currency; hide Ticker, Purchase Price label-as-"price", and Shares.
+- **Cash mode:** render Date (shared field, relabelled "Date"), the Deposit/Withdrawal toggle, Amount (number, `step="0.01"`, bound to the `purchase_price` field), and Currency; hide Ticker, Purchase Price label-as-"price", and Shares.
 - **On submit in Cash mode:** set `ticker = "CASH"`, `shares = 1`, `transaction_type = isDeposit ? "cash_deposit" : "cash_withdrawal"` before the existing `fetch`. Stock mode sets `transaction_type = "equity"`.
 - **Edit mode:** initialize mode and deposit/withdrawal from `transaction.transaction_type` (see Critical Implementation Details). Ticker stays hidden in Cash mode (it is always `"CASH"`).
 
