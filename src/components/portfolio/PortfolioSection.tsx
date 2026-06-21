@@ -730,7 +730,6 @@ export default function PortfolioSection({
               marginTop: 28,
               paddingTop: 18,
               borderTop: "1px solid #E6EBF5",
-              borderRadius: 4,
               ...(cashBalance != null ? { cursor: "pointer" } : {}),
             }}
             onClick={
@@ -750,7 +749,7 @@ export default function PortfolioSection({
             onMouseLeave={
               cashBalance != null
                 ? (e) => {
-                    e.currentTarget.style.background = "";
+                    e.currentTarget.style.background = "transparent";
                   }
                 : undefined
             }

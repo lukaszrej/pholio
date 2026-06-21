@@ -211,6 +211,8 @@ Make the Cash Position block clickable to open a list of cash movements with edi
 
 **File**: `src/components/portfolio/PortfolioSection.tsx`
 
+> **Delivered early in Phase 3 (commit 354e549).** The Phase 3 commit added not only the display block but also the onClick → onShowLots("CASH", portfolio.id), cursor pointer, and onMouseEnter/Leave hover affordance. No PortfolioSection.tsx changes needed for Phase 4.
+
 **Intent**: Give users an entry point to view/manage cash movements, since cash rows never appear in the holdings table.
 
 **Contract**: Make the Cash Position block (`:728-759`) clickable when `cashBalance != null`, calling `onShowLots("CASH", portfolio.id)` (reuse the existing `onShowLots` prop — no new prop needed). Add hover/cursor affordance consistent with holdings rows.

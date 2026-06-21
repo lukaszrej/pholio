@@ -41,6 +41,13 @@ export default function LotsModal({ ticker, open, onOpenChange, transactions, on
             </tr>
           </thead>
           <tbody>
+            {isCash && lots.length === 0 && (
+              <tr>
+                <td colSpan={6} className="py-3 text-center text-gray-400">
+                  No cash movements
+                </td>
+              </tr>
+            )}
             {lots.map((t) => (
               <tr key={t.id} className="border-t border-gray-100">
                 <td className="py-1.5">{t.purchase_date}</td>

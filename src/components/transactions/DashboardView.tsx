@@ -281,9 +281,11 @@ export default function DashboardView({
   }, [portfolios, txByPortfolio, prices]);
 
   const portfolioCashMap = useMemo(() => {
-    const map = new Map<string, number>();
+    const map = new Map<string, number | null>();
     for (const p of portfolios) {
-      map.set(p.id, computeCashBalance(txByPortfolio.get(p.id) ?? []));
+      const txns = txByPortfolio.get(p.id) ?? [];
+      const hasCash = txns.some((t) => t.transaction_type !== "equity");
+      map.set(p.id, hasCash ? computeCashBalance(txns) : null);
     }
     return map;
   }, [portfolios, txByPortfolio]);
