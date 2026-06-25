@@ -27,3 +27,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# stryker temp files
+.stryker-tmp

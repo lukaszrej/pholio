@@ -28,4 +28,10 @@ Two boundaries to keep straight:
   re-finds it (route through PR review). A changed business behavior → healer
   masks the bug; that failing-test-to-fix case is Lesson 5.
 
-<!-- END @przeprogramowani/10x-cli -->
+  ## Mutation testing
+
+Repo uses Stryker for selective mutation testing on risk-critical modules.
+Run it only for code covered by the current change or a risk from test-plan.md,
+prefer narrowed scope with --mutate "path/to/file.ts:start-end", and do not chase
+100% mutation score. Survived mutants should be reviewed one by one: add an
+assertion only when the mutant represents a user-visible or business-relevant bug.
