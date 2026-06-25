@@ -1,9 +1,9 @@
 ---
 change_id: testing-portfolios-api-security
 title: API security tests for /api/portfolios/[id]
-status: implemented
+status: impl_reviewed
 created: 2026-06-25
-updated: 2026-06-25 (implemented)
+updated: 2026-06-25 (impl_reviewed — phases 1 & 2)
 archived_at: null
 ---
 

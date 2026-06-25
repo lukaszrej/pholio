@@ -74,7 +74,7 @@ describe("Risk #3 — unauthenticated API guard (middleware)", () => {
   });
 
   describe("/api/watchlist/quotes — no valid session → 401", () => {
-    it("(d) GET /api/watchlist/quotes with no Cookie → 401 Unauthorized; next not called", async () => {
+    it("(g) GET /api/watchlist/quotes with no Cookie → 401 Unauthorized; next not called", async () => {
       const { context, next } = makeContext("GET", "/api/watchlist/quotes");
 
       const response = await invoke(context, next);
@@ -85,7 +85,7 @@ describe("Risk #3 — unauthenticated API guard (middleware)", () => {
       expect(body).toEqual({ error: "Unauthorized" });
     });
 
-    it("(e) GET /api/watchlist/quotes with garbage Cookie → 401; next not called", async () => {
+    it("(h) GET /api/watchlist/quotes with garbage Cookie → 401; next not called", async () => {
       const { context, next } = makeContext("GET", "/api/watchlist/quotes", "garbage-session=not-a-real-token");
 
       const response = await invoke(context, next);
@@ -98,7 +98,7 @@ describe("Risk #3 — unauthenticated API guard (middleware)", () => {
   });
 
   describe("PUBLIC_API_ROUTES are exempt from the 401 guard", () => {
-    it("(f) GET /api/auth/callback → next IS called (not 401)", async () => {
+    it("(i) GET /api/auth/callback → next IS called (not 401)", async () => {
       const { context, next } = makeContext("GET", "/api/auth/callback");
 
       const response = await invoke(context, next);
