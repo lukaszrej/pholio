@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import type { Transaction } from "@/types/transaction";
-import { computePositions, computePortfolioSummary, computeCashBalance } from "@/lib/portfolio";
+import {
+  computePositions,
+  computePortfolioSummary,
+  computeCashBalance,
+  computeSectorAllocation,
+} from "@/lib/portfolio";
 import type { PriceData, PortfolioPosition } from "@/lib/portfolio";
 
 // ---------------------------------------------------------------------------
@@ -78,6 +83,8 @@ describe("computePositions", () => {
     expect(p.positionValue).toBe(1500);
     expect(p.roiAbs).toBe(500);
     expect(p.roiPct).toBe(50);
+    expect(p.costBasis).toBe(1000); // 100 × 10
+    expect(p.isFresh).toBe(true);
   });
 
   it("multi-purchase weighted average (even split)", () => {
@@ -148,6 +155,7 @@ describe("computePositions", () => {
     expect(p.positionValue).toBeNull();
     expect(p.roiAbs).toBeNull();
     expect(p.roiPct).toBeNull();
+    expect(p.isFresh).toBe(false);
   });
 
   it("ticker case aggregation — 'aapl' and 'AAPL' merge into one position", () => {
@@ -423,6 +431,17 @@ describe("computePortfolioSummary — cash parameter", () => {
 
     expect(noArgResult).toEqual(zeroArgResult);
   });
+
+  it("mixed-currency equity with cashCurrency set — currency is null, not cashCurrency", () => {
+    // equityCurrency is null (two different currencies) → fall back to positionCount === 0 branch
+    // positionCount is 2, so branch returns null, not cashCurrency
+    const posA = position({ ticker: "AAPL", currency: "USD", hasMultipleCurrencies: false });
+    const posB = position({ ticker: "PKOB", currency: "PLN", hasMultipleCurrencies: false });
+
+    const summary = computePortfolioSummary([posA, posB], 1000, "USD");
+
+    expect(summary.currency).toBeNull();
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -498,5 +517,95 @@ describe("computePositions — cash row exclusion", () => {
       txn({ ticker: "CASH", transaction_type: "cash_withdrawal", purchase_price: 200, shares: 1 }),
     ];
     expect(computePositions(txns, {})).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// computeSectorAllocation
+// ---------------------------------------------------------------------------
+
+describe("computeSectorAllocation", () => {
+  it("two sectors — values and percentages match position values, sorted descending", () => {
+    // XOM  (Energy):     positionValue = 1000  ← inserted first (ascending order)
+    // AAPL (Technology): positionValue = 2000
+    // total = 3000 → Technology 66.667%, Energy 33.333%
+    // Without sort the Map insertion order would yield [Energy, Technology] — wrong
+    const positions = [
+      position({ ticker: "XOM", positionValue: 1000 }),
+      position({ ticker: "AAPL", positionValue: 2000 }),
+    ];
+    const sectors = { XOM: "Energy", AAPL: "Technology" };
+
+    const slices = computeSectorAllocation(positions, sectors);
+
+    expect(slices).toHaveLength(2);
+    expect(slices[0].sector).toBe("Technology");
+    expect(slices[0].value).toBe(2000);
+    expect(slices[0].percentage).toBeCloseTo((2000 / 3000) * 100, 10);
+    expect(slices[1].sector).toBe("Energy");
+    expect(slices[1].value).toBe(1000);
+    expect(slices[1].percentage).toBeCloseTo((1000 / 3000) * 100, 10);
+    const pctSum = slices.reduce((s, sl) => s + sl.percentage, 0);
+    expect(pctSum).toBeCloseTo(100, 10);
+  });
+
+  it("ticker absent from sectors map falls back to Other", () => {
+    const positions = [
+      position({ ticker: "AAPL", positionValue: 1000 }),
+      position({ ticker: "UNKNOWN", positionValue: 500 }),
+    ];
+    const sectors = { AAPL: "Technology" };
+
+    const slices = computeSectorAllocation(positions, sectors);
+
+    expect(slices).toHaveLength(2);
+    const other = slices.find((s) => s.sector === "Other");
+    expect(other).toBeDefined();
+    expect(other?.value).toBe(500);
+  });
+
+  it("Other is pinned to end even when it is not the smallest sector", () => {
+    // After descending sort: Technology(3000), Other(2000), Energy(1000)
+    // Other at index 1 > 0 → splice and push to end → [Technology, Energy, Other]
+    const positions = [
+      position({ ticker: "AAPL", positionValue: 3000 }),
+      position({ ticker: "UNKNOWN", positionValue: 2000 }),
+      position({ ticker: "XOM", positionValue: 1000 }),
+    ];
+    const sectors = { AAPL: "Technology", XOM: "Energy" };
+
+    const slices = computeSectorAllocation(positions, sectors);
+
+    expect(slices).toHaveLength(3);
+    expect(slices[0].sector).toBe("Technology");
+    expect(slices[1].sector).toBe("Energy");
+    expect(slices[2].sector).toBe("Other");
+  });
+
+  it("positions without a current price are excluded from allocation", () => {
+    // GOOGL is in a different sector so the mutation (filter removed) would add a
+    // zero-value "Energy" slice, changing length from 1 to 2 and killing the mutant
+    const positions = [
+      position({ ticker: "AAPL", positionValue: 1000 }),
+      position({ ticker: "GOOGL", positionValue: null }),
+    ];
+    const sectors = { AAPL: "Technology", GOOGL: "Energy" };
+
+    const slices = computeSectorAllocation(positions, sectors);
+
+    expect(slices).toHaveLength(1);
+    expect(slices[0].sector).toBe("Technology");
+    expect(slices[0].value).toBe(1000);
+  });
+
+  it("all positions unpriced — returns empty array", () => {
+    const positions = [position({ ticker: "AAPL", positionValue: null })];
+    const sectors = { AAPL: "Technology" };
+
+    expect(computeSectorAllocation(positions, sectors)).toEqual([]);
+  });
+
+  it("empty positions array — returns empty array", () => {
+    expect(computeSectorAllocation([], {})).toEqual([]);
   });
 });

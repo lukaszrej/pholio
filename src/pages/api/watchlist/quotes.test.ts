@@ -201,4 +201,18 @@ describe("GET /api/watchlist/quotes", () => {
       expect(res.status).toBe(500);
     });
   });
+
+  describe("Input cap", () => {
+    it("(j) more than 25 distinct tickers are silently capped — only first 25 forwarded upstream", async () => {
+      const allTickers = Array.from({ length: 26 }, (_, i) => `T${i + 1}`);
+      mockRefreshPrices.mockResolvedValue({});
+      mockRefreshSectors.mockResolvedValue({});
+
+      await GET(makeContext(allTickers.join(",")));
+
+      const [calledTickers] = mockRefreshPrices.mock.calls[0];
+      expect(calledTickers).toHaveLength(25);
+      expect(calledTickers).toEqual(allTickers.slice(0, 25));
+    });
+  });
 });
