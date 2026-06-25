@@ -38,6 +38,39 @@ describe("Risk #3 — unauthenticated API guard (middleware)", () => {
       expect(next).not.toHaveBeenCalled();
       expect(response.status).toBe(401);
     });
+
+    it("(d) PUT /api/portfolios/<uuid> with no Cookie → 401 Unauthorized; next not called", async () => {
+      const { context, next } = makeContext("PUT", "/api/portfolios/00000000-0000-0000-0000-000000000001");
+
+      const response = await invoke(context, next);
+
+      expect(next).not.toHaveBeenCalled();
+      expect(response.status).toBe(401);
+      const body = (await response.json()) as { error: string };
+      expect(body).toEqual({ error: "Unauthorized" });
+    });
+
+    it("(e) DELETE /api/portfolios/<uuid> with no Cookie → 401; next not called", async () => {
+      const { context, next } = makeContext("DELETE", "/api/portfolios/00000000-0000-0000-0000-000000000001");
+
+      const response = await invoke(context, next);
+
+      expect(next).not.toHaveBeenCalled();
+      expect(response.status).toBe(401);
+    });
+
+    it("(f) PUT /api/portfolios/<uuid> with garbage Cookie → 401; next not called", async () => {
+      const { context, next } = makeContext(
+        "PUT",
+        "/api/portfolios/00000000-0000-0000-0000-000000000001",
+        "garbage-session=not-a-real-token",
+      );
+
+      const response = await invoke(context, next);
+
+      expect(next).not.toHaveBeenCalled();
+      expect(response.status).toBe(401);
+    });
   });
 
   describe("/api/watchlist/quotes — no valid session → 401", () => {
