@@ -183,7 +183,7 @@ zero affected rows at the DB layer, not a 403 status.
 **Reference tests:**
 
 - Cross-user read (Risk #2): `src/test/integration/rls-cross-user.integration.test.ts`
-- IDOR write (Risk #4): `src/test/integration/idor-write.integration.test.ts`
+- IDOR write (Risk #4): `src/test/integration/idor-write.integration.test.ts` — covers transaction UPDATE, transaction DELETE, portfolio UPDATE, and portfolio DELETE.
 
 ### 6.3 Adding a test for an external-HTTP dependency (Finnhub pattern)
 
@@ -290,7 +290,7 @@ context — no running server or build needed. The helper at
 context and a `next` spy. Test at minimum: no Cookie → 401 JSON; garbage
 Cookie → 401; `/api/auth/*` path → `next` IS called. Reference:
 `src/test/integration/unauthenticated-api.integration.test.ts`.
-Routes with middleware auth-guard coverage: `/api/portfolios`, `/api/transactions`, `/api/watchlist/quotes`.
+Routes with middleware auth-guard coverage: `/api/portfolios`, `/api/portfolios/[id]` (PUT/DELETE), `/api/transactions`, `/api/watchlist/quotes`.
 
 **Ownership / IDOR pattern:** Prove at the Supabase-client layer using the
 two-user fixture (see §6.2). The negative assertion (User A cannot read or

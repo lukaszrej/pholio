@@ -146,23 +146,23 @@ Prove a cross-user DELETE on a portfolio affects zero rows and leaves User B's r
 
 #### Automated
 
-- [x] 1.1 Integration suite passes: `npm run test:integration`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Type checking passes: `npm run typecheck`
+- [x] 1.1 Integration suite passes: `npm run test:integration` — 75cee39
+- [x] 1.2 Linting passes: `npm run lint` — 75cee39
+- [x] 1.3 Type checking passes: `npm run typecheck` — 75cee39
 
 #### Manual
 
-- [x] 1.4 New cases appear under the "Risk #3" describe block and read consistently with cases (a)–(c)
+- [x] 1.4 New cases appear under the "Risk #3" describe block and read consistently with cases (a)–(c) — 75cee39
 
 ### Phase 2: IDOR DELETE on portfolios (Risk #4) + cookbook update
 
 #### Automated
 
-- [ ] 2.1 Integration suite passes: `npm run test:integration`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Type checking passes: `npm run typecheck`
+- [x] 2.1 Integration suite passes: `npm run test:integration`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Type checking passes: `npm run typecheck`
 
 #### Manual
 
-- [ ] 2.4 DELETE IDOR case uses the User-B re-fetch oracle to confirm non-deletion
-- [ ] 2.5 §6.4 coverage line names `/api/portfolios/[id]`
+- [x] 2.4 DELETE IDOR case uses the User-B re-fetch oracle to confirm non-deletion
+- [x] 2.5 §6.4 coverage line names `/api/portfolios/[id]`

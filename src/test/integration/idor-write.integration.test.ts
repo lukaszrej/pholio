@@ -82,4 +82,23 @@ describe("Risk #4 — IDOR on transaction writes", () => {
     const portfolio = row;
     expect(portfolio?.name).toBe("Portfolio B");
   });
+
+  it("User A DELETE on User B portfolio affects 0 rows; oracle confirms row still exists", async () => {
+    const { data: deleted, error: deleteErr } = await fixture.userA.client
+      .from("portfolios")
+      .delete()
+      .eq("id", fixture.userB.portfolioId)
+      .select("*");
+    expect(deleteErr).toBeNull();
+    expect(deleted).toHaveLength(0);
+
+    // Oracle: re-fetch with User B's client and confirm the portfolio still exists
+    const { data: row, error: fetchErr } = await fixture.userB.client
+      .from("portfolios")
+      .select("name")
+      .eq("id", fixture.userB.portfolioId)
+      .single();
+    expect(fetchErr).toBeNull();
+    expect(row?.name).toBe("Portfolio B");
+  });
 });
