@@ -1,9 +1,9 @@
 {
   "package": "@przeprogramowani/10x-cli",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "manifestVersion": 3,
-  "lastApplied": "2026-06-25T16:11:27.495Z",
-  "lessonId": "m3l5",
+  "lastApplied": "2026-06-28T08:57:43.742Z",
+  "lessonId": "m3l3",
   "course": "10xdevs3",
   "tool": "claude-code",
   "files": {
@@ -174,7 +174,7 @@
       "10x-tdd": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "58943e0630cc874e019aa1f196bf8e0cf6ca95f9f3fb238c533b1ab2a32b0802"
+          "SKILL.md": "142707eba64cdb7a7bc9901e2de9a221c3a41a2cc0109f49820f684e2ec5a1ad"
         }
       },
       "10x-e2e": {
@@ -790,7 +790,7 @@
       "configs": []
     },
     "m3l3": {
-      "appliedAt": "2026-06-25T16:11:19.467Z",
+      "appliedAt": "2026-06-28T08:57:43.741Z",
       "skills": {
         "10x-init": {
           "files": ["SKILL.md"]
