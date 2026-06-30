@@ -8,6 +8,11 @@
             "type": "command",
             "command": "npx eslint --fix . --quiet",
             "timeout": 10000
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/scoped-tests.sh",
+            "timeout": 30000
           }
         ]
       }
