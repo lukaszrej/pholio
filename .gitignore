@@ -35,3 +35,10 @@ auth.json
 # stryker temp files and reports
 .stryker-tmp
 reports/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
