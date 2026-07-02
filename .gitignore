@@ -28,6 +28,10 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# playwright session state (sensitive auth data)
+auth.json
+.playwright-cli/
+
 # stryker temp files and reports
 .stryker-tmp
 reports/
