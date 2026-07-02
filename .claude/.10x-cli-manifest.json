@@ -2,8 +2,8 @@
   "package": "@przeprogramowani/10x-cli",
   "version": "1.10.0",
   "manifestVersion": 3,
-  "lastApplied": "2026-06-28T08:57:43.742Z",
-  "lessonId": "m3l3",
+  "lastApplied": "2026-07-02T15:17:53.606Z",
+  "lessonId": "m3l4",
   "course": "10xdevs3",
   "tool": "claude-code",
   "files": {
@@ -149,7 +149,7 @@
       "10x-impl-review": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "daf014f7060e6db75ac037d223fb1e05c0e7e4169cef5013da551e36d53957f6"
+          "SKILL.md": "35f411842641123a9a9bcab3928794d259ae9451595b78783169af82a35317c6"
         }
       },
       "10x-frame": {
@@ -192,7 +192,7 @@
           "references/e2e-prompt-template.md": "7d934d3b6f0e3f36e7abdf0ab7ff4a23b645d12cb80603e3a962ce7d6babb95b",
           "references/e2e-quality-rules.md": "d161cf3659ae5321b7f597987664e4017aecc7e15f5caa7a15a1eaf73bf4162b",
           "references/seed-test-pattern.md": "90fa8778a557d0c88320e839c6a8879735b3390b68ed89b3487258f2562b2f80",
-          "SKILL.md": "994b511efafdcbe7526bb32a9908b330bd78326c42c5e41896983e497c61cd54"
+          "SKILL.md": "85a9ab63aedcac669951aa90a98e7e3d4e4e5fa59b0340ee3f62505bbfed4ad1"
         }
       }
     },
@@ -887,7 +887,7 @@
       "configs": []
     },
     "m3l4": {
-      "appliedAt": "2026-06-25T16:11:23.947Z",
+      "appliedAt": "2026-07-02T15:17:53.605Z",
       "skills": {
         "10x-init": {
           "files": ["SKILL.md"]
