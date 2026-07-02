@@ -20,7 +20,8 @@
       "Bash(echo \"staged_exit:$?\")",
       "Read(//tmp/**)",
       "mcp__exa__web_search_exa",
-      "Bash(pbcopy)"
+      "Bash(pbcopy)",
+      "Skill(10x-e2e)"
     ],
     "deny": ["Bash(rm -rf *)"],
     "ask": ["Bash(curl *)", "Bash(wget *)", "Bash(git push *)", "Bash(git push)"]
