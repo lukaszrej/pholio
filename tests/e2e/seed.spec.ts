@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { createClient } from "@supabase/supabase-js";
 
 // Seed test — the model every generated E2E test in this project is built
 // from. See CLAUDE.md's E2E hard rules and .claude/skills/10x-e2e for the
@@ -67,6 +68,28 @@ test("new stock purchase shows correct weighted-average cost and cost basis on t
   await lotsDialog.getByRole("button", { name: "Delete" }).click();
   await page.getByRole("alertdialog", { name: "Delete transaction" }).getByRole("button", { name: "Delete" }).click();
   await expect(lotsDialog).not.toBeVisible();
+
+  // The dialog closing reflects the browser-side fetch resolving, but the
+  // portfolio-delete endpoint's own transaction count check can observe the
+  // DB fractionally later. Poll the real precondition (no transactions left)
+  // instead of assuming UI state and DB state are synchronized.
+  const url = process.env.SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceRoleKey) {
+    throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set (see .env.test).");
+  }
+  const admin = createClient(url, serviceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  await expect
+    .poll(async () => {
+      const { count } = await admin
+        .from("transactions")
+        .select("*", { count: "exact", head: true })
+        .eq("portfolio_id", portfolio.id);
+      return count;
+    })
+    .toBe(0);
 
   // page.request runs from Node, not the browser, so it sends no Origin
   // header by default — Astro's cross-site check rejects state-changing
