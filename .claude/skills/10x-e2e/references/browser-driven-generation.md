@@ -33,6 +33,44 @@ Two transports drive the real browser; pick by token cost:
 Either browser transport produces the same artifact: a spec authored from the
 **accessibility tree** the app actually rendered.
 
+## Authenticating a CLI-driven exploration session (storageState)
+
+PLAN/GENERATE explore the running app as a signed-in user, but you don't want to
+redo an interactive sign-in every session. `playwright-cli` persists the browser's
+`storageState` (cookies + localStorage) to a file, exactly like the test suite's own
+`auth.setup.ts` fixture does for automated runs — this is the same mechanism, used
+manually.
+
+**One-time capture** (interactive sign-in, then save):
+
+```
+playwright-cli open <app-url>/auth/signin
+# sign in via the UI — type credentials yourself or ask the user to type them
+playwright-cli state-save playwright/.auth/user.json
+```
+
+**Reload in a later session** — order matters: `state-load` requires the browser to
+already be open, so `open` must come first:
+
+```
+playwright-cli open
+playwright-cli state-load playwright/.auth/user.json
+playwright-cli goto <app-url>/dashboard
+```
+
+Calling `state-load` before `open` fails with "the browser 'default' is not open."
+
+Verify the reload actually worked by checking the resulting page isn't a redirect
+back to the sign-in route (`playwright-cli tab-list` or `snapshot` after the `goto`).
+
+**Interaction with the automated test suite.** `playwright.config.ts`'s `setup`
+project (`auth.setup.ts`) writes its own ephemeral test-user session to this same
+path (`playwright/.auth/user.json`) on every `npm run test:e2e` run, then
+`global-teardown.ts` deletes that user. Running the suite overwrites your manually
+captured session — re-run `state-save` afterward if you need your real session back
+for further CLI-driven exploration. The path is already covered by
+`/playwright/.auth/` in `.gitignore`, so neither session ever gets committed.
+
 ## Why the accessibility tree changes everything
 
 You work from a snapshot of roles, names, and states with element refs — exactly
