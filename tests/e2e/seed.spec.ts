@@ -14,15 +14,26 @@ import { createClient } from "@supabase/supabase-js";
 // covers the weighted-average-cost half of that risk, which is derivable
 // purely from transaction data; the ROI half also depends on the live
 // Finnhub price and belongs in a mocked-network E2E test, not this exemplar.
-test("new stock purchase shows correct weighted-average cost and cost basis on the dashboard", async ({ page }) => {
+//
+// Two lots at different prices/share counts, not one: with a single lot,
+// weighted-average cost and simple average are the same number, so a bug
+// that averages per-lot prices without weighting by shares would slip
+// through undetected. Two lots make the two formulas diverge (120 vs 115
+// below), so the assertion actually exercises the "weighted" part.
+test("multiple stock purchases show correct weighted-average cost and cost basis on the dashboard", async ({
+  page,
+}) => {
   const portfolioName = `E2E Seed Portfolio ${Date.now()}`;
   const ticker = `TKR${Date.now()}`;
-  const shares = 5;
-  const price = 100;
+  const lots = [
+    { date: "2024-01-15", price: 100, shares: 5 },
+    { date: "2024-02-20", price: 130, shares: 10 },
+  ];
   // Oracle computed by hand, not by reading the app's own output:
-  // weighted-avg cost of a single purchase == that purchase's price.
-  const expectedAvgCost = "100,00";
-  const expectedCostBasis = "500,00"; // shares * price
+  // weighted-avg cost = (5*100 + 10*130) / 15 = 1800 / 15 = 120
+  // (a simple, unweighted average of the two prices would wrongly give 115)
+  const expectedAvgCost = "120,00";
+  const expectedCostBasis = "1.800,00"; // total shares (15) * weighted-avg cost (120)
 
   await page.goto("/dashboard");
   // DashboardView is a client:load React island — wait for its bundle to
@@ -42,15 +53,17 @@ test("new stock purchase shows correct weighted-average cost and cost basis on t
   const { data: portfolio } = (await (await createResponse).json()) as { data: { id: string } };
   await expect(page.getByRole("button", { name: portfolioName })).toBeVisible();
 
-  // Action: record a single stock purchase.
-  await page.getByRole("button", { name: "Add transaction" }).click();
+  // Action: record two purchases of the same ticker at different prices/share counts.
   const addDialog = page.getByRole("dialog");
-  await addDialog.getByLabel("Ticker").fill(ticker);
-  await addDialog.getByLabel("Purchase date").fill("2024-01-15");
-  await addDialog.getByLabel("Purchase price").fill(String(price));
-  await addDialog.getByLabel("Shares").fill(String(shares));
-  await addDialog.getByRole("button", { name: "Add transaction" }).click();
-  await expect(addDialog).not.toBeVisible();
+  for (const lot of lots) {
+    await page.getByRole("button", { name: "Add transaction" }).click();
+    await addDialog.getByLabel("Ticker").fill(ticker);
+    await addDialog.getByLabel("Purchase date").fill(lot.date);
+    await addDialog.getByLabel("Purchase price").fill(String(lot.price));
+    await addDialog.getByLabel("Shares").fill(String(lot.shares));
+    await addDialog.getByRole("button", { name: "Add transaction" }).click();
+    await expect(addDialog).not.toBeVisible();
+  }
 
   // Assertion: the holdings row shows the hand-calculated avg cost and cost basis.
   const row = page.getByRole("row", { name: new RegExp(ticker) });
@@ -59,14 +72,18 @@ test("new stock purchase shows correct weighted-average cost and cost basis on t
   await expect(cells.nth(3)).toHaveText(expectedAvgCost); // "Avg" column
   await expect(cells.nth(4)).toHaveText(expectedCostBasis); // "Cost basis" column
 
-  // Cleanup: delete the transaction through the UI (required first —
-  // portfolio_id is ON DELETE RESTRICT). Once its last position is gone the
-  // portfolio view drops to an empty state with no delete control, so the
-  // portfolio itself is removed via the same API the UI would call.
+  // Cleanup: delete both transactions through the UI (required first —
+  // portfolio_id is ON DELETE RESTRICT). The lots dialog only auto-closes
+  // once its last lot is gone, so delete each lot (identified by its unique
+  // purchase date) in turn before expecting it to disappear.
   await row.click();
   const lotsDialog = page.getByRole("dialog", { name: `${ticker} — Lots` });
-  await lotsDialog.getByRole("button", { name: "Delete" }).click();
-  await page.getByRole("alertdialog", { name: "Delete transaction" }).getByRole("button", { name: "Delete" }).click();
+  for (const lot of lots) {
+    const lotRow = lotsDialog.getByRole("row", { name: new RegExp(lot.date) });
+    await lotRow.getByRole("button", { name: "Delete" }).click();
+    await page.getByRole("alertdialog", { name: "Delete transaction" }).getByRole("button", { name: "Delete" }).click();
+    await expect(lotRow).not.toBeVisible();
+  }
   await expect(lotsDialog).not.toBeVisible();
 
   // The dialog closing reflects the browser-side fetch resolving, but the
