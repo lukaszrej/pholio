@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-15 (Phase 4 complete — all gates wired in CI)
+> Last updated: 2026-07-03 (Phase 5 complete — browser-level/E2E coverage added for Risks #1, #5, #6)
 
 ---
 
@@ -62,6 +62,16 @@ research's job, see §1 principle #3).
 | #5   | When Finnhub HTTP call times out or returns 5xx, the dashboard renders with the last cached price and a ⚠ indicator; when no cache exists, "brak danych" is shown without throwing                | "Fallback code exists in the plan" ≠ "fallback actually fires when Finnhub is slow or down" — AbortController timeout must trigger under test conditions | Where the Finnhub call occurs in the server render path; AbortController/timeout setup; how the fallback cascades to the UI render           | Integration (mock Finnhub HTTP, real Supabase cache) | Only testing the happy path (successful Finnhub response)                                                                               |
 | #6   | When Finnhub returns `{c: 0}`, no price is written to the cache; the affected position shows "brak danych"; any previously cached price for the ticker is preserved                               | "The guard was in the implementation plan" ≠ "the guard survived subsequent refactors to the fetch/cache logic"                                          | `fetchQuote()` implementation: where the `c === 0` check lives, return value when null, how the caller handles a null result                 | Unit (mock `fetch`, no DB needed)                    | Only testing valid-ticker responses where `c > 0`                                                                                       |
 
+**Browser-level (E2E) supplement (Phase 5):** Risks #1, #5, and #6 additionally
+carry a Playwright test that proves the risk's cheapest-layer fix actually
+renders correctly for a real user — this doesn't replace the unit/integration
+layer above (still the cheapest signal and the primary regression gate), it
+guards against "the guard exists in the function" ≠ "the guard's effect
+reaches the DOM." Risk #6's E2E test covers only the no-cache branch (a
+brand-new ticker with no prior price row); the stale-cache branch is covered
+by Risk #5's test since both share the same `quote === null` code path in
+`refreshPricesForTickers`. See §6.5.
+
 ---
 
 ## 3. Phased Rollout
@@ -70,24 +80,25 @@ Each row is a discrete rollout phase that will open its own change folder
 via `/10x-new`. Status moves left-to-right through the values below; the
 orchestrator updates Status as artifacts appear on disk.
 
-| #   | Phase name                     | Goal (one line)                                                                           | Risks covered | Test types                                  | Status   | Change folder                                          |
-| --- | ------------------------------ | ----------------------------------------------------------------------------------------- | ------------- | ------------------------------------------- | -------- | ------------------------------------------------------ |
-| 1   | Business logic unit suite      | Prove ROI aggregation and zero-price guard are correct at the cheapest layer              | #1, #6        | Unit (Vitest)                               | complete | context/changes/testing-business-logic-unit-suite      |
-| 2   | API security integration tests | Prove users can only read and write their own data; unauthenticated requests are rejected | #2, #3, #4    | Integration (real Supabase, two test users) | complete | context/changes/testing-api-security-integration       |
-| 3   | External dependency resilience | Prove Finnhub outage neither crashes the dashboard nor silently misleads the user         | #5            | Integration (mock Finnhub HTTP, real cache) | complete | context/changes/testing-external-dependency-resilience |
-| 4   | Quality gates wiring           | Wire Vitest into CI so no change reaches production with a failing test                   | all           | CI config (GitHub Actions)                  | complete | context/changes/testing-quality-gates-wiring           |
+| #   | Phase name                        | Goal (one line)                                                                           | Risks covered | Test types                                  | Status   | Change folder                                          |
+| --- | --------------------------------- | ----------------------------------------------------------------------------------------- | ------------- | ------------------------------------------- | -------- | ------------------------------------------------------ |
+| 1   | Business logic unit suite         | Prove ROI aggregation and zero-price guard are correct at the cheapest layer              | #1, #6        | Unit (Vitest)                               | complete | context/changes/testing-business-logic-unit-suite      |
+| 2   | API security integration tests    | Prove users can only read and write their own data; unauthenticated requests are rejected | #2, #3, #4    | Integration (real Supabase, two test users) | complete | context/changes/testing-api-security-integration       |
+| 3   | External dependency resilience    | Prove Finnhub outage neither crashes the dashboard nor silently misleads the user         | #5            | Integration (mock Finnhub HTTP, real cache) | complete | context/changes/testing-external-dependency-resilience |
+| 4   | Quality gates wiring              | Wire Vitest into CI so no change reaches production with a failing test                   | all           | CI config (GitHub Actions)                  | complete | context/changes/testing-quality-gates-wiring           |
+| 5   | Browser-level risk coverage (E2E) | Prove the risks that only fail visibly in the rendered UI actually render correctly       | #1, #5, #6    | E2E (Playwright)                            | complete | none — standalone `/10x-e2e` runs, no change folder    |
 
 ---
 
 ## 4. Stack
 
-| Layer             | Tool                                     | Notes                                                                                                                                                                                                                      |
-| ----------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Unit              | Vitest ≥ 4.1                             | Pure-function tests (e.g. position aggregation, price guard); no Workers runtime needed                                                                                                                                    |
-| Integration       | Vitest ≥ 4.1 (plain Node env)            | Runs in Node via `vitest.integration.config.ts`; `.env.test` loaded via `loadEnv`; `@`/`astro:env/server`/`astro:middleware` aliases wired. `@cloudflare/vitest-pool-workers` was aspirational; Phase 2/3 uses plain Node. |
-| HTTP mocking      | `vi.spyOn(global, "fetch")`              | Intercepts outbound Finnhub calls at the `global.fetch` boundary inside `fetchQuote`. `undici` MockAgent is not used — it requires the Workers runtime. Restore the spy in `afterEach` (see §6.3).                         |
-| Supabase test env | Local `supabase start`                   | Required for Phase 2 (two-user RLS) and Phase 3 (single-row cache fallback). Use service-role client to seed/clean test rows.                                                                                              |
-| e2e               | none yet — not in scope for this rollout | Add if a future risk requires full browser context                                                                                                                                                                         |
+| Layer             | Tool                            | Notes                                                                                                                                                                                                                                                                                                                                                                                 |
+| ----------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit              | Vitest ≥ 4.1                    | Pure-function tests (e.g. position aggregation, price guard); no Workers runtime needed                                                                                                                                                                                                                                                                                               |
+| Integration       | Vitest ≥ 4.1 (plain Node env)   | Runs in Node via `vitest.integration.config.ts`; `.env.test` loaded via `loadEnv`; `@`/`astro:env/server`/`astro:middleware` aliases wired. `@cloudflare/vitest-pool-workers` was aspirational; Phase 2/3 uses plain Node.                                                                                                                                                            |
+| HTTP mocking      | `vi.spyOn(global, "fetch")`     | Intercepts outbound Finnhub calls at the `global.fetch` boundary inside `fetchQuote`. `undici` MockAgent is not used — it requires the Workers runtime. Restore the spy in `afterEach` (see §6.3).                                                                                                                                                                                    |
+| Supabase test env | Local `supabase start`          | Required for Phase 2 (two-user RLS) and Phase 3 (single-row cache fallback). Use service-role client to seed/clean test rows.                                                                                                                                                                                                                                                         |
+| e2e               | Playwright (`@playwright/test`) | `playwright.config.ts`: `webServer` boots the real Astro dev server (`npm run dev -- --port 4610`) against local Supabase; a `setup` project (`auth.setup.ts`) signs in once and saves `playwright/.auth/user.json`, so specs authenticate via `storageState`, never the login UI. `fullyParallel: true`, no dedicated `npm run` script — invoke directly with `npx playwright test`. |
 
 **Stack grounding tools (current session):**
 
@@ -100,13 +111,14 @@ orchestrator updates Status as artifacts appear on disk.
 
 ## 5. Quality Gates
 
-| Gate                  | Where          | Required?                                                                           | Catches                                                            |
-| --------------------- | -------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| lint + typecheck      | local + CI     | required (already wired in CI)                                                      | syntactic and type drift                                           |
-| unit tests            | local + CI     | required (wired in CI)                                                              | ROI computation regressions, price-guard regressions               |
-| integration tests     | local + CI     | required (wired in CI)                                                              | cross-user data access, unauthenticated API access, IDOR on writes |
-| Finnhub fallback test | local + CI     | required (wired in CI)                                                              | outage regressions in the price-fetch/cache path                   |
-| CI gate enforcement   | GitHub Actions | required (active — `unit` + `integration` jobs enforce all suites on every push/PR) | prevents any of the above regressions from merging                 |
+| Gate                   | Where          | Required?                                                                           | Catches                                                                                                           |
+| ---------------------- | -------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| lint + typecheck       | local + CI     | required (already wired in CI)                                                      | syntactic and type drift                                                                                          |
+| unit tests             | local + CI     | required (wired in CI)                                                              | ROI computation regressions, price-guard regressions                                                              |
+| integration tests      | local + CI     | required (wired in CI)                                                              | cross-user data access, unauthenticated API access, IDOR on writes                                                |
+| Finnhub fallback test  | local + CI     | required (wired in CI)                                                              | outage regressions in the price-fetch/cache path                                                                  |
+| E2E tests (Playwright) | local only     | **not yet wired into CI** — run manually with `npx playwright test tests/e2e`       | rendered-UI regressions in weighted-avg-cost display, Finnhub outage/no-data fallback rendering                   |
+| CI gate enforcement    | GitHub Actions | required (active — `unit` + `integration` jobs enforce all suites on every push/PR) | prevents any of the above regressions from merging; **E2E is a gap** — a CI job for Playwright has not been added |
 
 ---
 
@@ -309,6 +321,64 @@ HTTP surface. Update this entry when the endpoint is added.
 
 ---
 
+### 6.5 Adding an E2E test (browser-level risk)
+
+**Established by:** §3 Phase 5, driven by the `/10x-e2e` skill (standalone
+runs — no change folder). Only for risks that cross several system
+boundaries or exist solely in the rendered UI; see the skill's E2E-worthiness
+gate before promoting a risk here — cost × signal (§1) still applies. Don't
+promote an auth/RLS/IDOR contract risk to E2E just because it "feels safer";
+Risks #2/#3/#4 are deliberately _not_ E2E'd because Phase 2's integration
+tests already prove them at lower cost with equal signal.
+
+**File location:** `tests/e2e/<risk-or-feature>.spec.ts`. One test per file.
+
+**Naming convention:** describes the scenario, not the risk number — e.g.
+`finnhub-no-data.spec.ts`, not `risk-6.spec.ts`.
+
+**Run command:** `npx playwright test tests/e2e/<file>.spec.ts` (single
+spec) or `npx playwright test tests/e2e` (whole suite). No dedicated `npm
+run` script exists yet. Requires local Supabase running (`supabase start`);
+`playwright.config.ts`'s `webServer` boots the dev server itself.
+
+**Auth without the UI:** `tests/e2e/auth.setup.ts` runs once as its own
+Playwright project, signs in, and saves `playwright/.auth/user.json`; every
+spec in the `chromium` project picks it up via `storageState` — never drive
+login through the UI in a new spec.
+
+**Real vs mocked:** internal boundaries (auth, routing, DB) stay real.
+Finnhub is called **server-side** (`src/lib/finnhub.ts` via
+`src/lib/prices.ts`), so browser-level `page.route()` cannot intercept it —
+`finnhub-fallback.spec.ts` and `finnhub-no-data.spec.ts` instead exploit a
+real, stable Finnhub behavior (an unrecognized ticker reliably returns
+`{c: 0}`) to deterministically trigger the same code path a real outage
+takes, with zero mocking and zero flakiness.
+
+**Gotcha — UI-visible state ≠ DB-committed state:** a dialog closing after an
+`await fetch(...)` in its handler proves the _client_ received a response, not
+that a _different_ endpoint's own DB-side check (e.g. a portfolio-delete
+route's transaction-count guard) has necessarily observed it by the time the
+next request lands under parallel load. `seed.spec.ts` initially lacked this
+poll and failed a full 3-worker suite run deterministically (though it passed
+in isolation) — fixed by polling the real precondition with
+`expect.poll(...)` before the dependent request, the same pattern
+`finnhub-fallback.spec.ts` and `finnhub-no-data.spec.ts` already used. Any new
+spec with a similar two-step cleanup (delete child → delete parent) should
+poll the child's count first rather than trusting UI state alone.
+
+**Reference tests:**
+
+- Weighted-avg-cost display, the exemplar (Risk #1, partial):
+  `tests/e2e/seed.spec.ts`
+- Stale-cache fallback rendering (Risk #5): `tests/e2e/finnhub-fallback.spec.ts`
+- No-cache no-data-marker rendering (Risk #6, no-cache branch):
+  `tests/e2e/finnhub-no-data.spec.ts`
+
+**Not yet done:** wiring an E2E job into CI (`.github/workflows/ci.yml` has no
+Playwright step) — currently these specs are run manually only.
+
+---
+
 ## 7. What We Deliberately Don't Test
 
 Exclusions agreed during the rollout (Phase 2 interview, Q5). Future
@@ -324,8 +394,8 @@ contributors should respect these unless the underlying assumption changes.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-15
-- Stack versions last verified: 2026-06-15
+- Strategy (§1–§5) last reviewed: 2026-07-03 (added Playwright/E2E as a test layer)
+- Stack versions last verified: 2026-07-03
 - AI-native tool references last verified: n/a — no AI-native layer in this rollout
 
 Refresh (`/10x-test-plan --refresh`) when:
@@ -334,3 +404,4 @@ Refresh (`/10x-test-plan --refresh`) when:
 - a recommended tool's `checked:` date is older than three months,
 - the project's tech stack changes (new framework, new test runner),
 - §7 negative-space no longer matches what the team believes.
+- an E2E CI job is added (§5's "not yet wired into CI" gap is closed).
