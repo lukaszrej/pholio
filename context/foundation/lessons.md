@@ -80,3 +80,12 @@ If you connect a Cloudflare Worker to a GitHub repo via the Cloudflare dashboard
 - **Problem**: The `prices` RLS policies deliberately allow any authenticated user to INSERT and UPDATE prices ("any authenticated user can read and upsert prices"). In practice, price writes flow through server-side code via the service-role key, but a regular authenticated user could write arbitrary price rows directly — affecting portfolio valuations across all users.
 - **Rule**: [TODO]
 - **Applies to**: [TODO]
+
+---
+
+## A caught or logged error must be propagated, not silently swallowed
+
+- **Context**: Any SSR page or API route whose backend call returns a `{data, error}` shape or can throw (Supabase queries, external HTTP calls, etc.) — found in `src/pages/dashboard.astro`.
+- **Problem**: `dashboard.astro` logged a failed transactions/portfolios Supabase query via `console.error` but didn't propagate it, silently rendering a false empty-portfolio 200 success page instead of an error state.
+- **Rule**: Logging an error is not the same as handling it. Any catch block or error-shaped result must either propagate the failure to the caller (non-2xx status, thrown error, or explicit error state) or have an explicit, documented reason it's safe to swallow (e.g. an intentional cache-fallback degrade).
+- **Applies to**: implement, impl-review
