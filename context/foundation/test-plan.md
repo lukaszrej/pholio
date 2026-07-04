@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-07-03 (Phase 5 complete — browser-level/E2E coverage added for Risks #1, #5, #6)
+> Last updated: 2026-07-04 (added Risk #7 — dashboard load-error swallowing, with unit + E2E coverage)
 
 ---
 
@@ -42,14 +42,15 @@ terms, not test names. The Source column cites the _evidence that surfaced
 this risk_ — never a specific file as "where the failure lives" (that is
 research's job, see §1 principle #3).
 
-| #   | Risk (failure scenario)                                                                                                                                     | Impact | Likelihood | Source (evidence — not anchor)                                                                                                                                                |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Position aggregation returns wrong weighted-average cost or ROI — user sees incorrect profit/loss for any portfolio position                                | High   | High       | PRD Guardrail §ROI ("błąd matematyczny jest gorszy niż brak funkcji"); interview Q1; hot-spot dir `src/components/transactions/` 39 commits/30d; `src/lib/` 24 commits/30d    |
-| 2   | Cross-user read: authenticated User A retrieves User B's transactions or portfolio via the API (RLS gap or service-role key misuse)                         | High   | Medium     | PRD §AC ("absolutnie niedostępne"); lessons.md (RLS WITH CHECK was initially missing from prices migration — precedent for policy gap); `supabase/migrations/` 10 commits/30d |
-| 3   | Unauthenticated request to `/api/transactions` or `/api/portfolios` succeeds — data returned or state mutated without a session                             | High   | Medium     | PRD §AC; AGENTS.md "Protected routes" hard rule; `src/middleware.ts` 7 commits/30d                                                                                            |
-| 4   | IDOR on transaction write: User A sends PATCH or DELETE to `/api/transactions/[id]` with User B's ID and the operation succeeds                             | High   | Medium     | PRD §AC; archived `2026-06-10-transaction-crud` (no explicit IDOR test in plan); `src/pages/api/transactions/` 9 commits/30d                                                  |
-| 5   | Finnhub outage: dashboard crashes or shows zero/stale price without the required fallback indicator ("brak danych" or ⚠ with cached price)                  | High   | Medium     | PRD Guardrail §API availability ("bez crasha"); interview Q1; archived `2026-06-09-portfolio-roi-view` (fallback path explicitly called out in plan)                          |
-| 6   | Finnhub returns `{c: 0}` (invalid ticker or no market data) — zero price written to cache — user sees $0 current price and wildly wrong ROI with no warning | Medium | Medium     | Archived `2026-06-09-portfolio-roi-view` ("`c === 0` guard" flagged as critical implementation detail); `src/lib/` hot-spot 24 commits/30d                                    |
+| #   | Risk (failure scenario)                                                                                                                                                                                                    | Impact | Likelihood | Source (evidence — not anchor)                                                                                                                                                  |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Position aggregation returns wrong weighted-average cost or ROI — user sees incorrect profit/loss for any portfolio position                                                                                               | High   | High       | PRD Guardrail §ROI ("błąd matematyczny jest gorszy niż brak funkcji"); interview Q1; hot-spot dir `src/components/transactions/` 39 commits/30d; `src/lib/` 24 commits/30d      |
+| 2   | Cross-user read: authenticated User A retrieves User B's transactions or portfolio via the API (RLS gap or service-role key misuse)                                                                                        | High   | Medium     | PRD §AC ("absolutnie niedostępne"); lessons.md (RLS WITH CHECK was initially missing from prices migration — precedent for policy gap); `supabase/migrations/` 10 commits/30d   |
+| 3   | Unauthenticated request to `/api/transactions` or `/api/portfolios` succeeds — data returned or state mutated without a session                                                                                            | High   | Medium     | PRD §AC; AGENTS.md "Protected routes" hard rule; `src/middleware.ts` 7 commits/30d                                                                                              |
+| 4   | IDOR on transaction write: User A sends PATCH or DELETE to `/api/transactions/[id]` with User B's ID and the operation succeeds                                                                                            | High   | Medium     | PRD §AC; archived `2026-06-10-transaction-crud` (no explicit IDOR test in plan); `src/pages/api/transactions/` 9 commits/30d                                                    |
+| 5   | Finnhub outage: dashboard crashes or shows zero/stale price without the required fallback indicator ("brak danych" or ⚠ with cached price)                                                                                 | High   | Medium     | PRD Guardrail §API availability ("bez crasha"); interview Q1; archived `2026-06-09-portfolio-roi-view` (fallback path explicitly called out in plan)                            |
+| 6   | Finnhub returns `{c: 0}` (invalid ticker or no market data) — zero price written to cache — user sees $0 current price and wildly wrong ROI with no warning                                                                | Medium | Medium     | Archived `2026-06-09-portfolio-roi-view` ("`c === 0` guard" flagged as critical implementation detail); `src/lib/` hot-spot 24 commits/30d                                      |
+| 7   | A failed Supabase query for transactions or portfolios is logged but not propagated — dashboard renders a false "empty portfolio" 200 success page instead of an error, indistinguishable from a real account with no data | Medium | Low        | Codebase swallowed-error audit, 2026-07-04 (found and fixed in `src/pages/dashboard.astro`, commit `69a2e42`) — precedent for the broader "catch, log, don't propagate" pattern |
 
 ### Risk Response Guidance
 
@@ -61,6 +62,7 @@ research's job, see §1 principle #3).
 | #4   | PATCH/DELETE to `/api/transactions/[id]` using User B's resource ID returns 404 or 403; User B's row is unchanged after the call                                                                  | "RLS UPDATE is enabled" ≠ "policy has both USING and WITH CHECK" — lessons.md records this was once missing on the prices migration                      | RLS UPDATE and DELETE policies on `transactions`; presence of WITH CHECK clause; whether the API validates ownership independently of RLS    | Integration (two test users, real Supabase project)  | Testing only the happy path (User A updating their own transaction)                                                                     |
 | #5   | When Finnhub HTTP call times out or returns 5xx, the dashboard renders with the last cached price and a ⚠ indicator; when no cache exists, "brak danych" is shown without throwing                | "Fallback code exists in the plan" ≠ "fallback actually fires when Finnhub is slow or down" — AbortController timeout must trigger under test conditions | Where the Finnhub call occurs in the server render path; AbortController/timeout setup; how the fallback cascades to the UI render           | Integration (mock Finnhub HTTP, real Supabase cache) | Only testing the happy path (successful Finnhub response)                                                                               |
 | #6   | When Finnhub returns `{c: 0}`, no price is written to the cache; the affected position shows "brak danych"; any previously cached price for the ticker is preserved                               | "The guard was in the implementation plan" ≠ "the guard survived subsequent refactors to the fetch/cache logic"                                          | `fetchQuote()` implementation: where the `c === 0` check lives, return value when null, how the caller handles a null result                 | Unit (mock `fetch`, no DB needed)                    | Only testing valid-ticker responses where `c > 0`                                                                                       |
+| #7   | A failed transactions/portfolios query sets a 500 status and renders a visible error banner; the error-resolution decision returns the right message when either or both queries fail             | "The error is logged" ≠ "the caller is told" — `console.error` alone leaves the rendered page indistinguishable from a genuine empty portfolio           | Where `dashboard.astro` checks the Supabase result/error shape; whether the same swallow-and-log pattern exists on other SSR pages           | Unit (pure decision fn) + E2E (real DB failure)      | Testing only the happy path, or mocking Supabase entirely for the E2E layer instead of forcing a genuine query failure                  |
 
 **Browser-level (E2E) supplement (Phase 5):** Risks #1, #5, and #6 additionally
 carry a Playwright test that proves the risk's cheapest-layer fix actually
@@ -71,6 +73,15 @@ reaches the DOM." Risk #6's E2E test covers only the no-cache branch (a
 brand-new ticker with no prior price row); the stale-cache branch is covered
 by Risk #5's test since both share the same `quote === null` code path in
 `refreshPricesForTickers`. See §6.5.
+
+Risk #7 (added standalone via `/10x-e2e`, 2026-07-04) follows the same
+unit + E2E split: `src/lib/dashboard-load-error.ts` isolates the pure
+error-resolution decision for a fast unit test, and
+`tests/e2e/dashboard-load-error.spec.ts` proves the real 500 + banner path by
+forcing a genuine PostgREST permission-denied error — a temporary, tightly
+scoped `REVOKE`/`GRANT` on `public.transactions`'s `authenticated` SELECT
+grant, since Postgres/PostgREST permissions are role-level and no per-user
+technique exists to isolate the failure. See §6.5.
 
 ---
 
@@ -373,6 +384,7 @@ poll the child's count first rather than trusting UI state alone.
 - Stale-cache fallback rendering (Risk #5): `tests/e2e/finnhub-fallback.spec.ts`
 - No-cache no-data-marker rendering (Risk #6, no-cache branch):
   `tests/e2e/finnhub-no-data.spec.ts`
+- Load-error banner rendering (Risk #7): `tests/e2e/dashboard-load-error.spec.ts`
 
 **Not yet done:** wiring an E2E job into CI (`.github/workflows/ci.yml` has no
 Playwright step) — currently these specs are run manually only.
