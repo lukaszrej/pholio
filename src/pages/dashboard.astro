@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Banner from "@/components/Banner.astro";
 import DashboardView from "@/components/transactions/DashboardView";
 import { createClient } from "@/lib/supabase";
 import { refreshPricesForTickers } from "@/lib/prices";
@@ -12,19 +13,18 @@ const supabase = createClient(Astro.request.headers, Astro.cookies);
 const result = supabase
   ? await supabase.from("transactions").select("*").order("purchase_date", { ascending: false }).limit(500)
   : null;
-if (result?.error) {
-  // eslint-disable-next-line no-console
-  console.error("[dashboard] failed to load transactions", result.error.message);
-}
-const transactions = (result?.data ?? []) as Transaction[];
-
 const { data: portfoliosData, error: portfoliosError } = supabase
   ? await supabase.from("portfolios").select("*").order("created_at", { ascending: true })
   : { data: [], error: null };
-if (portfoliosError) {
+
+const loadError = result?.error?.message ?? portfoliosError?.message ?? null;
+if (loadError) {
   // eslint-disable-next-line no-console
-  console.error("[dashboard] failed to load portfolios", portfoliosError.message);
+  console.error("[dashboard] failed to load dashboard data", loadError);
+  Astro.response.status = 500;
 }
+
+const transactions = (result?.data ?? []) as Transaction[];
 
 const uniqueTickers = [...new Set(transactions.map((t) => t.ticker.toUpperCase()))];
 const prices: Record<string, PriceData> = supabase ? await refreshPricesForTickers(uniqueTickers, supabase) : {};
@@ -37,6 +37,13 @@ for (const [ticker, profile] of Object.entries(sectorProfiles)) {
 ---
 
 <Layout title="Dashboard">
+  {
+    loadError && (
+      <Banner variant="error">
+        <strong>We couldn't load your dashboard data.</strong> Please refresh the page or try again shortly.
+      </Banner>
+    )
+  }
   <DashboardView
     client:load
     initialTransactions={transactions}
